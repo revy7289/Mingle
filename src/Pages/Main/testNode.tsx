@@ -1,6 +1,6 @@
 // import { Handle, Position } from "@xyflow/react";
 import { useState } from "react";
-import img from "../../public/naver.png";
+import img from "/naver.png";
 
 export default function TEST_NODE({ data }) {
     const [testToggle, setTestToggle] = useState(false);
