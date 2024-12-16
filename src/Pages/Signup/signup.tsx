@@ -1,15 +1,21 @@
 import { ChevronLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function SignupPage() {
+  const handleGoBack = () => {
+    window.history.back();
+  };
   return (
     <div className="w-screen h-screen bg-[#343434] flex justify-center items-center relative">
       <div className="bg-[url('/login-bg.png')] w-full h-full bg-cover"></div>
       <div className=" absolute w-[580px] h-[700px] bg-[#fcfcfc] rounded-2xl p-[50px] flex justify-between flex-col">
         <div className="flex  justify-center relative">
-          <p className="text-[#767676] flex absolute left-0">
+          <p onClick={handleGoBack} className="text-[#767676] flex absolute left-0 cursor-pointer">
             <ChevronLeft className="text-[#767676]" /> 뒤로가기
           </p>
-          <img src="/login-logo.png" alt="logo" className="w-[180px] h-[60px]" />
+          <Link to='/'>
+            <img src="/login-logo.png" alt="logo" className="w-[180px] h-[60px]" />
+          </Link>
         </div>
         <div className="w-full h-[400px] flex flex-col justify-between">
           <div className="flex flex-col gap-[8px]">

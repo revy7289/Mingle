@@ -7,7 +7,9 @@ export default function LoginPage() {
       <div className=" absolute w-[580px] h-[700px] bg-[#fcfcfc] rounded-2xl px-[50px] pt-[60px] pb-[70px] flex justify-between flex-col">
         <div className="w-full flex justify-center">
           <div className="w-[240px] h-[80px]">
-            <img src="/login-logo.png" alt="login-logo" />
+            <Link to="/">
+              <img src="/login-logo.png" alt="login-logo" />
+            </Link>
           </div>
         </div>
         <div className="w-full h-[250px] flex flex-col justify-around">
