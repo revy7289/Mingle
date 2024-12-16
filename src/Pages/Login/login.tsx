@@ -15,14 +15,14 @@ export default function LoginPage() {
             <p className="text-[24px]">이메일</p>
             <input
               type="text"
-              className="w-full h-[56px] px-[15px] rounded-2xl bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
+              className="w-full h-[48px] px-[15px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
             />
           </div>
           <div className="flex gap-[8px] flex-col">
             <p className="text-[24px]">비밀번호</p>
             <input
               type="text"
-              className="w-full h-[56px] px-[15px] rounded-2xl bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
+              className="w-full h-[48px] px-[15px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
             />
           </div>
         </div>
