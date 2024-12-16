@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function LoginPage() {
   return (
     <div className="w-screen h-screen bg-[#343434] flex justify-center items-center relative">
@@ -31,7 +33,9 @@ export default function LoginPage() {
           <div className="bg-[yellow]w- full h-[80px] flex flex-col justify-around">
             <div className="flex justify-between text-[16px] text-[#222222]">
               <p>아직 회원이 아니신가요?</p>
-              <button className="underline underline-offset-2">회원가입</button>
+              <Link to="/signup" className="underline underline-offset-2">
+                회원가입
+              </Link>
             </div>
             <div className="flex justify-between text-[16px] text-[#222222]">
               <p>비밀번호를 잊어버리셨나요?</p>
