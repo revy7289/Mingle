@@ -1,4 +1,4 @@
-import Comments from "@/components/comments";
+import Reply from "@/components/Comments/reply";
 import PostList from "@/components/postList";
 import Tag from "@/components/tag";
 import { useState } from "react";
@@ -104,7 +104,7 @@ const Mypage = () => {
           )}
         </div>
         {tabIndex === 1 && <PostList />}
-        {tabIndex === 2 && <Comments />}
+        {tabIndex === 2 && <Reply />}
       </div>
     </div>
   );
