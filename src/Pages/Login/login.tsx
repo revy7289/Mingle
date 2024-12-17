@@ -41,7 +41,9 @@ export default function LoginPage() {
             </div>
             <div className="flex justify-between text-[16px] text-[#222222]">
               <p>비밀번호를 잊어버리셨나요?</p>
-              <button className="underline underline-offset-2">비밀번호찾기</button>
+              <Link to="/findpw" className="underline underline-offset-2">
+                비밀번호찾기
+              </Link>
             </div>
           </div>
         </div>
