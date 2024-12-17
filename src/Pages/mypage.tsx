@@ -8,7 +8,7 @@ const Mypage = () => {
   const tabs = ["내 작업공간", "내가 쓴 글", "내가 쓴 댓글"];
 
   return (
-    <div className="flex flex-col items-center mt-[220px]">
+    <div className="flex flex-col items-center">
       <div className="flex gap-[115px]">
         <div className="flex flex-col justify-center items-center">
           <div className="w-[265px] h-[265px] bg-[#E0E0E0] rounded-[16px]"></div>
