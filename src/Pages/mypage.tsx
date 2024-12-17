@@ -21,11 +21,15 @@ const Mypage = () => {
             </div>
           </div>
           <div className="flex flex-col gap-[8px] mt-[12px] w-[245px]">
-            <p>Lv. 000000</p>
+            <div className="flex gap-[8px]">
+              <span className="text-[#767676]">Lv. 00</span>
+              <span className="text-[#767676]">000,000 XP</span>
+            </div>
             <div className="flex gap-[10px]">
               <img src="/follow.png" />
               <div>
                 <span>팔로잉 0</span>
+                <span> · </span>
                 <span>팔로워 0</span>
               </div>
             </div>
@@ -34,19 +38,21 @@ const Mypage = () => {
         <div className="w-[550px]">
           <div className="w-full h-[139px]">
             <div className="flex justify-between">
-              <h2 className="text-[24px] font-semibold">한 줄 소개</h2>
+              <span className="text-[24px] font-semibold">한 줄 소개</span>
               <div>
                 <img src="/edit.png" />
               </div>
             </div>
-            <p>Hello, world!</p>
+            <div className="px-[16px] py-[15px]">
+              <span className="text-[24px] font-semibold">Hello, world!</span>
+            </div>
           </div>
 
           <div className="w-full border-b border-solid border-[#BDBDBD]"></div>
 
           <div className="w-full h-[139px] mt-[40px]">
             <div className="flex justify-between mb-[20px]">
-              <h2 className="text-[24px] font-semibold">기술스택</h2>
+              <span className="text-[24px] font-semibold">기술스택</span>
               <div>
                 <img src="/edit.png" />
               </div>
@@ -54,8 +60,8 @@ const Mypage = () => {
             <Tag />
           </div>
           <div className="w-full h-[70px] ">
-            <h2 className="text-[24px] font-semibold mb-[17px]">연락처</h2>
-            <div className="flex gap-[12px]">
+            <span className="text-[24px] font-semibold">연락처</span>
+            <div className="flex gap-[12px] mt-[17px]">
               <div>
                 <img src="/email.png" />
               </div>

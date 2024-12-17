@@ -22,7 +22,7 @@ const PostList = () => {
         </div>
       </div>
       <div className="flex justify-between mt-[10px] px-[20px]">
-        <span>몇분전</span>
+        <span>몇 분 전</span>
         <div className="flex gap-[16px]">
           <div className="w-[51px] h-[20px] flex gap-[8px]">
             <img src="../../public/hits.png" />
