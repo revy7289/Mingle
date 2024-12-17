@@ -3,8 +3,8 @@ import SignupPage from "./Pages/Signup/signup";
 import MinglePage from "./Pages/Main/mingle";
 import LoginPage from "./Pages/Login/login";
 import FindPwPage from "./Pages/FindPw/findpw";
-import Mypage from "./Pages/mypage";
 import Header from "./Commons/Layout/header";
+import Mypage from "./Pages/Mypage/mypage";
 
 const HIDDEN_HEADER = ["/", "/login", "/signup", "/findpw"];
 
