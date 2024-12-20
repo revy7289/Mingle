@@ -7,7 +7,7 @@ import LoginPage from "./Pages/Login/login";
 import SignupPage from "./Pages/Signup/signup";
 import FindPwPage from "./Pages/FindPw/findpw";
 
-import Mypage from "./Pages/mypage";
+import Mypage from "./Pages/Mypage/mypage";
 
 import ListPage from "./Pages/Community/List/list";
 import PostPage from "./Pages/Community/Post/post";
