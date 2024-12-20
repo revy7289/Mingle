@@ -1,4 +1,4 @@
-const Comments = () => {
+const Reply = () => {
   return (
     <div className="w-full h-[136px] bg-[#EEEEEE] rounded-[16px] px-[20px] py-[16px]">
       <div className="flex justify-between items-center">
@@ -13,4 +13,4 @@ const Comments = () => {
   );
 };
 
-export default Comments;
+export default Reply;
