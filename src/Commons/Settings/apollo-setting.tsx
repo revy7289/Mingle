@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, InMemoryCache, fromPromise, ApolloProvider } from "@apollo/client";
+import { ApolloClient, ApolloLink, InMemoryCache, fromPromise, ApolloProvider, HttpLink } from "@apollo/client";
 import { useAccessTokenStore } from "../Stores/tokenStore";
 import { useEffect } from "react";
 import { onError } from "@apollo/client/link/error";
@@ -60,9 +60,12 @@ export default function ApolloSetting(props: IApolloSetting) {
       }
     }
   });
+  const httpLink = new HttpLink({
+    uri: "https://main-practice.codebootcamp.co.kr/graphql",
+  });
 
   const client = new ApolloClient({
-    link: ApolloLink.from([errorLink]),
+    link: ApolloLink.from([errorLink, httpLink]),
 
     // cache: new InMemoryCache(), // => accessToken이 변경돼서 리렌더될 때 새로만들어짐
     cache: GLOBAL_STATE, // => 컴포넌트는 새로 만들어져도, globalState는 유지됨
