@@ -80,6 +80,10 @@ body,
   }
 }
 
+.react-flow__attribution {
+  display: none;
+}
+
 .toastui-editor-contents p {
   font-size: 16px;
 }

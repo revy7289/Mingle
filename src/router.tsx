@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ReactNode } from "react";
 
-import MinglePage from "./Pages/Main/mingle";
+import MinglePage from "./Pages/Home/mingle";
 import Header from "./Commons/Layout/header";
 
 import LoginPage from "./Pages/Login/login";
