@@ -8,6 +8,11 @@ import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
+  NodeChange,
+  EdgeChange,
+  Connection,
+  Node,
+  Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -27,19 +32,19 @@ const initialNodes = [
 const nodeTypes = { testNode: TEST_NODE, antdTest: ANTD_ALERT, muiTEST: MUI_ALERT };
 
 export default function MinglePage() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState([]);
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes]
   );
   const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges]
   );
   const onConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 

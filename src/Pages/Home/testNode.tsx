@@ -1,10 +1,10 @@
 import img from "/naver.png";
-import { useState } from "react";
+import { KeyboardEvent, useState } from "react";
 
-export default function TEST_NODE({ data }) {
+export default function TEST_NODE() {
   const [testToggle, setTestToggle] = useState(false);
 
-  function handleEnter(e) {
+  function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
       setTestToggle(true);
