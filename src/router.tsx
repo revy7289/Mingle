@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ReactNode } from "react";
 
 import MinglePage from "./Pages/Main/mingle";
 import Header from "./Commons/Layout/header";
@@ -15,7 +16,7 @@ import NewPage from "./Pages/Community/New/new";
 
 const HIDDEN_HEADER = ["/", "/login", "/signup", "/findpw"];
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   const location = window.location.pathname;
   const isHiddenHeader = HIDDEN_HEADER.includes(location);
   return (
@@ -32,13 +33,13 @@ export default function Router() {
       <Layout>
         <Routes>
           <Route path="/" element={<MinglePage />} />
-          
+
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/findpw" element={<FindPwPage />} />
-          
+
           <Route path="/mypage" element={<Mypage />} />
-          
+
           <Route path="/community" element={<ListPage />} />
           <Route path="/community/post" element={<PostPage />} />
           <Route path="/community/new" element={<NewPage />} />
