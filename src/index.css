@@ -80,6 +80,10 @@ body,
   }
 }
 
+[data-id="node-1"] {
+  z-index: -1 !important;
+}
+
 .react-flow__attribution {
   display: none;
 }
