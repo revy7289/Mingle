@@ -1,6 +1,9 @@
+import { LoginUserDocument } from "@/Commons/graphql/graphql";
+import { useAccessTokenStore } from "@/Commons/Stores/tokenStore";
 import UseInputField from "@/components/input";
+import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface IFormType {
   email: string;
@@ -10,6 +13,7 @@ interface IFormType {
 }
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const {
     handleSubmit,
     register,
@@ -21,10 +25,42 @@ export default function LoginPage() {
   const watchPassword = watch("password");
 
   const isValid = watchEmail && watchPassword;
+
+  const { setAccessToken } = useAccessTokenStore();
+
+  const [loginUser] = useMutation(LoginUserDocument);
+
+  const onSubmitForm = async (data: IFormType) => {
+    console.log(data);
+    try {
+      const res = await loginUser({
+        variables: {
+          email: data.email,
+          password: data.password,
+        },
+      });
+      console.log(res);
+      const accessToken = res?.data?.loginUser.accessToken;
+      console.log(accessToken);
+
+      if (!accessToken) {
+        alert("로그인에 실패했습니다! 다시 시도해 주세요!");
+        return;
+      }
+      setAccessToken(accessToken);
+      alert("로그인 성공");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="w-screen h-screen bg-[#343434] flex justify-center items-center relative">
       <div className="bg-[url('/login-bg.png')] w-full h-full bg-cover"></div>
-      <form className=" absolute w-[600px] h-[690px] bg-[#fcfcfc] rounded-2xl px-[50px] pt-[60px] pb-[70px] flex justify-between flex-col">
+      <form
+        onSubmit={handleSubmit(onSubmitForm)}
+        className="absolute w-[600px] h-[690px] bg-[#fcfcfc] rounded-2xl px-[50px] pt-[60px] pb-[70px] flex justify-between flex-col"
+      >
         <div className="w-full flex justify-center">
           <div className="w-[240px] h-[80px]">
             <Link to="/">
