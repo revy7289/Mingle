@@ -41,7 +41,7 @@ export default function SignupPage() {
       <div className="bg-[url('/login-bg.png')] w-full h-full bg-cover"></div>
       <form
         onSubmit={handleSubmit(onChangeForm)}
-        className=" absolute w-[580px] min-h-[700px] h-auto bg-[#fcfcfc] rounded-2xl p-[50px] flex justify-between flex-col"
+        className=" absolute w-[600px] min-h-[750px] h-auto bg-[#fcfcfc] rounded-2xl p-[50px] flex justify-between flex-col"
       >
         <div className="flex  justify-center relative">
           <p onClick={handleGoBack} className="text-[#767676] flex absolute left-0 cursor-pointer">
