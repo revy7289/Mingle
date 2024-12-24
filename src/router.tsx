@@ -32,16 +32,18 @@ export default function Router() {
       <Layout>
         <Routes>
           <Route path="/" element={<MinglePage />} />
-          
+
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/findpw" element={<FindPwPage />} />
-          
+
           <Route path="/mypage" element={<Mypage />} />
-          
+
           <Route path="/community" element={<ListPage />} />
           <Route path="/community/post" element={<PostPage />} />
+          <Route path="/community/post/:boardId" element={<PostPage />} />
           <Route path="/community/new" element={<NewPage />} />
+          <Route path="/community/new/:boardId/edit" element={<NewPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>
