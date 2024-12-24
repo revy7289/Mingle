@@ -4,6 +4,14 @@ import { ChevronLeft } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import UseInputField from "@/components/input";
+
+interface IFormType {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  name: string;
+}
 
 export default function SignupPage() {
   const handleGoBack = () => {
@@ -17,14 +25,14 @@ export default function SignupPage() {
     register,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<IFormType>();
 
-  const password = useRef();
+  const password = useRef<string | undefined>();
   password.current = watch("password");
 
   const [createUser] = useMutation(CreateUserDocument);
 
-  const onChangeForm = async (data) => {
+  const onChangeForm = async (data: IFormType) => {
     console.log("회원가입정보:", data);
     try {
       const res = await createUser({
@@ -62,66 +70,49 @@ export default function SignupPage() {
         </div>
         <div className="w-full h-[400px] flex flex-col justify-between">
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[24px] text-semibold text-[#222222]">이메일</p>
-            <input
-              {...register("email", {
-                required: { value: true, message: "이메일을 입력해주세요." },
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "이메일 형식이 올바르지 않습니다",
-                },
+            <UseInputField
+              label="이메일"
+              register={register("email", {
+                required: "이메일을 입력해주세요.",
+                pattern: { value: /^\S+@\S+$/i, message: "이메일 형식이 올바르지 않습니다" },
               })}
-              type="text"
-              className="w-full h-[48px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
+              errorMessage={errors.email?.message}
             />
-            {errors?.email && <p className="text-[10px]">{errors?.email?.message}</p>}
           </div>
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[24px] text-semibold text-[#222222]">이름</p>
-            <input
-              {...register("name", {
-                required: { value: true, message: "이름을 입력해주세요." },
-                pattern: {
-                  value: /^[가-힣]{2,5}$/,
-                  message: "이름 형식이 올바르지 않습니다",
-                },
+            <UseInputField
+              label="이름"
+              register={register("name", {
+                required: "이름을 입력해주세요.",
+                pattern: { value: /^[가-힣]{2,5}$/, message: "이름 형식이 올바르지 않습니다" },
               })}
-              type="text"
-              className="w-full h-[48px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
+              errorMessage={errors.name?.message}
             />
-            {errors?.name && <p className="text-[10px]">{errors?.name?.message}</p>}
           </div>
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[24px] text-semibold text-[#222222]">비밀번호</p>
-            <input
-              {...register("password", {
-                required: { value: true, message: "비밀번호를 입력해주세요" },
+            <UseInputField
+              label="비밀번호"
+              register={register("password", {
+                required: "비밀번호를 입력해주세요",
                 minLength: {
                   value: 8,
                   message: "비밀번호 길이를 8자리 이상 입력해주세요",
                 },
               })}
+              errorMessage={errors?.password?.message}
               type="password"
-              className="w-full h-[48px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
             />
-            {errors?.password && <p className="text-[10px]">{errors?.password?.message}</p>}
           </div>
           <div className="flex flex-col gap-[8px]">
-            <p className="text-[24px] text-semibold text-[#222222]">비밀번호 확인</p>
-            <input
-              {...register("passwordConfirm", {
-                required: { value: true, message: "비밀번호 확인을 입력해주세요" },
-                validate: (value) => value === password.current,
+            <UseInputField
+              label="비밀번호 확인"
+              register={register("passwordConfirm", {
+                required: "비밀번호 확인을 입력해주세요",
+                validate: (value) => value === password.current || "비밀번호가 일치하지 않습니다.",
               })}
+              errorMessage={errors?.passwordConfirm?.message}
               type="password"
-              className="w-full h-[48px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none"
             />
-            {errors?.passwordConfirm?.type === "required" && (
-              <p className="text-[10px]">{errors?.passwordConfirm?.message}</p>
-            )}
-            {errors?.passwordConfirm?.type === "validate" && (
-              <p className="text-[10px]">비밀번호가 일치하지 않습니다.</p>
-            )}
           </div>
         </div>
         <div className="w-full h-[56px]">
