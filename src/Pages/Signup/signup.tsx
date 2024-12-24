@@ -3,12 +3,14 @@ import { useMutation } from "@apollo/client";
 import { ChevronLeft } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
   const handleGoBack = () => {
     window.history.back();
   };
+
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -24,16 +26,23 @@ export default function SignupPage() {
 
   const onChangeForm = async (data) => {
     console.log("회원가입정보:", data);
-    const res = await createUser({
-      variables: {
-        createUserInput: {
-          email: data.email,
-          password: data.password,
-          name: data.name,
+    try {
+      const res = await createUser({
+        variables: {
+          createUserInput: {
+            email: data.email,
+            password: data.password,
+            name: data.name,
+          },
         },
-      },
-    });
-    console.log(res);
+      });
+      console.log(res);
+      alert("회원가입 성공");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
   };
 
   return (
