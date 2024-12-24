@@ -53,6 +53,13 @@ export default function SignupPage() {
     }
   };
 
+  const watchEmail = watch("email");
+  const watchName = watch("name");
+  const watchPassword = watch("password");
+  const watchConfirmPassword = watch("passwordConfirm");
+
+  const isValid = watchEmail && watchName && watchPassword && watchConfirmPassword;
+
   return (
     <div className="w-screen h-screen bg-[#343434] flex justify-center items-center relative">
       <div className="bg-[url('/login-bg.png')] w-full h-full bg-cover"></div>
@@ -65,7 +72,7 @@ export default function SignupPage() {
             <ChevronLeft className="text-[#767676]" /> 뒤로가기
           </p>
           <Link to="/">
-            <img src="/login-logo.png" alt="logo" className="w-[180px] h-[60px]" />
+            <img src="/login-logo.png" alt="logo" className="w-[240px] h-[80px]" />
           </Link>
         </div>
         <div className="w-full h-[400px] flex flex-col justify-between">
@@ -77,6 +84,7 @@ export default function SignupPage() {
                 pattern: { value: /^\S+@\S+$/i, message: "이메일 형식이 올바르지 않습니다" },
               })}
               errorMessage={errors.email?.message}
+              placeholder="이메일을 입력해주세요"
             />
           </div>
           <div className="flex flex-col gap-[8px]">
@@ -87,6 +95,7 @@ export default function SignupPage() {
                 pattern: { value: /^[가-힣]{2,5}$/, message: "이름 형식이 올바르지 않습니다" },
               })}
               errorMessage={errors.name?.message}
+              placeholder="이름을 입력해주세요"
             />
           </div>
           <div className="flex flex-col gap-[8px]">
@@ -101,22 +110,29 @@ export default function SignupPage() {
               })}
               errorMessage={errors?.password?.message}
               type="password"
+              placeholder="비밀번호를 입력해주세요"
             />
           </div>
           <div className="flex flex-col gap-[8px]">
             <UseInputField
               label="비밀번호 확인"
               register={register("passwordConfirm", {
-                required: "비밀번호 확인을 입력해주세요",
+                required: "비밀번호를 다시 한 번 입력해주세요",
                 validate: (value) => value === password.current || "비밀번호가 일치하지 않습니다.",
               })}
               errorMessage={errors?.passwordConfirm?.message}
               type="password"
+              placeholder="비밀번호를 다시 한 번 입력해주세요"
             />
           </div>
         </div>
         <div className="w-full h-[56px]">
-          <button className="w-full h-full rounded-2xl bg-[#32cbff] text-[#fcfcfc] text-[24px] text-semibold">
+          <button
+            className={`w-full h-full rounded-2xl ${
+              !isValid ? "bg-[#767676]" : "bg-[#32cbff]"
+            } text-[#fcfcfc] text-[24px] text-semibold`}
+            disabled={!isValid}
+          >
             회원가입
           </button>
         </div>
