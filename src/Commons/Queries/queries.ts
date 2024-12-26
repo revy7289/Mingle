@@ -18,6 +18,20 @@ export const CREATE_USER = gql`
   }
 `;
 
+export const LOGIN_USER = gql`
+  mutation loginUser($password: String!, $email: String!) {
+    loginUser(password: $password, email: $email) {
+      accessToken
+    }
+  }
+`;
+
+export const LOGOUT_USER = gql`
+  mutation logoutUser {
+    logoutUser
+  }
+`;
+
 export const CREATE_BOARD = gql`
   mutation createBoard($createBoardInput: CreateBoardInput!) {
     createBoard(createBoardInput: $createBoardInput) {
@@ -60,5 +74,3 @@ export const FETCH_BOARD = gql`
       createdAt
       updatedAt
     }
-  }
-`;
