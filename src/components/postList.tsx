@@ -1,4 +1,4 @@
-import Tag from "./tag";
+import { TagReact } from "./tag";
 
 const PostList = () => {
   return (
@@ -16,7 +16,7 @@ const PostList = () => {
         <div>내용입니다</div>
         <div className="flex justify-between">
           <div>
-            <Tag />
+            <TagReact />
           </div>
           <span>작성자이름은최대열두글자</span>
         </div>

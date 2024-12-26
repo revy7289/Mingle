@@ -1,7 +1,6 @@
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
-import Tag from "@/components/tag";
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -10,6 +9,16 @@ import {
   UPDATE_BOARD,
 } from "@/Commons/Queries/queries";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  TagAngular,
+  TagAntd,
+  TagChakra,
+  TagMui,
+  TagReact,
+  TagShardcn,
+  TagSvelte,
+  TagVue,
+} from "@/components/tag";
 
 export default function NewPage() {
   const location = window.location.pathname;
@@ -110,15 +119,15 @@ export default function NewPage() {
           </div>
 
           {isModalOpen && (
-            <div className="w-[450px] h-[300px] border border-[#dadde6] flex flex-col justify-between px-[50px] py-[30px] rounded-2xl absolute bottom-0px] left-[10px] bg-white">
+            <div className="w-[450px] h-[300px] border border-[#dadde6] flex flex-col justify-between px-[50px] py-[30px] rounded-2xl absolute bottom-0px] left-[10px] bg-white z-10">
               <div>
                 <p># 라이브러리</p>
 
                 <div className="flex mt-[10px] gap-[10px]">
-                  <Tag />
-                  <Tag />
-                  <Tag />
-                  <Tag />
+                  <TagMui />
+                  <TagAntd />
+                  <TagChakra />
+                  <TagShardcn />
                 </div>
               </div>
 
@@ -126,10 +135,10 @@ export default function NewPage() {
                 <p># 프레임워크</p>
 
                 <div className="flex mt-[10px] gap-[10px]">
-                  <Tag />
-                  <Tag />
-                  <Tag />
-                  <Tag />
+                  <TagReact />
+                  <TagVue />
+                  <TagAngular />
+                  <TagSvelte />
                 </div>
               </div>
 

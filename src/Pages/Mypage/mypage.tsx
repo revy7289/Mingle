@@ -1,6 +1,6 @@
 import Reply from "@/components/Comments/reply";
 import PostList from "@/components/postList";
-import Tag from "@/components/tag";
+import { TagReact } from "@/components/tag";
 import { useState } from "react";
 
 const Mypage = () => {
@@ -57,7 +57,7 @@ const Mypage = () => {
                 <img src="/edit.png" />
               </div>
             </div>
-            <Tag />
+            <TagReact />
           </div>
           <div className="w-full h-[70px] ">
             <span className="text-[24px] font-semibold">연락처</span>

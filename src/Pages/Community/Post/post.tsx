@@ -58,12 +58,7 @@ export default function PostPage() {
             ...
           </div>
           <div className="w-full h-[24px] mt-[30px] flex justify-between">
-            <div className="w-[350px] h-full flex gap-[10px]">
-              <Tag />
-              <Tag />
-              <Tag />
-              <Tag />
-            </div>
+            <div className="w-[350px] h-full flex gap-[10px]">태그</div>
             <div className="flex gap-[20px]">
               <Link to={`/community/post/${params.boardId}/edit`}>
                 <button className="text-[#767676]">수정하기</button>
