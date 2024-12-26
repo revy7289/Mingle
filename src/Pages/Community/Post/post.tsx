@@ -1,4 +1,3 @@
-import Tag from "@/components/tag";
 import { Eye, ThumbsUp } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 

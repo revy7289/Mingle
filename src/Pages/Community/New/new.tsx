@@ -3,11 +3,6 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import {
-  CREATE_BOARD,
-  FETCH_BOARD,
-  UPDATE_BOARD,
-} from "@/Commons/Queries/queries";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   TagAngular,
@@ -19,6 +14,11 @@ import {
   TagSvelte,
   TagVue,
 } from "@/components/tag";
+import {
+  CreateBoardDocument,
+  FetchBoardDocument,
+  UpdateBoardDocument,
+} from "@/Commons/graphql/graphql";
 
 export default function NewPage() {
   const location = window.location.pathname;
@@ -32,10 +32,10 @@ export default function NewPage() {
   const [editor, setEditor] = useState("");
   // const [tag, setTag] = useState([""]);
 
-  const [createBoard] = useMutation(CREATE_BOARD);
-  const [updateBoard] = useMutation(UPDATE_BOARD);
+  const [createBoard] = useMutation(CreateBoardDocument);
+  const [updateBoard] = useMutation(UpdateBoardDocument);
 
-  const { data } = useQuery(FETCH_BOARD, {
+  const { data } = useQuery(FetchBoardDocument, {
     variables: {
       boardId: params.boardId as string,
     },
