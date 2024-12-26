@@ -84,9 +84,7 @@ export default function NewPage() {
   return (
     <div className="w-screen h-full flex flex-col items-center">
       <div className="w-[1120px] flex flex-col">
-        <div className="text-[40px] font-semibold">
-          게시글 {isEdit ? "수정" : "등록"}
-        </div>
+        <div className="text-[40px] font-semibold">게시글 {isEdit ? "수정" : "등록"}</div>
 
         <input
           type="text"
