@@ -42,6 +42,8 @@ export default function Router() {
 
           <Route path="/community" element={<ListPage />} />
           <Route path="/community/post" element={<PostPage />} />
+          <Route path="/community/post/:boardId" element={<PostPage />} />
+          <Route path="/community/post/:boardId/edit" element={<NewPage />} />
           <Route path="/community/new" element={<NewPage />} />
         </Routes>
       </Layout>

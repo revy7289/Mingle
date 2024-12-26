@@ -2,29 +2,102 @@ import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
 import Tag from "@/components/tag";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  CREATE_BOARD,
+  FETCH_BOARD,
+  UPDATE_BOARD,
+} from "@/Commons/Queries/queries";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function NewPage() {
+  const location = window.location.pathname;
+  const isEdit = location.includes("edit");
+  const editorRef = useRef<Editor>();
+  const params = useParams();
+  const navigate = useNavigate();
+
   const [isModalOpen, setModalOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [editor, setEditor] = useState("");
+  // const [tag, setTag] = useState([""]);
+
+  const [createBoard] = useMutation(CREATE_BOARD);
+  const [updateBoard] = useMutation(UPDATE_BOARD);
+
+  const { data } = useQuery(FETCH_BOARD, {
+    variables: {
+      boardId: params.boardId as string,
+    },
+  });
+
+  const onChangeTitle = (e) => {
+    setTitle(e.target.value);
+    console.log(title);
+  };
+
+  const onChangeEditor = () => {
+    const content = editorRef.current.getInstance().getMarkdown();
+    console.log(content);
+    setEditor(content);
+  };
+
+  const onClickSubmit = async () => {
+    if (!isEdit) {
+      const createResult = await createBoard({
+        variables: {
+          createBoardInput: {
+            writer: "작성자",
+            password: "123",
+            title: title,
+            contents: editor,
+          },
+        },
+      });
+      console.log(createResult);
+      navigate(`/community/post/${createResult.data?.createBoard._id}`);
+    } else {
+      const updateResult = await updateBoard({
+        variables: {
+          updateBoardInput: {
+            title: title || data?.fetchBoard.title,
+            contents: editor || data?.fetchBoard.contents,
+          },
+          boardId: params.boardId as string,
+          password: "123",
+        },
+      });
+      navigate(`/community/post/${updateResult.data?.updateBoard._id}`);
+    }
+  };
 
   return (
     <div className="w-screen h-full flex flex-col items-center">
       <div className="w-[1120px] flex flex-col">
-        <div className="text-[40px] font-semibold">게시글 등록</div>
+        <div className="text-[40px] font-semibold">
+          게시글 {isEdit ? "수정" : "등록"}
+        </div>
 
         <input
           type="text"
           placeholder="제목을 입력해 주세요."
           className="w-full h-[80px] px-[20px] py-[24px] bg-[#fcfcfc] border-[#e0e0e0] border-b-[1px] outline-none text-[24px] mt-[30px]"
+          onChange={onChangeTitle}
+          defaultValue={data?.fetchBoard.title}
         />
 
         <div className="mt-[20px] min-h-[600px] mb-[400px] relative">
           <Editor
-            initialValue="hello react editor world!"
+            ref={editorRef}
+            // placeholder="hello react editor world!"
+            // hideModeSwitch="true"
             previewStyle="vertical"
             height="100%"
-            initialEditType="markdown"
+            initialEditType={"markdown"}
             useCommandShortcut={true}
+            onChange={onChangeEditor}
+            initialValue={isEdit ? data?.fetchBoard.contents : " "} // 초기값 비우기
           />
 
           <div
@@ -74,8 +147,11 @@ export default function NewPage() {
 
       <div className="w-screen h-[80px] fixed bg-[#767676] bottom-0 flex justify-center items-center">
         <div className="w-[1120px] flex justify-end gap-[20px]">
-          <button className="w-[120px] h-[48px] bg-[#32CBFF] rounded-lg text-white text-[20px]">
-            등록하기
+          <button
+            className="w-[120px] h-[48px] bg-[#32CBFF] rounded-lg text-white text-[20px]"
+            onClick={onClickSubmit}
+          >
+            {isEdit ? "수정하기" : "등록하기"}
           </button>
           <button className="w-[120px] h-[48px] bg-[#bdbdbd] rounded-lg text-white text-[20px]">
             취소하기
