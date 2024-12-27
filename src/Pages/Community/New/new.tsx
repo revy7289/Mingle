@@ -1,7 +1,7 @@
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
-import { useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -23,11 +23,14 @@ import {
 export default function NewPage() {
   const location = window.location.pathname;
   const isEdit = location.includes("edit");
-  const editorRef = useRef<Editor>();
+
+  const editorRef = useRef<Editor>(null);
+
   const params = useParams();
   const navigate = useNavigate();
 
   const [isModalOpen, setModalOpen] = useState(false);
+
   const [title, setTitle] = useState("");
   const [editor, setEditor] = useState("");
   // const [tag, setTag] = useState([""]);
@@ -41,13 +44,17 @@ export default function NewPage() {
     },
   });
 
-  const onChangeTitle = (e) => {
+  useEffect(() => {
+    editorRef.current?.getInstance().setMarkdown(data?.fetchBoard.contents);
+  }, [data]);
+
+  const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     console.log(title);
   };
 
   const onChangeEditor = () => {
-    const content = editorRef.current.getInstance().getMarkdown();
+    const content = editorRef.current?.getInstance().getMarkdown();
     console.log(content);
     setEditor(content);
   };
@@ -84,9 +91,7 @@ export default function NewPage() {
   return (
     <div className="w-screen h-full flex flex-col items-center">
       <div className="w-[1120px] flex flex-col">
-        <div className="text-[40px] font-semibold">
-          게시글 {isEdit ? "수정" : "등록"}
-        </div>
+        <div className="text-[40px] font-semibold">게시글 {isEdit ? "수정" : "등록"}</div>
 
         <input
           type="text"
@@ -98,15 +103,15 @@ export default function NewPage() {
 
         <div className="mt-[20px] min-h-[600px] mb-[400px] relative">
           <Editor
-            ref={editorRef}
-            // placeholder="hello react editor world!"
-            // hideModeSwitch="true"
+            initialValue=" "
+            placeholder="내용을 입력해주세요."
             previewStyle="vertical"
             height="100%"
-            initialEditType={"markdown"}
+            initialEditType="wysiwyg"
             useCommandShortcut={true}
+            hideModeSwitch="true"
+            ref={editorRef}
             onChange={onChangeEditor}
-            initialValue={isEdit ? data?.fetchBoard.contents : " "} // 초기값 비우기
           />
 
           <div
