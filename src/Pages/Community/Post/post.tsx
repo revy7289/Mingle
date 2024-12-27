@@ -17,7 +17,6 @@ export default function PostPage() {
   const [isModal, setIsModal] = useState(false);
   const [contents, setContents] = useState("");
   const [reply, setReply] = useState("");
-  // const [isReply, setIsReply] = useState(false);
 
   const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
@@ -66,6 +65,38 @@ export default function PostPage() {
         },
         boardId: params.boardId as string,
       },
+      refetchQueries: [
+        {
+          query: FetchBoardCommentsDocument,
+          variables: {
+            boardId: String(params.boardId),
+            page: 1,
+          },
+        },
+      ],
+    });
+  };
+
+  const onClickReply = () => {
+    createBoardComment({
+      variables: {
+        createBoardCommentInput: {
+          writer: "작성자",
+          password: "123",
+          contents: contents,
+          rating: 22321, // 임의로적어둠 -> 댓글 좋아요로 사용?
+        },
+        boardId: String(reply),
+      },
+      refetchQueries: [
+        {
+          query: FetchBoardCommentsDocument,
+          variables: {
+            boardId: String(reply),
+            page: 1,
+          },
+        },
+      ],
     });
   };
 
@@ -140,16 +171,24 @@ export default function PostPage() {
           <p className="text-[24px] text-[#222222] font-semibold w-[68px] h-[29px] ml-[20px]">
             답변 4
           </p>
-          <CommentWrite onChangeComment={onChangeComment} onClickComment={onClickComment} />
+          <CommentWrite
+            onChangeComment={onChangeComment}
+            onClickComment={onClickComment}
+            setReply={setReply} // 필요없긴함
+          />
         </div>
         <div>
           {dataComments?.fetchBoardComments.map((el) => (
             <div key={el._id} className="mt-[45px]">
-              <Comment el={el} boardCommentId={el._id} setReply={setReply} />
+              <Comment el={el} setReply={setReply} />
               {reply === el._id && (
                 <div key={el._id} className="mt-[20px]">
-                  <CommentWrite onChangeComment={onChangeComment} onClickComment={onClickComment} />
-                  {/* // 여기다 작성하면 게시글 댓글로 작성되고 대댓글로 작성안됨 */}
+                  {/* createBoardComment API로 대댓글 등록 */}
+                  <CommentWrite
+                    onChangeComment={onChangeComment}
+                    onClickComment={onClickReply}
+                    setReply={setReply}
+                  />
                 </div>
               )}
             </div>

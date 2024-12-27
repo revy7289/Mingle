@@ -1,4 +1,4 @@
-const CommentWrite = ({ onChangeComment, onClickComment }) => {
+const CommentWrite = ({ onChangeComment, onClickComment, setReply }) => {
   return (
     <div>
       <input
@@ -6,7 +6,12 @@ const CommentWrite = ({ onChangeComment, onClickComment }) => {
         onChange={onChangeComment}
       />
       <div className=" w-full h-[32px] mt-[15px] flex justify-end gap-[19px]">
-        <button className="bg-[#bdbdbd] text-[#fcfcfc] w-[100px] h-full rounded-[8px]">취소</button>
+        <button
+          className="bg-[#bdbdbd] text-[#fcfcfc] w-[100px] h-full rounded-[8px]"
+          onClick={() => setReply("")}
+        >
+          취소
+        </button>
         <button
           className="w-[100px] h-full rounded-[8px] bg-[#767676] text-[#fcfcfc]"
           onClick={onClickComment}
