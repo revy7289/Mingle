@@ -44,16 +44,8 @@ export const CREATE_BOARD = gql`
 `;
 
 export const UPDATE_BOARD = gql`
-  mutation updateBoard(
-    $updateBoardInput: UpdateBoardInput!
-    $boardId: ID!
-    $password: String
-  ) {
-    updateBoard(
-      updateBoardInput: $updateBoardInput
-      boardId: $boardId
-      password: $password
-    ) {
+  mutation updateBoard($updateBoardInput: UpdateBoardInput!, $boardId: ID!, $password: String) {
+    updateBoard(updateBoardInput: $updateBoardInput, boardId: $boardId, password: $password) {
       _id
       writer
       title
@@ -80,5 +72,59 @@ export const FETCH_BOARD = gql`
 export const DELETE_BOARD = gql`
   mutation deleteBoard($boardId: ID!) {
     deleteBoard(boardId: $boardId)
+  }
+`;
+
+export const CREATE_BOARD_COMMENT = gql`
+  mutation createBoardComment($createBoardCommentInput: CreateBoardCommentInput!, $boardId: ID!) {
+    createBoardComment(createBoardCommentInput: $createBoardCommentInput, boardId: $boardId) {
+      _id
+      writer
+      contents
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const UPDATE_BOARD_COMMENT = gql`
+  mutation updateBoardComment(
+    $updateBoardCommentInput: UpdateBoardCommentInput!
+    $password: String
+    $boardCommentId: ID!
+  ) {
+    updateBoardComment(
+      updateBoardCommentInput: $updateBoardCommentInput
+      boardCommentId: $boardCommentId
+      password: $password
+    ) {
+      _id
+      writer
+      contents
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const DELETE_BOARD_COMMENT = gql`
+  mutation deleteBoardComment($password: String, $boardCommentId: ID!) {
+    deleteBoardComment(boardCommentId: $boardCommentId, password: $password)
+  }
+`;
+
+export const FETCH_BOARD_COMMENTS = gql`
+  query FetchBoardComments($page: Int, $boardId: ID!) {
+    fetchBoardComments(boardId: $boardId, page: $page) {
+      _id
+      writer
+      contents
+      rating
+      createdAt
+      updatedAt
+      deletedAt
+    }
   }
 `;

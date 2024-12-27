@@ -1,7 +1,11 @@
 import {
+  CreateBoardCommentDocument,
   DeleteBoardDocument,
+  FetchBoardCommentsDocument,
   FetchBoardDocument,
 } from "@/Commons/graphql/graphql";
+import Comment from "@/components/Comments/comment";
+import CommentWrite from "@/components/Comments/commentWrite";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, ThumbsUp } from "lucide-react";
 import { useState } from "react";
@@ -11,8 +15,12 @@ export default function PostPage() {
   const params = useParams();
   const navigate = useNavigate();
   const [isModal, setIsModal] = useState(false);
+  const [contents, setContents] = useState("");
+  const [reply, setReply] = useState("");
+  // const [isReply, setIsReply] = useState(false);
 
   const [deleteBoard] = useMutation(DeleteBoardDocument);
+  const [createBoardComment] = useMutation(CreateBoardCommentDocument);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -20,9 +28,14 @@ export default function PostPage() {
     },
   });
 
-  const utcDate = data?.fetchBoard.createdAt;
-  const date = new Date(utcDate);
-  const localDate = new Date(date.getTime() + 9 * 60 * 60 * 1000); // 한국시간계산
+  const time = new Date(data?.fetchBoard.createdAt);
+
+  const { data: dataComments } = useQuery(FetchBoardCommentsDocument, {
+    variables: {
+      page: 1,
+      boardId: params.boardId as string,
+    },
+  });
 
   // 게시글 삭제
   const onClickDelPost = () => {
@@ -32,9 +45,28 @@ export default function PostPage() {
         boardId: params.boardId as string,
       },
     });
-    console.log("삭제함");
     setIsModal((prev) => !prev);
     navigate("/community");
+  };
+
+  //댓글
+  const onChangeComment = (e) => {
+    setContents(e.target.value);
+    console.log(e.target.value);
+  };
+
+  const onClickComment = () => {
+    createBoardComment({
+      variables: {
+        createBoardCommentInput: {
+          writer: "작성자",
+          password: "123",
+          contents: contents,
+          rating: 22321, // 임의로적어둠 -> 댓글 좋아요로 사용?
+        },
+        boardId: params.boardId as string,
+      },
+    });
   };
 
   return (
@@ -42,12 +74,8 @@ export default function PostPage() {
       <div className=" w-[1120px] h-[1500px]">
         <div className=" w-full h-[102px] border-[#bdbdbd] border-b-[1px] flex justify-between">
           <div className="w-[900px] h-[80px] flex flex-col justify-between">
-            <p className="text-[#222222] text-[40px] font-semibold">
-              {data?.fetchBoard.title}
-            </p>
-            <p className="text-[#222222] text-[16px] ">
-              작성자이름은최대열두글자
-            </p>
+            <p className="text-[#222222] text-[40px] font-semibold">{data?.fetchBoard.title}</p>
+            <p className="text-[#222222] text-[16px] ">작성자이름은최대열두글자</p>
           </div>
           <div className="w-[170px] h-[68px] flex flex-col justify-between mt-[15px]">
             <div className="flex w-full h-[24px] justify-between mt-[7px]">
@@ -65,13 +93,8 @@ export default function PostPage() {
               </div>
             </div>
             <div className="flex justify-center text-[#767676]">
-              {`${localDate.getFullYear()}.${String(
-                localDate.getMonth() + 1
-              ).padStart(2, "0")}.${String(localDate.getDate()).padStart(
-                2,
-                "0"
-              )} ${String(localDate.getHours()).padStart(2, "0")}:${String(
-                localDate.getMinutes()
+              {`${time.toLocaleDateString()} ${String(time.getHours()).padStart(2, "0")}:${String(
+                time.getMinutes()
               ).padStart(2, "0")}`}
             </div>
           </div>
@@ -86,10 +109,7 @@ export default function PostPage() {
               <Link to={`/community/post/${params.boardId}/edit`}>
                 <button className="text-[#767676]">수정하기</button>
               </Link>
-              <button
-                className="text-[#767676]"
-                onClick={() => setIsModal((prev) => !prev)}
-              >
+              <button className="text-[#767676]" onClick={() => setIsModal((prev) => !prev)}>
                 삭제하기
               </button>
               {isModal && (
@@ -120,17 +140,20 @@ export default function PostPage() {
           <p className="text-[24px] text-[#222222] font-semibold w-[68px] h-[29px] ml-[20px]">
             답변 4
           </p>
-          <div>
-            <input className="w-full h-[130px] rounded-[16px] border-[#bdbdbd] border-[1px] px-[20px] py-[15px] text-[#222222] leading-[24px]" />
-            <div className=" w-full h-[32px] mt-[15px] flex justify-end gap-[19px]">
-              <button className="bg-[#bdbdbd] text-[#fcfcfc] w-[100px] h-full rounded-[8px]">
-                취소
-              </button>
-              <button className="w-[100px] h-full rounded-[8px] bg-[#767676] text-[#fcfcfc]">
-                작성하기
-              </button>
+          <CommentWrite onChangeComment={onChangeComment} onClickComment={onClickComment} />
+        </div>
+        <div>
+          {dataComments?.fetchBoardComments.map((el) => (
+            <div key={el._id} className="mt-[45px]">
+              <Comment el={el} boardCommentId={el._id} setReply={setReply} />
+              {reply === el._id && (
+                <div key={el._id} className="mt-[20px]">
+                  <CommentWrite onChangeComment={onChangeComment} onClickComment={onClickComment} />
+                  {/* // 여기다 작성하면 게시글 댓글로 작성되고 대댓글로 작성안됨 */}
+                </div>
+              )}
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
