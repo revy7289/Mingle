@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAccessTokenStore } from "../Stores/tokenStore";
 import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { LogoutUserDocument } from "../graphql/graphql";
 
 const Header = () => {
   const location = useLocation();
@@ -15,6 +17,18 @@ const Header = () => {
   const [dropDown, setDropDown] = useState(false);
   const openDropDown = () => {
     setDropDown(!dropDown);
+  };
+
+  const [logout] = useMutation(LogoutUserDocument);
+
+  const onClickLogout = async () => {
+    try {
+      const data = await logout();
+      useAccessTokenStore.getState().resetAccessToken();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -52,7 +66,7 @@ const Header = () => {
                       <Link to="/mypage">마이페이지</Link>
                     </li>
                     <li className="w-full h-[50%] flex items-center">
-                      <button onClick={() => alert("Logged out!")}>로그아웃</button>
+                      <button onClick={onClickLogout}>로그아웃</button>
                     </li>
                   </ul>
                 </div>
