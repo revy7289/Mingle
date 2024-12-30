@@ -49,7 +49,7 @@ export default function LoginPage() {
       }
       setAccessToken(accessToken);
       alert("로그인 성공");
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log(error);
     }

@@ -27,6 +27,7 @@ const Header = () => {
       const data = await logout();
       useAccessTokenStore.getState().resetAccessToken();
       console.log(data);
+      alert('로그아웃 성공')
     } catch (error) {
       console.log(error);
     }

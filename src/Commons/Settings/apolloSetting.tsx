@@ -24,7 +24,7 @@ const getAccessToken = async () => {
     const newAccessToken = result.restoreAccessToken.accessToken;
     return newAccessToken;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 
