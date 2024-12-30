@@ -1,6 +1,6 @@
 import { LoginUserDocument } from "@/Commons/graphql/graphql";
 import { useAccessTokenStore } from "@/Commons/Stores/tokenStore";
-import UseInputField from "@/components/input";
+import UseInputField from "@/Components/input";
 import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
