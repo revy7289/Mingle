@@ -1,7 +1,7 @@
 import img from "/naver.png";
 import { KeyboardEvent, useState } from "react";
 
-export default function TEST_NODE() {
+export default function SITE_SEARCH() {
   const [testToggle, setTestToggle] = useState(false);
 
   function handleEnter(e: KeyboardEvent<HTMLInputElement>) {

@@ -1,78 +1,128 @@
 import logo from "/logo.svg";
-import { useCallback, useState } from "react";
+import { MouseEvent, useCallback, useRef, useState } from "react";
 
 import {
   ReactFlow,
   Background,
   Controls,
   addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
-  NodeChange,
-  EdgeChange,
   Connection,
-  Node,
-  Edge,
+  ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import TEST_NODE from "./testNode";
-import ANTD_ALERT from "@/components/ANTD/ANTD_ALERT";
-import MUI_ALERT from "@/components/MUI/MUI_ALERT";
+import SITE_SEARCH from "./siteSearch";
+// import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
+// import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
 import { X } from "lucide-react";
+import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
+import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
+
+import { DnDProvider, useDnD } from "./dndContext";
 
 const initialNodes = [
   {
     id: "node-1",
-    type: "testNode",
+    type: "SITE_SEARCH",
     position: { x: 0, y: 0 },
-    data: { value: "기본값 test" },
+    data: { value: "사이트 검색용 기본 노드" },
   },
 ];
 
-const nodeTypes = { testNode: TEST_NODE, antdTest: ANTD_ALERT, muiTEST: MUI_ALERT };
+const nodeTypes = {
+  SITE_SEARCH,
+  MUI_BREADCRUMB,
+  ANTD_BREADCRUMB,
+};
 
-export default function MinglePage() {
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>([]);
+let id = 0;
+const getId = () => `dndnode_${id++}`;
+
+function MinglePage() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [selectedComp, setSelectedComp] = useState("");
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes]
-  );
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [setEdges]
-  );
+  const reactFlowWrapper = useRef(null);
+  const { screenToFlowPosition } = useReactFlow();
+  const [type, setType] = useDnD();
+
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
 
-  function onClickMUI() {
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      // check if the dropped element is valid
+      if (!type) {
+        return;
+      }
+
+      // project was renamed to screenToFlowPosition
+      // and you don't need to subtract the reactFlowBounds.left/top anymore
+      // details: https://reactflow.dev/whats-new/2023-11-10
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNode = {
+        id: getId(),
+        type,
+        position,
+        data: { label: `${type} node` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [screenToFlowPosition, type]
+  );
+
+  const onDragStart = (event, nodeType) => {
+    setType(nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
+  function onClickLib(e: MouseEvent) {
+    console.log(e.currentTarget.id);
+    const currentNode = String(e.currentTarget.id);
+
     setNodes((prev) => [
       ...prev, // 기존 노드들
       {
         id: `node-${prev.length + 1}`,
-        type: "muiTEST",
-        position: { x: -200, y: 50 },
-        data: { value: "mui 노드 test" },
+        type: `${currentNode}`,
+        position: { x: 50, y: prev.length * 100 },
+        data: { value: `${currentNode}` },
       },
     ]);
   }
 
-  function onClickANTD() {
-    setNodes((prev) => [
-      ...prev, // 기존 노드들
-      {
-        id: `node-${prev.length + 1}`,
-        type: "antdTest",
-        position: { x: -200, y: 150 },
-        data: { value: "antd 노드 test" },
-      },
-    ]);
+  function onClickComp(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    const component = target.textContent?.toUpperCase() || "";
+
+    setDrawerOpen((prev) => !prev);
+    setSelectedComp(component);
   }
+
+  const MUI_COMP = nodeTypes[`MUI_${selectedComp}` as keyof typeof nodeTypes];
+  const ANTD_COMP = nodeTypes[`ANTD_${selectedComp}` as keyof typeof nodeTypes];
+  const CHAKRA_COMP = nodeTypes[`CHAKRA_${selectedComp}` as keyof typeof nodeTypes];
+  const SHADCN_COMP = nodeTypes[`SHADCN_${selectedComp}` as keyof typeof nodeTypes];
 
   return (
     <div className="w-screen h-screen bg-[#222222] flex relative">
@@ -106,18 +156,19 @@ export default function MinglePage() {
         <input
           type="text"
           placeholder="Search"
-          className="w-[200px] h-[40px] bg-[#222222] rounded-lg mt-[20px] pl-[40px] text-white bg-[url(/search.png)] bg-no-repeat bg-[center_left_10px] shrink-0"
+          className="w-[200px] h-[40px] bg-[#222222] rounded-lg mt-[20px] pl-[40px] text-white bg-[url('/search.png')] bg-no-repeat bg-[center_left_10px] shrink-0"
         />
 
         {/* 컴포넌트 리스트 */}
         <ul
           className="mt-[20px] w-full h-full max-h-[520px] overflow-scroll text-white flex flex-col gap-[20px] px-[10px]"
           style={{ scrollbarColor: "#ffffff transparent" }}
-          onClick={() => setDrawerOpen((prev) => !prev)}
         >
-          {new Array(30).fill("test").map((el, idx) => (
+          <li onClick={onClickComp}>Breadcrumb</li>
+
+          {/* {new Array(30).fill("test").map((el, idx) => (
             <li>{`${el} ${idx + 1}`}</li>
-          ))}
+          ))} */}
         </ul>
       </div>
 
@@ -140,16 +191,16 @@ export default function MinglePage() {
           사용자에게 해당 컴포넌트의 간략한 예시를 이미지로 보여주고, 각 부분에 어떤 요소가 들어갈
           것인지 표현합니다.
         </p>
-        <p className="px-[10px] leading-normal font-normal text-pretty tracking-wide max-h-[80px] text-[14px] flex gap-[4px]">
-          <p className="font-semibold">*</p>
-          <p>
+        <div className="px-[10px] leading-normal font-normal text-pretty tracking-wide max-h-[80px] text-[14px] flex gap-[4px]">
+          <b className="font-semibold">*</b>
+          <div>
             일반적으로 {""}
             <span className="text-[#52C41A]">성공</span>(초록), {""}
             <span className="text-[#1677FF]">정보</span>(파랑), {""}
             <span className="text-[#FAAD14]">경고</span>(주황), {""}
             <span className="text-[#FF4D4F]">위험</span>(빨강)으로 표현합니다.
-          </p>
-        </p>
+          </div>
+        </div>
 
         <div className="w-full border-b-2 border-[#e0e0e0] mt-[20px]"></div>
 
@@ -163,10 +214,12 @@ export default function MinglePage() {
 
             <div
               className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
-              onClick={onClickMUI}
+              onClick={MUI_COMP !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `MUI_${selectedComp}`)}
+              draggable
+              id={`MUI_${selectedComp}`}
             >
-              <MUI_ALERT />
-              무이 무이 구글 디자인은 정말로 위대헤
+              {MUI_COMP ? <MUI_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -178,10 +231,12 @@ export default function MinglePage() {
 
             <div
               className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
-              onClick={onClickANTD}
+              onClick={ANTD_COMP !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `ANTD_${selectedComp}`)}
+              draggable
+              id={`ANTD_${selectedComp}`}
             >
-              <ANTD_ALERT />
-              많이는 쓰는데... 뭔가... 뭔가... 별로...
+              {ANTD_COMP ? <ANTD_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -191,8 +246,14 @@ export default function MinglePage() {
               <p className="text-[24px] font-semibold">chakra UI</p>
             </div>
 
-            <div className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center">
-              진정한 힙스터를 위한 낭만의 굳이굳이
+            <div
+              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              onClick={CHAKRA_COMP !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `CHAKRA_${selectedComp}`)}
+              draggable
+              id={`CHAKRA_${selectedComp}`}
+            >
+              {CHAKRA_COMP ? <CHAKRA_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -202,8 +263,14 @@ export default function MinglePage() {
               <p className="text-[24px] font-semibold">shadcn/ui</p>
             </div>
 
-            <div className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center">
-              사실 샤드는 ui 콜렉숀이래요
+            <div
+              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              onClick={SHADCN_COMP !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `SHADCN_${selectedComp}`)}
+              draggable
+              id={`SHADCN_${selectedComp}`}
+            >
+              {SHADCN_COMP ? <SHADCN_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -213,7 +280,7 @@ export default function MinglePage() {
 
       {/* 플로우 메인 화면 */}
       <div className="w-full h-full p-[20px]">
-        <div className="w-full h-full bg-[#343434] rounded-2xl">
+        <div className="w-full h-full bg-[#343434] rounded-2xl" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}
             nodeTypes={nodeTypes}
@@ -222,6 +289,8 @@ export default function MinglePage() {
             // edgeTypes={edgeTypes}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
             fitView
           >
             <Background />
@@ -230,5 +299,15 @@ export default function MinglePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DnDTest() {
+  return (
+    <ReactFlowProvider>
+      <DnDProvider>
+        <MinglePage />
+      </DnDProvider>
+    </ReactFlowProvider>
   );
 }
