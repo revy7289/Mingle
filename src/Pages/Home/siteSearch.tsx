@@ -1,13 +1,26 @@
-import img from "/naver.png";
 import { KeyboardEvent, useState } from "react";
 
 export default function SITE_SEARCH() {
-  const [testToggle, setTestToggle] = useState(false);
+  const [url, setUrl] = useState<string>("");
+  const [content, setContent] = useState<string>("");
 
-  function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setTestToggle(true);
+  async function handleEnter(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") return;
+    if (!e.currentTarget.value) return;
+
+    setUrl(e.currentTarget.value);
+
+    try {
+      const response = await fetch("https://naver.com");
+      if (!response.ok) {
+        throw new Error("데이터를 가져오는 데 실패했습니다.");
+      }
+
+      const data = await response.text();
+      setContent(data);
+    } catch (error) {
+      console.error(error);
+      setContent("URL 데이터를 가져오는 데 문제가 발생했습니다.");
     }
   }
 
@@ -23,16 +36,10 @@ export default function SITE_SEARCH() {
           onKeyDown={handleEnter}
         />
       </div>
-      <div className="w-full min-h-[540px] max-h-[1080px] overflow-clip relative bg-white rounded-b-2xl opacity-90">
-        {testToggle && (
-          <>
-            <div className="absolute text-[#ff0000] text-5xl left-[10%]">
-              테스트용 쌩캡쳐 이미지 입니다.
-            </div>
-            <img src={img} />
-          </>
-        )}
-      </div>
+      <div
+        className="w-full min-h-[540px] max-h-[1080px] overflow-clip relative bg-white rounded-b-2xl opacity-90"
+        dangerouslySetInnerHTML={{ __html: content }}
+      ></div>
     </div>
   );
 }

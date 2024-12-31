@@ -15,13 +15,17 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import SITE_SEARCH from "./siteSearch";
-// import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
-// import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
+
 import { X } from "lucide-react";
-import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
-import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
 
 import { DnDProvider, useDnD } from "./dndContext";
+
+import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
+import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
+import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
+import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
+import MUI_MENU from "@/components/_MUI/MUI_MENU";
+import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
 
 const initialNodes = [
   {
@@ -34,12 +38,37 @@ const initialNodes = [
 
 const nodeTypes = {
   SITE_SEARCH,
+  MUI_ALERT,
+  ANTD_ALERT,
   MUI_BREADCRUMB,
   ANTD_BREADCRUMB,
+  MUI_MENU,
+  ANTD_MENU,
 };
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+// const prefixes = ["MUI", "ANTD", "CHAKRA", "SHADCN"];
+const menuList = ["Alert", "Menu", "Breadcrumb"];
+
+// prefixes.forEach((prefix) => {
+//   menuList.forEach((menu) => {
+//     const key = `${prefix}_${menu.toUpperCase()}`;
+//     nodeTypes[key] = `${prefix}_${menu.toUpperCase()}`;
+//   });
+// });
+
+// console.log(nodeTypes);
+
+// const loadComponents = async () => {
+//   const imports = {};
+
+//   for (const key in nodeTypes) {
+//     const componentName = nodeTypes[key];
+//     imports[key] = await import(`../../components/Libraries/${componentName}`).then(
+//       (module) => module.default
+//     );
+//   }
+//   console.log(imports);
+// };
 
 function MinglePage() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -70,6 +99,9 @@ function MinglePage() {
       if (!type) {
         return;
       }
+
+      let id = 0;
+      const getId = () => `dndnode_${id++}`;
 
       // project was renamed to screenToFlowPosition
       // and you don't need to subtract the reactFlowBounds.left/top anymore
@@ -105,7 +137,7 @@ function MinglePage() {
       {
         id: `node-${prev.length + 1}`,
         type: `${currentNode}`,
-        position: { x: 50, y: prev.length * 100 },
+        position: { x: prev.length * 10, y: prev.length * 10 },
         data: { value: `${currentNode}` },
       },
     ]);
@@ -117,6 +149,7 @@ function MinglePage() {
 
     setDrawerOpen((prev) => !prev);
     setSelectedComp(component);
+    console.log(component);
   }
 
   const MUI_COMP = nodeTypes[`MUI_${selectedComp}` as keyof typeof nodeTypes];
@@ -164,11 +197,11 @@ function MinglePage() {
           className="mt-[20px] w-full h-full max-h-[520px] overflow-scroll text-white flex flex-col gap-[20px] px-[10px]"
           style={{ scrollbarColor: "#ffffff transparent" }}
         >
-          <li onClick={onClickComp}>Breadcrumb</li>
-
-          {/* {new Array(30).fill("test").map((el, idx) => (
-            <li>{`${el} ${idx + 1}`}</li>
-          ))} */}
+          {menuList.map((item) => (
+            <li onClick={onClickComp} key={item}>
+              {item}
+            </li>
+          ))}
         </ul>
       </div>
 
@@ -205,7 +238,7 @@ function MinglePage() {
         <div className="w-full border-b-2 border-[#e0e0e0] mt-[20px]"></div>
 
         {/* 컴포넌트 리스트 */}
-        <div className="w-full max-h-[520px] overflow-scroll">
+        <div className="w-full max-h-[520px] overflow-scroll bg-[#f5f5f5] mt-[20px]">
           <div className="px-[10px] mt-[40px] flex flex-col gap-[20px]">
             <div className="flex gap-[20px]">
               <img src="/MUI.svg" alt="mui" className="mt-[4px]" />
