@@ -74,3 +74,14 @@ export const DELETE_BOARD = gql`
     deleteBoard(boardId: $boardId)
   }
 `;
+
+export const FETCH_USER = gql`
+  query fetchUserLoggedIn {
+    fetchUserLoggedIn {
+      _id
+      email
+      name
+      picture
+    }
+  }
+`;

@@ -1,8 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAccessTokenStore } from "../Stores/tokenStore";
 import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { LogoutUserDocument } from "../graphql/graphql";
+import { useMutation, useQuery } from "@apollo/client";
+import { FetchUserLoggedInDocument, LogoutUserDocument } from "../graphql/graphql";
 
 const Header = () => {
   const location = useLocation();
@@ -19,6 +19,7 @@ const Header = () => {
     setDropDown(!dropDown);
   };
 
+  // 로그아웃
   const [logout] = useMutation(LogoutUserDocument);
 
   const onClickLogout = async () => {
@@ -26,10 +27,15 @@ const Header = () => {
       const data = await logout();
       useAccessTokenStore.getState().resetAccessToken();
       console.log(data);
+      alert('로그아웃 성공')
     } catch (error) {
       console.log(error);
     }
   };
+
+  // 유저정보조회
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
+  console.log("유저정보", userData);
 
   return (
     <div className="w-screen h-[100px] bg-[#343434] justify-center flex items-center mb-[120px]">
@@ -51,11 +57,13 @@ const Header = () => {
           <div className="flex items-center gap-[7px] w-[170px] h-[60px] text-[22px]">
             {accessToken ? (
               <div
-                className="relative bg-[#32cbff] w-[165px] h-[48px] flex rounded-[8px] items-center justify-center gap-[8px] cursor-pointer"
+                className="relative w-auto px-[20px] h-[48px] flex rounded-[8px] items-center justify-center gap-[8px] cursor-pointer"
                 onClick={openDropDown}
               >
                 <div className="w-[32px] h-[32px] bg-[#FCFCFC] rounded-full"></div>
-                <span className="text-[20px] text-[#fcfcfc] font-semibold">유저네임이름</span>
+                <span className="text-[20px] text-[#fcfcfc] font-semibold">
+                  {userData?.fetchUserLoggedIn.name}
+                </span>
                 <div
                   className={`flex absolute top-[55px] w-[165px] h-[102px] bg-[#eeeeee] text-[#222222] rounded-[8px] p-[10px] overflow-hidden transition-all duration-300 ease-in-out transform origin-top ${
                     dropDown ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"
