@@ -195,7 +195,7 @@ export default function GalleryPage() {
             <div key={index} className="relative group">
               <img src={url} alt={`Image ${index + 1}`} className="w-full rounded-lg shadow-md" />
               <div className="w-full h-full absolute inset-0 bg-gradient-to-b from-transparent to-[#000000] opacity-0 group-hover:opacity-80 transition-opacity duration-300 rounded-lg flex justify-end items-end cursor-pointer">
-                <div className="w-full h-[120px] p-[20px] flex flex-col gap-[8px]">
+                <div className="w-full h-[130px] p-[20px] flex flex-col gap-[8px]">
                   <p className="text-[#fcfcfc] text-[24px]">작성자이름은최대열두글자</p>
                   <div className="flex gap-[10px]">
                     <TagAntd />
