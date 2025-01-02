@@ -32,6 +32,17 @@ export const LOGOUT_USER = gql`
   }
 `;
 
+export const FETCH_USER = gql`
+  query fetchUserLoggedIn {
+    fetchUserLoggedIn {
+      _id
+      email
+      name
+      picture
+    }
+  }
+`;
+
 export const CREATE_BOARD = gql`
   mutation createBoard($createBoardInput: CreateBoardInput!) {
     createBoard(createBoardInput: $createBoardInput) {
@@ -74,7 +85,6 @@ export const DELETE_BOARD = gql`
     deleteBoard(boardId: $boardId)
   }
 `;
-
 export const CREATE_BOARD_COMMENT = gql`
   mutation createBoardComment($createBoardCommentInput: CreateBoardCommentInput!, $boardId: ID!) {
     createBoardComment(createBoardCommentInput: $createBoardCommentInput, boardId: $boardId) {

@@ -18,6 +18,7 @@ const documents = {
     "\n  mutation createUser($createUserInput: CreateUserInput!) {\n    createUser(createUserInput: $createUserInput) {\n      _id\n      email\n      name\n    }\n  }\n": types.CreateUserDocument,
     "\n  mutation loginUser($password: String!, $email: String!) {\n    loginUser(password: $password, email: $email) {\n      accessToken\n    }\n  }\n": types.LoginUserDocument,
     "\n  mutation logoutUser {\n    logoutUser\n  }\n": types.LogoutUserDocument,
+    "\n  query fetchUserLoggedIn {\n    fetchUserLoggedIn {\n      _id\n      email\n      name\n      picture\n    }\n  }\n": types.FetchUserLoggedInDocument,
     "\n  mutation createBoard($createBoardInput: CreateBoardInput!) {\n    createBoard(createBoardInput: $createBoardInput) {\n      _id\n      writer\n      title\n      contents\n    }\n  }\n": types.CreateBoardDocument,
     "\n  mutation updateBoard($updateBoardInput: UpdateBoardInput!, $boardId: ID!, $password: String) {\n    updateBoard(updateBoardInput: $updateBoardInput, boardId: $boardId, password: $password) {\n      _id\n      writer\n      title\n      contents\n    }\n  }\n": types.UpdateBoardDocument,
     "\n  query fetchBoard($boardId: ID!) {\n    fetchBoard(boardId: $boardId) {\n      _id\n      writer\n      title\n      contents\n      likeCount\n      dislikeCount\n      createdAt\n      updatedAt\n    }\n  }\n": types.FetchBoardDocument,
@@ -58,6 +59,10 @@ export function graphql(source: "\n  mutation loginUser($password: String!, $ema
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation logoutUser {\n    logoutUser\n  }\n"): (typeof documents)["\n  mutation logoutUser {\n    logoutUser\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query fetchUserLoggedIn {\n    fetchUserLoggedIn {\n      _id\n      email\n      name\n      picture\n    }\n  }\n"): (typeof documents)["\n  query fetchUserLoggedIn {\n    fetchUserLoggedIn {\n      _id\n      email\n      name\n      picture\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
