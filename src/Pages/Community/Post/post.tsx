@@ -3,6 +3,7 @@ import {
   DeleteBoardDocument,
   FetchBoardCommentsDocument,
   FetchBoardDocument,
+  UpdateBoardCommentDocument,
 } from "@/Commons/graphql/graphql";
 import Comment from "@/components/Comments/comment";
 import CommentWrite from "@/components/Comments/commentWrite";
@@ -15,11 +16,14 @@ export default function PostPage() {
   const params = useParams();
   const navigate = useNavigate();
   const [isModal, setIsModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [contents, setContents] = useState("");
-  const [reply, setReply] = useState("");
+  const [commentId, setCommentId] = useState("");
+  const [replyId, setReplyId] = useState("");
 
   const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
+  const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -35,6 +39,7 @@ export default function PostPage() {
       boardId: params.boardId as string,
     },
   });
+  console.log(dataComments);
 
   // 게시글 삭제
   const onClickDelPost = () => {
@@ -77,6 +82,30 @@ export default function PostPage() {
     });
   };
 
+  const onClickUpdateComment = () => {
+    updateBoardComment({
+      variables: {
+        updateBoardCommentInput: {
+          contents: contents,
+          rating: 13123,
+        },
+        password: "123",
+        boardCommentId: String(commentId),
+      },
+      refetchQueries: [
+        {
+          query: FetchBoardCommentsDocument,
+          variables: {
+            boardId: String(commentId),
+            page: 1,
+          },
+        },
+      ],
+    });
+    setIsEdit(false);
+  };
+
+  //대댓글
   const onClickReply = () => {
     createBoardComment({
       variables: {
@@ -86,18 +115,44 @@ export default function PostPage() {
           contents: contents,
           rating: 22321, // 임의로적어둠 -> 댓글 좋아요로 사용?
         },
-        boardId: String(reply),
+        boardId: String(replyId),
       },
       refetchQueries: [
         {
           query: FetchBoardCommentsDocument,
           variables: {
-            boardId: String(reply),
+            boardId: String(replyId),
             page: 1,
           },
         },
       ],
     });
+  };
+
+  const onClickUpdateReply = () => {
+    updateBoardComment({
+      variables: {
+        updateBoardCommentInput: {
+          contents: contents,
+          rating: 13123,
+        },
+        password: "123",
+        boardCommentId: String(replyId),
+      },
+    });
+    setIsEdit(false);
+  };
+
+  const handleUpdate = () => {
+    if (isEdit) {
+      if (commentId) {
+        onClickUpdateComment(); // 댓글 업데이트 함수 호출
+      } else {
+        onClickUpdateReply(); // 대댓글 업데이트 함수 호출
+      }
+      // commentId 초기화
+      setCommentId("");
+    }
   };
 
   return (
@@ -168,26 +223,44 @@ export default function PostPage() {
           </div>
         </div>
         <div className="w-full h-[325px] border-[#bdbdbd] border-b-[1px] px-[20px] pt-[60px] pb-[45px] flex flex-col gap-[10px]">
-          <p className="text-[24px] text-[#222222] font-semibold w-[68px] h-[29px] ml-[20px]">
-            답변 4
-          </p>
+          <div className="flex text-[24px] text-[#222222] font-semibold h-[29px] ml-[20px]">
+            답변 {dataComments?.fetchBoardComments.length}
+          </div>
+          {/* 댓글처음 다는부분 */}
           <CommentWrite
             onChangeComment={onChangeComment}
             onClickComment={onClickComment}
-            setReply={setReply} // 필요없긴함
+            // onClickUpdateComment={onClickUpdateComment}// 업데이트 필요없음
+            // setReplyId={setReplyId} // 필요없긴함
+            // isEdit={isEdit}// 필요없음
           />
         </div>
         <div>
           {dataComments?.fetchBoardComments.map((el) => (
             <div key={el._id} className="mt-[45px]">
-              <Comment el={el} setReply={setReply} />
-              {reply === el._id && (
-                <div key={el._id} className="mt-[20px]">
+              <Comment
+                el={el}
+                replyId={replyId}
+                setReplyId={setReplyId}
+                onChangeComment={onChangeComment}
+                onClickComment={onClickReply} // 대댓글 onClickReply
+                onClickUpdateComment={handleUpdate}
+                setIsEdit={setIsEdit}
+                isEdit={isEdit}
+                setCommentId={setCommentId}
+                commentId={commentId}
+              />
+              {/* 댓글등록 */}
+              {!isEdit && replyId === el._id && (
+                <div className="mt-[20px]">
                   {/* createBoardComment API로 대댓글 등록 */}
                   <CommentWrite
                     onChangeComment={onChangeComment}
                     onClickComment={onClickReply}
-                    setReply={setReply}
+                    onClickUpdateComment={onClickUpdateComment}
+                    setReplyId={setReplyId}
+                    setCommentId={setCommentId}
+                    isEdit={isEdit}
                   />
                 </div>
               )}
