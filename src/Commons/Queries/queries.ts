@@ -32,6 +32,17 @@ export const LOGOUT_USER = gql`
   }
 `;
 
+export const FETCH_USER = gql`
+  query fetchUserLoggedIn {
+    fetchUserLoggedIn {
+      _id
+      email
+      name
+      picture
+    }
+  }
+`;
+
 export const CREATE_BOARD = gql`
   mutation createBoard($createBoardInput: CreateBoardInput!) {
     createBoard(createBoardInput: $createBoardInput) {
@@ -74,14 +85,62 @@ export const DELETE_BOARD = gql`
     deleteBoard(boardId: $boardId)
   }
 `;
-
-export const FETCH_USER = gql`
-  query fetchUserLoggedIn {
-    fetchUserLoggedIn {
+export const CREATE_BOARD_COMMENT = gql`
+  mutation createBoardComment($createBoardCommentInput: CreateBoardCommentInput!, $boardId: ID!) {
+    createBoardComment(createBoardCommentInput: $createBoardCommentInput, boardId: $boardId) {
       _id
-      email
-      name
-      picture
+      writer
+      contents
+      createdAt
+      updatedAt
+      deletedAt
     }
+  }
+`;
+
+export const UPDATE_BOARD_COMMENT = gql`
+  mutation updateBoardComment(
+    $updateBoardCommentInput: UpdateBoardCommentInput!
+    $password: String
+    $boardCommentId: ID!
+  ) {
+    updateBoardComment(
+      updateBoardCommentInput: $updateBoardCommentInput
+      boardCommentId: $boardCommentId
+      password: $password
+    ) {
+      _id
+      writer
+      contents
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const DELETE_BOARD_COMMENT = gql`
+  mutation deleteBoardComment($password: String, $boardCommentId: ID!) {
+    deleteBoardComment(boardCommentId: $boardCommentId, password: $password)
+  }
+`;
+
+export const FETCH_BOARD_COMMENTS = gql`
+  query FetchBoardComments($page: Int, $boardId: ID!) {
+    fetchBoardComments(boardId: $boardId, page: $page) {
+      _id
+      writer
+      contents
+      rating
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const LIKE_COUNT = gql`
+  mutation LikeBoard($boardId: ID!) {
+    likeBoard(boardId: $boardId)
   }
 `;
