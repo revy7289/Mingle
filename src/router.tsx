@@ -15,6 +15,7 @@ import Mypage from "./Pages/Mypage/mypage";
 import ListPage from "./Pages/Community/List/list";
 import PostPage from "./Pages/Community/Post/post";
 import NewPage from "./Pages/Community/New/new";
+import GalleryPage from "./Pages/Gallery/gallery";
 
 const HIDDEN_HEADER = ["/", "/home", "/login", "/signup", "/findpw"];
 
@@ -48,6 +49,8 @@ export default function Router() {
           <Route path="/community/post/:boardId" element={<PostPage />} />
           <Route path="/community/post/:boardId/edit" element={<NewPage />} />
           <Route path="/community/new" element={<NewPage />} />
+
+          <Route path="gallery" element={<GalleryPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

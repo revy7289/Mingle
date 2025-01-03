@@ -1,5 +1,5 @@
-import Reply from "@/components/Comments/reply";
-import PostList from "@/components/postList";
+import Reply from "@/Components/Comments/reply";
+import PostList from "@/Components/postList";
 import { TagReact } from "@/components/tag";
 import { useState } from "react";
 
@@ -13,9 +13,7 @@ const Mypage = () => {
         <div className="flex flex-col justify-center items-center">
           <div className="w-[265px] h-[265px] bg-[#E0E0E0] rounded-[16px]"></div>
           <div className="flex justify-between items-center w-[245px] h-[48px] mt-[20px]">
-            <span className="text-[#222222] text-[40px] font-medium">
-              닉네임
-            </span>
+            <span className="text-[#222222] text-[40px] font-medium">닉네임</span>
             <div>
               <img src="/edit.png" />
             </div>
