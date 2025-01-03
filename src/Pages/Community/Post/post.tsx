@@ -3,6 +3,7 @@ import {
   DeleteBoardDocument,
   FetchBoardCommentsDocument,
   FetchBoardDocument,
+  FetchUserLoggedInDocument,
   LikeBoardDocument,
   UpdateBoardCommentDocument,
 } from "@/Commons/graphql/graphql";
@@ -22,11 +23,15 @@ export default function PostPage() {
   const [contents, setContents] = useState("");
   const [commentId, setCommentId] = useState("");
   const [replyId, setReplyId] = useState("");
+  const [likeCount, setLikeCount] = useState(false);
 
   const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
   const [likeBoard] = useMutation(LikeBoardDocument);
+
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
+  console.log("유저정보", userData);
 
   useEffect(() => {
     if (isModal) {
@@ -35,6 +40,14 @@ export default function PostPage() {
       document.body.style.overflow = "auto"; // 스크롤 복원
     }
   }, [isModal]);
+
+  useEffect(() => {
+    const a = JSON.parse(localStorage.getItem(`likeCount_${params.boardId}`));
+    console.log(a);
+    if (a === userData?.fetchUserLoggedIn._id) {
+      setLikeCount(true);
+    }
+  }, []);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -166,20 +179,27 @@ export default function PostPage() {
   };
 
   const onClickLikeCount = () => {
-    likeBoard({
-      variables: {
-        boardId: String(params.boardId),
-      },
-      refetchQueries: [
-        {
-          query: FetchBoardDocument,
-          variables: {
-            boardId: String(params.boardId),
-            page: 1,
-          },
+    if (localStorage.getItem(`likeCount_${params.boardId}`) === null) {
+      likeBoard({
+        variables: {
+          boardId: String(params.boardId),
         },
-      ],
-    });
+        refetchQueries: [
+          {
+            query: FetchBoardDocument,
+            variables: {
+              boardId: String(params.boardId),
+              page: 1,
+            },
+          },
+        ],
+      });
+      setLikeCount(true);
+    }
+    localStorage.setItem(
+      `likeCount_${params.boardId}`,
+      JSON.stringify(userData?.fetchUserLoggedIn._id)
+    );
   };
 
   return (
@@ -193,8 +213,11 @@ export default function PostPage() {
           <div className="w-[170px] h-[68px] flex flex-col justify-between mt-[15px]">
             <div className="flex w-full h-[24px] justify-between mt-[7px]">
               <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
-                {/* <Heart fill="#ff3179" stroke="0" onClick={onClickLikeCount} /> */}
-                <Heart color="#767676" onClick={onClickLikeCount} />
+                {likeCount ? (
+                  <Heart fill="#ff3179" stroke="0" />
+                ) : (
+                  <Heart color="#767676" onClick={onClickLikeCount} />
+                )}
 
                 <p className="text-[#767676] text-[16px]">{String(data?.fetchBoard.likeCount)}</p>
               </div>
