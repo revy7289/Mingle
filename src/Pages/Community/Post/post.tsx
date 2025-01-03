@@ -6,11 +6,12 @@ import {
   LikeBoardDocument,
   UpdateBoardCommentDocument,
 } from "@/Commons/graphql/graphql";
-import Comment from "@/components/Comments/comment";
-import CommentWrite from "@/components/Comments/commentWrite";
+import Comment from "@/Components/Comments/comment";
+import CommentWrite from "@/Components/Comments/commentWrite";
+import Modal from "@/Components/Comments/modal";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, Heart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function PostPage() {
@@ -26,6 +27,14 @@ export default function PostPage() {
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
   const [likeBoard] = useMutation(LikeBoardDocument);
+
+  useEffect(() => {
+    if (isModal) {
+      document.body.style.overflow = "hidden"; // 스크롤 숨김
+    } else {
+      document.body.style.overflow = "auto"; // 스크롤 복원
+    }
+  }, [isModal]);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -45,7 +54,6 @@ export default function PostPage() {
 
   // 게시글 삭제
   const onClickDelPost = () => {
-    console.log(isModal);
     deleteBoard({
       variables: {
         boardId: params.boardId as string,
@@ -68,7 +76,7 @@ export default function PostPage() {
           writer: "작성자",
           password: "123",
           contents: contents,
-          rating: 22321, // 임의로적어둠 -> 댓글 좋아요로 사용?
+          rating: 101, // 임의로적어둠 -> 댓글 좋아요로 사용?
         },
         boardId: params.boardId as string,
       },
@@ -89,7 +97,7 @@ export default function PostPage() {
       variables: {
         updateBoardCommentInput: {
           contents: contents,
-          rating: 13123,
+          rating: 101,
         },
         password: "123",
         boardCommentId: String(commentId),
@@ -217,27 +225,7 @@ export default function PostPage() {
               <button className="text-[#767676]" onClick={() => setIsModal((prev) => !prev)}>
                 삭제하기
               </button>
-              {isModal && (
-                <div className="absolute top-0 left-0 w-full h-screen overflow-hidden bg-black bg-opacity-50">
-                  <div className="flex flex-col justify-center items-center w-[512px] h-[340px] bg-white absolute top-2/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-[8px]">
-                    <span>삭제하시겠습니까?</span>
-                    <div className="flex w-full h-[32px] justify-center gap-[20px] mt-[15px]">
-                      <button
-                        className="w-[100px] h-full rounded-[8px] bg-[#32CBFF] text-[#fcfcfc]"
-                        onClick={onClickDelPost}
-                      >
-                        삭제
-                      </button>
-                      <button
-                        className="w-[100px] h-full rounded-[8px] bg-[#767676] text-[#fcfcfc]"
-                        onClick={() => setIsModal((prev) => !prev)}
-                      >
-                        취소
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {isModal && <Modal onClickDelete={onClickDelPost} setIsModal={setIsModal} />}
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import Reply from "@/Components/Comments/reply";
 import PostList from "@/Components/postList";
-import { TagReact } from "@/components/tag";
+import { TagReact } from "@/Components/tag";
 import { useState } from "react";
 
 const Mypage = () => {

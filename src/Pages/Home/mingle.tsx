@@ -20,12 +20,12 @@ import { X } from "lucide-react";
 
 import { DnDProvider, useDnD } from "./dndContext";
 
-import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
-import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
-import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
-import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
-import MUI_MENU from "@/components/_MUI/MUI_MENU";
-import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
+import MUI_ALERT from "@/Components/_MUI/MUI_ALERT";
+import ANTD_ALERT from "@/Components/_ANTD/ANTD_ALERT";
+import MUI_BREADCRUMB from "@/Components/_MUI/MUI_BREADCRUMB";
+import ANTD_BREADCRUMB from "@/Components/_ANTD/ANTD_BREADCRUMB";
+import MUI_MENU from "@/Components/_MUI/MUI_MENU";
+import ANTD_MENU from "@/Components/_ANTD/ANTD_MENU";
 
 const initialNodes = [
   {

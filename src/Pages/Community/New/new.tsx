@@ -13,7 +13,7 @@ import {
   TagShardcn,
   TagSvelte,
   TagVue,
-} from "@/components/tag";
+} from "@/Components/tag";
 import {
   CreateBoardDocument,
   FetchBoardDocument,

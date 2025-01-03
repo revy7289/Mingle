@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import UseInputField from "@/components/input";
+import UseInputField from "@/Components/input";
 
 interface IFormType {
   email: string;

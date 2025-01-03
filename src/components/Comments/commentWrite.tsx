@@ -8,10 +8,12 @@ const CommentWrite = ({
 }) => {
   return (
     <div>
-      <input
-        className="w-full h-[130px] rounded-[16px] border-[#bdbdbd] border-[1px] px-[20px] py-[15px] text-[#222222] leading-[24px]"
+      <textarea
+        className="w-full h-[130px] rounded-[16px] border-[#bdbdbd] border-[1px] px-[20px] py-[15px]
+        text-[#222222] leading-[24px]"
         onChange={onChangeComment}
-      />
+        placeholder="댓글을 작성해주세요."
+      ></textarea>
       <div className=" w-full h-[32px] mt-[15px] flex justify-end gap-[19px]">
         <button
           className="bg-[#bdbdbd] text-[#fcfcfc] w-[100px] h-full rounded-[8px]"

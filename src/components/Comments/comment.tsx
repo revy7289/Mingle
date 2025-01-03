@@ -4,6 +4,8 @@ import Reply from "./reply";
 import { Heart, MessageCircleReply, Pencil, Trash2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import CommentWrite from "./commentWrite";
+import { useEffect, useState } from "react";
+import Modal from "./modal";
 
 const Comment = ({
   el,
@@ -19,6 +21,15 @@ const Comment = ({
 }) => {
   const params = useParams();
   const time = new Date(el.createdAt);
+  const [isModal, setIsModal] = useState(false);
+
+  useEffect(() => {
+    if (isModal) {
+      document.body.style.overflow = "hidden"; // 스크롤 숨김
+    } else {
+      document.body.style.overflow = "auto"; // 스크롤 복원
+    }
+  }, [isModal]);
 
   const { data: dataReply } = useQuery(FetchBoardCommentsDocument, {
     variables: {
@@ -75,9 +86,10 @@ const Comment = ({
               >
                 <Pencil />
               </div>
-              <div onClick={onClickDelPostComment}>
+              <div onClick={() => setIsModal(true)}>
                 <Trash2 />
               </div>
+              {isModal && <Modal onClickDelete={onClickDelPostComment} setIsModal={setIsModal} />}
             </div>
           </div>
           <div className="h-[50px] flex items-center">{el.contents}</div>
