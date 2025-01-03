@@ -1,7 +1,7 @@
 import { DeleteBoardCommentDocument, FetchBoardCommentsDocument } from "@/Commons/graphql/graphql";
 import { useMutation, useQuery } from "@apollo/client";
 import Reply from "./reply";
-import { Pencil, Trash2 } from "lucide-react";
+import { Heart, MessageCircleReply, Pencil, Trash2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import CommentWrite from "./commentWrite";
 
@@ -88,9 +88,9 @@ const Comment = ({
             <div className="flex gap-[20px] items-center">
               <div className="flex gap-[8px]">
                 <div>
-                  <img src="/frame.png" />
+                  <Heart color="#767676" />
                 </div>
-                <span className="text-[#767676]">{String(el.rating).padStart(3, "0")}</span>
+                <span className="text-[#767676]">{String(el.rating)}</span>
               </div>
 
               <button
@@ -100,7 +100,7 @@ const Comment = ({
                   setReplyId(el._id);
                 }}
               >
-                <img src="/reply.png" />
+                <MessageCircleReply />
                 <span>답글</span>
               </button>
             </div>

@@ -138,3 +138,9 @@ export const FETCH_BOARD_COMMENTS = gql`
     }
   }
 `;
+
+export const LIKE_COUNT = gql`
+  mutation LikeBoard($boardId: ID!) {
+    likeBoard(boardId: $boardId)
+  }
+`;

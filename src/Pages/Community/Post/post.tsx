@@ -3,12 +3,13 @@ import {
   DeleteBoardDocument,
   FetchBoardCommentsDocument,
   FetchBoardDocument,
+  LikeBoardDocument,
   UpdateBoardCommentDocument,
 } from "@/Commons/graphql/graphql";
 import Comment from "@/components/Comments/comment";
 import CommentWrite from "@/components/Comments/commentWrite";
 import { useMutation, useQuery } from "@apollo/client";
-import { Eye, ThumbsUp } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -24,6 +25,7 @@ export default function PostPage() {
   const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
+  const [likeBoard] = useMutation(LikeBoardDocument);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -155,6 +157,23 @@ export default function PostPage() {
     }
   };
 
+  const onClickLikeCount = () => {
+    likeBoard({
+      variables: {
+        boardId: String(params.boardId),
+      },
+      refetchQueries: [
+        {
+          query: FetchBoardDocument,
+          variables: {
+            boardId: String(params.boardId),
+            page: 1,
+          },
+        },
+      ],
+    });
+  };
+
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <div className=" w-[1120px] h-[1500px]">
@@ -165,16 +184,16 @@ export default function PostPage() {
           </div>
           <div className="w-[170px] h-[68px] flex flex-col justify-between mt-[15px]">
             <div className="flex w-full h-[24px] justify-between mt-[7px]">
-              <div className="flex gap-[8px]">
-                <ThumbsUp color="#767676" />{" "}
-                <p className="text-[#767676] text-[16px]">
-                  {String(data?.fetchBoard.likeCount).padStart(3, "0")}
-                </p>
+              <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
+                {/* <Heart fill="#ff3179" stroke="0" onClick={onClickLikeCount} /> */}
+                <Heart color="#767676" onClick={onClickLikeCount} />
+
+                <p className="text-[#767676] text-[16px]">{String(data?.fetchBoard.likeCount)}</p>
               </div>
-              <div className="flex gap-[8px]">
+              <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
                 <Eye color="#767676" />{" "}
                 <p className="text-[#767676] text-[16px]">
-                  {String(data?.fetchBoard.dislikeCount).padStart(3, "0")}
+                  {String(data?.fetchBoard.dislikeCount)}
                 </p>
               </div>
             </div>
