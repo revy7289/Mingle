@@ -1,6 +1,7 @@
 import {
   CreateBoardCommentDocument,
   DeleteBoardDocument,
+  DislikeBoardDocument,
   FetchBoardCommentsDocument,
   FetchBoardDocument,
   FetchUserLoggedInDocument,
@@ -12,7 +13,7 @@ import CommentWrite from "@/Components/Comments/commentWrite";
 import Modal from "@/Components/Comments/modal";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function PostPage() {
@@ -23,15 +24,31 @@ export default function PostPage() {
   const [contents, setContents] = useState("");
   const [commentId, setCommentId] = useState("");
   const [replyId, setReplyId] = useState("");
-  const [likeCount, setLikeCount] = useState(false);
+  const [likeCountActive, setLikeCountActive] = useState(false);
 
   const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
   const [likeBoard] = useMutation(LikeBoardDocument);
+  const [hits] = useMutation(DislikeBoardDocument);
 
   const { data: userData } = useQuery(FetchUserLoggedInDocument);
   console.log("유저정보", userData);
+
+  //조회수
+  const mount = useRef(false);
+  useEffect(() => {
+    if (!mount.current) {
+      // 처음 마운트될 때 실행 // 본인도 업, 여러번 업
+      console.log("조회수 업");
+      hits({
+        variables: {
+          boardId: params.boardId as string,
+        },
+      });
+      mount.current = true;
+    }
+  });
 
   useEffect(() => {
     if (isModal) {
@@ -41,11 +58,12 @@ export default function PostPage() {
     }
   }, [isModal]);
 
+  //TODO: 하트다시안나옴
   useEffect(() => {
     const a = JSON.parse(localStorage.getItem(`likeCount_${params.boardId}`));
     console.log(a);
     if (a === userData?.fetchUserLoggedIn._id) {
-      setLikeCount(true);
+      setLikeCountActive(true);
     }
   }, []);
 
@@ -89,7 +107,7 @@ export default function PostPage() {
           writer: "작성자",
           password: "123",
           contents: contents,
-          rating: 101, // 임의로적어둠 -> 댓글 좋아요로 사용?
+          rating: 0, // 임의로적어둠 -> 댓글 좋아요로 사용,처음생성될때 무조건0
         },
         boardId: params.boardId as string,
       },
@@ -110,7 +128,7 @@ export default function PostPage() {
       variables: {
         updateBoardCommentInput: {
           contents: contents,
-          rating: 101,
+          rating: 0, // 디비에있는 좋아요가져오기
         },
         password: "123",
         boardCommentId: String(commentId),
@@ -157,7 +175,7 @@ export default function PostPage() {
       variables: {
         updateBoardCommentInput: {
           contents: contents,
-          rating: 13123,
+          rating: 0,
         },
         password: "123",
         boardCommentId: String(replyId),
@@ -179,6 +197,7 @@ export default function PostPage() {
   };
 
   const onClickLikeCount = () => {
+    // TODO: 로그인 되어있을때만, 좋아요 처리
     if (localStorage.getItem(`likeCount_${params.boardId}`) === null) {
       likeBoard({
         variables: {
@@ -194,7 +213,7 @@ export default function PostPage() {
           },
         ],
       });
-      setLikeCount(true);
+      setLikeCountActive(true);
     }
     localStorage.setItem(
       `likeCount_${params.boardId}`,
@@ -213,7 +232,7 @@ export default function PostPage() {
           <div className="w-[170px] h-[68px] flex flex-col justify-between mt-[15px]">
             <div className="flex w-full h-[24px] justify-between mt-[7px]">
               <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
-                {likeCount ? (
+                {likeCountActive ? (
                   <Heart fill="#ff3179" stroke="0" />
                 ) : (
                   <Heart color="#767676" onClick={onClickLikeCount} />

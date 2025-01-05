@@ -9,7 +9,7 @@ const CommentWrite = ({
   return (
     <div>
       <textarea
-        className="w-full h-[130px] rounded-[16px] border-[#bdbdbd] border-[1px] px-[20px] py-[15px]
+        className="w-full h-[130px] rounded-[16px] resize-none border-[#bdbdbd] border-[1px] px-[20px] py-[15px]
         text-[#222222] leading-[24px]"
         onChange={onChangeComment}
         placeholder="댓글을 작성해주세요."

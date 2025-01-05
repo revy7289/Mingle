@@ -1,6 +1,15 @@
+import { FetchBoardsDocument, FetchTravelproductsDocument } from "@/Commons/graphql/graphql";
+import PostList from "@/Components/postList";
+import { useQuery } from "@apollo/client";
 import { Pencil, Search, ThumbsUpIcon } from "lucide-react";
+import { useState } from "react";
 
 export default function ListPage() {
+  const [tabIndex, setTabIndex] = useState(0);
+  const tabs = ["질문과답변", "자유게시판"];
+  const { data: dataBoards } = useQuery(FetchBoardsDocument);
+  const { data: dataQuestionBoards } = useQuery(FetchTravelproductsDocument);
+
   return (
     <>
       <div className="w-full h-full flex flex-col items-center">
@@ -37,23 +46,45 @@ export default function ListPage() {
           {/* 탭바 */}
           <div className="flex mt-[80px] justify-between">
             <div className="flex gap-[20px]">
-              <div className="w-[150px] h-[40px] flex justify-center items-center border-b border-solid border-[#222222] text-[24px]">
-                질문과답변
-              </div>
-              <div className="w-[150px] h-[40px] flex justify-center items-center border-b border-solid border-[#767676] text-[24px] text-[#767676]">
-                자유게시판
-              </div>
+              {tabs.map((el, index) => (
+                <div
+                  key={`${el}_${index}`}
+                  className={`cursor-pointer w-[150px] h-[40px] flex justify-center items-center border-b border-solid text-[24px] ${
+                    index === tabIndex
+                      ? "border-[#222222] text-[#222222]"
+                      : "border-[#767676] text-[#767676]"
+                  }`}
+                  onClick={() => setTabIndex(index)}
+                >
+                  {el}
+                </div>
+              ))}
             </div>
-
             <div className="flex gap-[40px]">
               <div className="flex gap-[4px] p-[6px] text-[#767676] w-[200px] h-[40px] rounded-2xl border border-solid border-[#32CBFF]">
                 <Search color="#32CBFF" /> Search
               </div>
-
               <button className="w-[120px] h-[40px] flex justify-center items-center gap-[8px] rounded-2xl bg-[#32CBFF] text-white">
                 <Pencil /> 글 쓰기
               </button>
             </div>
+          </div>
+          <div className="mt-[50px] w-full flex flex-col justify-center items-center gap-[50px]">
+            {tabIndex === 0 ? (
+              //질문과답변
+              <>
+                {dataQuestionBoards?.fetchTravelproducts.map((questionBoards) => (
+                  <PostList Boards={questionBoards} />
+                ))}
+              </>
+            ) : (
+              //자유게시판
+              <>
+                {dataBoards?.fetchBoards.map((freeBoards) => (
+                  <PostList Boards={freeBoards} />
+                ))}
+              </>
+            )}
           </div>
         </div>
       </div>

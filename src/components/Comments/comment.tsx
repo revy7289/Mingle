@@ -1,4 +1,9 @@
-import { DeleteBoardCommentDocument, FetchBoardCommentsDocument } from "@/Commons/graphql/graphql";
+import {
+  DeleteBoardCommentDocument,
+  FetchBoardCommentsDocument,
+  FetchUserLoggedInDocument,
+  UpdateBoardCommentDocument,
+} from "@/Commons/graphql/graphql";
 import { useMutation, useQuery } from "@apollo/client";
 import Reply from "./reply";
 import { Heart, MessageCircleReply, Pencil, Trash2 } from "lucide-react";
@@ -22,6 +27,16 @@ const Comment = ({
   const params = useParams();
   const time = new Date(el.createdAt);
   const [isModal, setIsModal] = useState(false);
+  const [likeActive, setLikeActive] = useState(false);
+
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
+  const { data: dataReply } = useQuery(FetchBoardCommentsDocument, {
+    variables: {
+      page: 1,
+      boardId: el._id as string,
+    },
+  });
+  const [updateLikeComment] = useMutation(UpdateBoardCommentDocument);
 
   useEffect(() => {
     if (isModal) {
@@ -30,13 +45,6 @@ const Comment = ({
       document.body.style.overflow = "auto"; // 스크롤 복원
     }
   }, [isModal]);
-
-  const { data: dataReply } = useQuery(FetchBoardCommentsDocument, {
-    variables: {
-      page: 1,
-      boardId: el._id as string,
-    },
-  });
 
   const [deleteBoardComment] = useMutation(DeleteBoardCommentDocument);
 
@@ -56,6 +64,28 @@ const Comment = ({
         },
       ],
     });
+  };
+
+  // 좋아요 누를때마다 댓글 업데이트함
+  const onClickUpdateLike = () => {
+    if (localStorage.getItem(`likeCount_Comment_${el._id}`) === null) {
+      const likeCount = el.rating;
+      setLikeActive(true);
+      updateLikeComment({
+        variables: {
+          updateBoardCommentInput: {
+            contents: el.content,
+            rating: likeCount + 1,
+          },
+          password: "123",
+          boardCommentId: el._id as string,
+        },
+      });
+      localStorage.setItem(
+        `likeCount_Comment_${el._id}`,
+        JSON.stringify(userData?.fetchUserLoggedIn._id)
+      );
+    }
   };
 
   return (
@@ -100,7 +130,11 @@ const Comment = ({
             <div className="flex gap-[20px] items-center">
               <div className="flex gap-[8px]">
                 <div>
-                  <Heart color="#767676" />
+                  {likeActive ? (
+                    <Heart fill="#ff3179" stroke="0" />
+                  ) : (
+                    <Heart color="#767676" onClick={onClickUpdateLike} />
+                  )}
                 </div>
                 <span className="text-[#767676]">{String(el.rating)}</span>
               </div>
