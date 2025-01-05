@@ -128,7 +128,7 @@ const Comment = ({
               time.getHours()
             ).padStart(2, "0")}:${String(time.getMinutes()).padStart(2, "0")}`}</div>
             <div className="flex gap-[20px] items-center">
-              <div className="flex gap-[8px]">
+              <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
                 <div>
                   {likeActive ? (
                     <Heart fill="#ff3179" stroke="0" />

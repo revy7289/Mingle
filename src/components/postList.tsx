@@ -32,8 +32,8 @@ const PostList = ({ Boards }) => {
             000
           </div>
           <div className="flex gap-[8px]">
-            <Heart size={20} color="#767676" />
-            {Boards.likeCount}
+            <Heart size={20} fill="#222" stroke="0" />
+            {Boards.likeCount || 0}
           </div>
         </div>
       </div>

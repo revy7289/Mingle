@@ -1,14 +1,20 @@
 import { FetchBoardsDocument, FetchTravelproductsDocument } from "@/Commons/graphql/graphql";
 import PostList from "@/Components/postList";
 import { useQuery } from "@apollo/client";
-import { Pencil, Search, ThumbsUpIcon } from "lucide-react";
+import { Heart, Pencil, Search } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function ListPage() {
   const [tabIndex, setTabIndex] = useState(0);
   const tabs = ["질문과답변", "자유게시판"];
   const { data: dataBoards } = useQuery(FetchBoardsDocument);
   const { data: dataQuestionBoards } = useQuery(FetchTravelproductsDocument);
+
+  const popularBoards = dataBoards?.fetchBoards
+    .filter((boards) => boards.likeCount > 1)
+    .sort((a, b) => b.likeCount - a.likeCount)
+    .slice(0, 3);
 
   return (
     <>
@@ -18,29 +24,37 @@ export default function ListPage() {
 
           {/* 인기글 덩어리들 */}
           <div className="flex gap-[20px] mt-[30px]">
-            {new Array(3).fill("인기글").map((post) => (
-              <div className="w-[360px] h-[280px]">
-                <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl"></div>
+            {popularBoards?.map((post) => {
+              // console.log(post);
+              // const text = post.contents;
+              // const imagePattern = /![](data:image\/jpeg;base64,[A-Za-z0-9+\/=]+)(?=\))/g;
+              // const matches = text.match(imagePattern);
 
-                <div className="w-full h-[100px] rounded-b-2xl border border-solid border-[#bdbdbd] flex flex-col justify-between p-[16px]">
-                  <div className="text-[24px] text-semibold">{post} 제목입니다~</div>
+              return (
+                <div className="w-[360px] h-[280px]">
+                  <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl"></div>
 
-                  <div className="flex justify-between">
-                    <div className="flex gap-[8px]">
-                      {new Array(3).fill("태그").map((tag) => (
-                        <div className="w-[80px] h-[24px] rounded-lg bg-[#767676] flex justify-center items-center text-white">
-                          {tag}
-                        </div>
-                      ))}
-                    </div>
+                  <div className="w-full h-[100px] rounded-b-2xl border border-solid border-[#bdbdbd] flex flex-col justify-between p-[16px]">
+                    <div className="text-[24px] text-semibold">{post.title}</div>
 
-                    <div className="flex gap-[8px]">
-                      <ThumbsUpIcon color="#222" /> 000
+                    <div className="flex justify-between">
+                      <div className="flex gap-[8px]">
+                        {new Array(3).fill("태그").map((tag) => (
+                          <div className="w-[80px] h-[24px] rounded-lg bg-[#767676] flex justify-center items-center text-white">
+                            {tag}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
+                        <Heart fill="#222" stroke="0" />
+                        {post.likeCount}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* 탭바 */}
@@ -64,9 +78,11 @@ export default function ListPage() {
               <div className="flex gap-[4px] p-[6px] text-[#767676] w-[200px] h-[40px] rounded-2xl border border-solid border-[#32CBFF]">
                 <Search color="#32CBFF" /> Search
               </div>
-              <button className="w-[120px] h-[40px] flex justify-center items-center gap-[8px] rounded-2xl bg-[#32CBFF] text-white">
-                <Pencil /> 글 쓰기
-              </button>
+              <Link to="/community/new">
+                <button className="w-[120px] h-[40px] flex justify-center items-center gap-[8px] rounded-2xl bg-[#32CBFF] text-white">
+                  <Pencil /> 글 쓰기
+                </button>
+              </Link>
             </div>
           </div>
           <div className="mt-[50px] w-full flex flex-col justify-center items-center gap-[50px]">

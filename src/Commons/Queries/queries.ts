@@ -184,3 +184,49 @@ export const FETCH_TRAVEL_PRODUCTS = gql`
     }
   }
 `;
+
+export const CREATE_TRAVEL_PRODUCT = gql`
+  mutation createTravelproduct($createTravelproductInput: CreateTravelproductInput!) {
+    createTravelproduct(createTravelproductInput: $createTravelproductInput) {
+      _id
+      name
+      remarks
+      contents
+      tags
+      images
+      pickedCount
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const UPDATE_TRAVEL_PRODUCT = gql`
+  mutation updateTravelproduct(
+    $updateTravelproductInput: UpdateTravelproductInput!
+    $travelproductId: ID!
+  ) {
+    updateTravelproduct(
+      updateTravelproductInput: $updateTravelproductInput
+      travelproductId: $travelproductId
+    ) {
+      _id
+      name
+      remarks
+      contents
+      tags
+      images
+      pickedCount
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const DELETE_TRAVEL_PRODUCT = gql`
+  mutation deleteTravelproduct($travelproductId: ID!) {
+    deleteTravelproduct(travelproductId: $travelproductId)
+  }
+`;
