@@ -25,14 +25,26 @@ export default function ListPage() {
           {/* 인기글 덩어리들 */}
           <div className="flex gap-[20px] mt-[30px]">
             {popularBoards?.map((post) => {
-              // console.log(post);
-              // const text = post.contents;
-              // const imagePattern = /![](data:image\/jpeg;base64,[A-Za-z0-9+\/=]+)(?=\))/g;
-              // const matches = text.match(imagePattern);
+              const text = post.contents || "";
+              const imagePattern = /!\[.*?\]\(data:image\/jpeg;base64,[A-Za-z0-9+\/=]+\)/g;
+              const matches = text.match(imagePattern);
 
               return (
-                <div className="w-[360px] h-[280px]">
-                  <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl"></div>
+                <div className="w-[360px] h-[280px] overflow-hidden">
+                  {matches ? (
+                    matches?.map((match) => {
+                      const imgSrc = match.replace("![](", "").replace(")", "");
+                      console.log(imgSrc);
+                      return (
+                        <img
+                          className="w-full h-[180px] rounded-t-2xl object-cover  border-[#BDBDBD] border-x border-t"
+                          src={imgSrc}
+                        />
+                      );
+                    })
+                  ) : (
+                    <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl "></div>
+                  )}
 
                   <div className="w-full h-[100px] rounded-b-2xl border border-solid border-[#bdbdbd] flex flex-col justify-between p-[16px]">
                     <div className="text-[24px] text-semibold">{post.title}</div>
