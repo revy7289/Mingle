@@ -1,5 +1,5 @@
 import logo from "/logo.svg";
-import { MouseEvent, useCallback, useRef, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import {
   ReactFlow,
@@ -29,10 +29,9 @@ import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
 
 const initialNodes = [
   {
-    id: "node-1",
+    id: "node-00",
     type: "SITE_SEARCH",
     position: { x: 0, y: 0 },
-    data: { value: "사이트 검색용 기본 노드" },
   },
 ];
 
@@ -81,6 +80,26 @@ function MinglePage() {
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
+  let length = String(nodes.length);
+  const getId = () => `node-${length.padStart(2, "0")}`;
+
+  useEffect(() => {
+    console.log(nodes);
+  }, [nodes]);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    console.log(hash);
+
+    if (!hash.startsWith("#node&")) return;
+
+    const nodeParams = hash.replace("#node&", "");
+    const nodeLoader = JSON.parse(atob(nodeParams));
+
+    setNodes(nodeLoader);
+    console.log(nodes);
+  }, []);
+
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
@@ -95,17 +114,10 @@ function MinglePage() {
     (event) => {
       event.preventDefault();
 
-      // check if the dropped element is valid
       if (!type) {
         return;
       }
 
-      let id = 0;
-      const getId = () => `dndnode_${id++}`;
-
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -115,10 +127,13 @@ function MinglePage() {
         id: getId(),
         type,
         position,
-        data: { label: `${type} node` },
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => {
+        const dndUpdateNode = nds.concat(newNode);
+        encodeUrl(dndUpdateNode);
+        return dndUpdateNode;
+      });
     },
     [screenToFlowPosition, type]
   );
@@ -128,21 +143,6 @@ function MinglePage() {
     event.dataTransfer.effectAllowed = "move";
   };
 
-  function onClickLib(e: MouseEvent) {
-    console.log(e.currentTarget.id);
-    const currentNode = String(e.currentTarget.id);
-
-    setNodes((prev) => [
-      ...prev, // 기존 노드들
-      {
-        id: `node-${prev.length + 1}`,
-        type: `${currentNode}`,
-        position: { x: prev.length * 10, y: prev.length * 10 },
-        data: { value: `${currentNode}` },
-      },
-    ]);
-  }
-
   function onClickComp(e: MouseEvent) {
     const target = e.target as HTMLElement;
     const component = target.textContent?.toUpperCase() || "";
@@ -150,6 +150,33 @@ function MinglePage() {
     setDrawerOpen((prev) => !prev);
     setSelectedComp(component);
     console.log(component);
+  }
+
+  function onClickLib(e: MouseEvent) {
+    console.log(e.currentTarget.id);
+    const currentNode = String(e.currentTarget.id);
+
+    setNodes((prev) => {
+      const updateNode = [
+        ...prev, // 기존 노드들
+        {
+          id: getId(),
+          type: `${currentNode}`,
+          position: { x: prev.length * 10, y: prev.length * 10 },
+        },
+      ];
+      encodeUrl(updateNode);
+      return updateNode;
+    });
+  }
+
+  function encodeUrl(updateNode) {
+    const encoded = btoa(JSON.stringify(updateNode));
+    console.log(encoded.length);
+
+    // if (encoded.length > 60000) return;
+
+    window.history.pushState({}, "", "#node&" + encoded);
   }
 
   const MUI_COMP = nodeTypes[`MUI_${selectedComp}` as keyof typeof nodeTypes];

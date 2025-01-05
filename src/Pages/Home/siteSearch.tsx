@@ -31,6 +31,7 @@ export default function SITE_SEARCH() {
         <div className="w-[20px] h-[20px] bg-[#FEBC2F] rounded-full"></div>
         <div className="w-[20px] h-[20px] bg-[#28C840] rounded-full"></div>
         <input
+          data-id="siteSearch"
           className="w-[800px] h-[40px] rounded-lg px-5 py-2.5"
           placeholder="사이트를 검색해주세요."
           onKeyDown={handleEnter}
