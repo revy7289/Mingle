@@ -46,6 +46,13 @@ const Comment = ({
     }
   }, [isModal]);
 
+  useEffect(() => {
+    const a = JSON.parse(localStorage.getItem(`likeCount_Comment_${el._id}`));
+    if (a === userData?.fetchUserLoggedIn._id) {
+      setLikeActive(true);
+    }
+  }, [userData]);
+
   const [deleteBoardComment] = useMutation(DeleteBoardCommentDocument);
 
   const onClickDelPostComment = () => {
@@ -74,7 +81,6 @@ const Comment = ({
       updateLikeComment({
         variables: {
           updateBoardCommentInput: {
-            contents: el.content,
             rating: likeCount + 1,
           },
           password: "123",

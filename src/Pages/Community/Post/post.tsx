@@ -30,7 +30,7 @@ export default function PostPage() {
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
   const [likeBoard] = useMutation(LikeBoardDocument);
-  const [hits] = useMutation(DislikeBoardDocument);
+  const [viewBoard] = useMutation(DislikeBoardDocument);
 
   const { data: userData } = useQuery(FetchUserLoggedInDocument);
   console.log("유저정보", userData);
@@ -41,14 +41,14 @@ export default function PostPage() {
     if (!mount.current) {
       // 처음 마운트될 때 실행 // 본인도 업, 여러번 업
       console.log("조회수 업");
-      hits({
+      viewBoard({
         variables: {
           boardId: params.boardId as string,
         },
       });
       mount.current = true;
     }
-  });
+  }, []);
 
   useEffect(() => {
     if (isModal) {
@@ -58,14 +58,13 @@ export default function PostPage() {
     }
   }, [isModal]);
 
-  //TODO: 하트다시안나옴
   useEffect(() => {
     const a = JSON.parse(localStorage.getItem(`likeCount_${params.boardId}`));
     console.log(a);
     if (a === userData?.fetchUserLoggedIn._id) {
       setLikeCountActive(true);
     }
-  }, []);
+  }, [userData]);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {

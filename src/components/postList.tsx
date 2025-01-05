@@ -23,15 +23,15 @@ const PostList = ({ Boards }) => {
       <div className="flex justify-between mt-[10px] px-[20px]">
         <span className="text-[#767676] text-[12px]">몇 분 전</span>
         <div className="flex gap-[16px]">
-          <div className="flex gap-[8px]">
+          <div className="flex gap-[8px] items-center">
             <Eye size={20} color="#767676" />
             000
           </div>
-          <div className="flex gap-[8px]">
+          <div className="flex gap-[8px] items-center">
             <MessageCircle size={20} color="#767676" />
             000
           </div>
-          <div className="flex gap-[8px]">
+          <div className="flex gap-[8px] items-center">
             <Heart size={20} fill="#222" stroke="0" />
             {Boards.likeCount || 0}
           </div>
