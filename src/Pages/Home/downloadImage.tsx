@@ -1,4 +1,4 @@
-import { getNodesBounds, getViewportForBounds, Panel, useReactFlow } from "@xyflow/react";
+import { getNodesBounds, getViewportForBounds, useReactFlow } from "@xyflow/react";
 import { toPng } from "html-to-image";
 import { ImageDown } from "lucide-react";
 
@@ -36,13 +36,11 @@ export default function DownloadPanel() {
   };
 
   return (
-    <Panel position="top-right">
-      <button
-        className="w-[40px] h-[40px] bg-[#767676] rounded-lg flex justify-center items-center"
-        onClick={onClickDownload}
-      >
-        <ImageDown color="#fff" />
-      </button>
-    </Panel>
+    <button
+      className="w-[28px] h-[28px] bg-[#767676] rounded-[4px] flex justify-center items-center"
+      onClick={onClickDownload}
+    >
+      <ImageDown color="#fff" size={20} />
+    </button>
   );
 }

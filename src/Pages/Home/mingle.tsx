@@ -12,6 +12,7 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  Panel,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -25,6 +26,7 @@ import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
 import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
 import MUI_MENU from "@/components/_MUI/MUI_MENU";
 import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
+import ZoomPanel from "./zoomTransition";
 
 const initialNodes = [
   {
@@ -332,8 +334,11 @@ function MinglePage() {
             fitView
           >
             <Background />
-            <Controls />
-            <DownloadPanel />
+
+            <Panel position="top-right" className="flex gap-[12px]">
+              <ZoomPanel />
+              <DownloadPanel />
+            </Panel>
           </ReactFlow>
         </div>
       </div>
