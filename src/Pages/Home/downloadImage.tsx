@@ -2,10 +2,13 @@ import { getNodesBounds, getViewportForBounds, Panel, useReactFlow } from "@xyfl
 import { toPng } from "html-to-image";
 import { ImageDown } from "lucide-react";
 
-function download(dataUrl) {
+/**
+ * @param dataUrl 이미지를 base64 encode하여 전달하기 때문에 string type
+ */
+function download(dataUrl: string) {
   const a = document.createElement("a");
 
-  a.setAttribute("download", "reactflow.png");
+  a.setAttribute("download", "mingle.png");
   a.setAttribute("href", dataUrl);
   a.click();
 }

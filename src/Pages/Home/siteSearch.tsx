@@ -18,7 +18,7 @@ export default function SITE_SEARCH() {
   }
 
   return (
-    <div className="w-[960px] min-h-[540px]">
+    <div className="w-[960px] h-full">
       <div className="w-full h-[60px] bg-[#bdbdbd] rounded-t-2xl flex gap-2.5 items-center justify-center">
         <div className="w-[20px] h-[20px] bg-[#FD5F57] rounded-full"></div>
         <div className="w-[20px] h-[20px] bg-[#FEBC2F] rounded-full"></div>
@@ -31,7 +31,7 @@ export default function SITE_SEARCH() {
         />
       </div>
       <div
-        className="w-full min-h-[540px] h-full bg-[#fcfcfc] rounded-b-2xl opacity-90"
+        className="w-full min-h-[540px] bg-[#fcfcfc] rounded-b-2xl"
         dangerouslySetInnerHTML={{ __html: page }}
       ></div>
     </div>
