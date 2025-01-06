@@ -1,5 +1,6 @@
 import logo from "/logo.svg";
 import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 
 import {
   ReactFlow,
@@ -14,12 +15,10 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import SITE_SEARCH from "./siteSearch";
-
-import { X } from "lucide-react";
-
 import { DnDProvider, useDnD } from "./dndContext";
+import DownloadPanel from "./downloadImage";
 
+import SITE_SEARCH from "./siteSearch";
 import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
 import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
 import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
@@ -45,30 +44,13 @@ const nodeTypes = {
   ANTD_MENU,
 };
 
-// const prefixes = ["MUI", "ANTD", "CHAKRA", "SHADCN"];
-const menuList = ["Alert", "Menu", "Breadcrumb"];
+const menuList = ["Alert", "Breadcrumb", "Menu"];
 
-// prefixes.forEach((prefix) => {
-//   menuList.forEach((menu) => {
-//     const key = `${prefix}_${menu.toUpperCase()}`;
-//     nodeTypes[key] = `${prefix}_${menu.toUpperCase()}`;
-//   });
-// });
+const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
-// console.log(nodeTypes);
-
-// const loadComponents = async () => {
-//   const imports = {};
-
-//   for (const key in nodeTypes) {
-//     const componentName = nodeTypes[key];
-//     imports[key] = await import(`../../components/Libraries/${componentName}`).then(
-//       (module) => module.default
-//     );
-//   }
-//   console.log(imports);
-// };
-
+/**
+ * @returns react-flow 활용한 node-base 플레이그라운드 구현
+ */
 function MinglePage() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -79,9 +61,6 @@ function MinglePage() {
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
-
-  let length = String(nodes.length);
-  const getId = () => `node-${length.padStart(2, "0")}`;
 
   useEffect(() => {
     console.log(nodes);
@@ -97,13 +76,17 @@ function MinglePage() {
     const nodeLoader = JSON.parse(atob(nodeParams));
 
     setNodes(nodeLoader);
-    console.log(nodes);
   }, []);
 
   const onConnect = useCallback(
     (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges]
   );
+
+  const onDragStart = (event, nodeType) => {
+    setType(nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -114,22 +97,20 @@ function MinglePage() {
     (event) => {
       event.preventDefault();
 
-      if (!type) {
-        return;
-      }
+      if (!type) return;
 
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
-      const newNode = {
-        id: getId(),
-        type,
-        position,
-      };
-
       setNodes((nds) => {
+        const newNode = {
+          id: getId(nds.length),
+          type,
+          position,
+        };
+
         const dndUpdateNode = nds.concat(newNode);
         encodeUrl(dndUpdateNode);
         return dndUpdateNode;
@@ -138,29 +119,24 @@ function MinglePage() {
     [screenToFlowPosition, type]
   );
 
-  const onDragStart = (event, nodeType) => {
-    setType(nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-
   function onClickComp(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    const component = target.textContent?.toUpperCase() || "";
+    const menu = target.textContent?.toUpperCase() || "";
 
     setDrawerOpen((prev) => !prev);
-    setSelectedComp(component);
-    console.log(component);
+    setSelectedComp(menu);
+    console.log(menu);
   }
 
   function onClickLib(e: MouseEvent) {
-    console.log(e.currentTarget.id);
     const currentNode = String(e.currentTarget.id);
+    console.log(e.currentTarget.id);
 
     setNodes((prev) => {
       const updateNode = [
         ...prev, // 기존 노드들
         {
-          id: getId(),
+          id: getId(prev.length),
           type: `${currentNode}`,
           position: { x: prev.length * 10, y: prev.length * 10 },
         },
@@ -170,11 +146,12 @@ function MinglePage() {
     });
   }
 
+  function getId(nodeIndex) {
+    return `node-${String(nodeIndex).padStart(2, "0")}`;
+  }
+
   function encodeUrl(updateNode) {
     const encoded = btoa(JSON.stringify(updateNode));
-    console.log(encoded.length);
-
-    // if (encoded.length > 60000) return;
 
     window.history.pushState({}, "", "#node&" + encoded);
   }
@@ -351,10 +328,12 @@ function MinglePage() {
             onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            defaultViewport={defaultViewport}
             fitView
           >
             <Background />
             <Controls />
+            <DownloadPanel />
           </ReactFlow>
         </div>
       </div>
@@ -362,7 +341,7 @@ function MinglePage() {
   );
 }
 
-export default function DnDTest() {
+export default function DnDFlow() {
   return (
     <ReactFlowProvider>
       <DnDProvider>

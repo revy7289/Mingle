@@ -2,6 +2,10 @@ import { createContext, useContext, useState } from "react";
 
 const DnDContext = createContext([null, (_) => {}]);
 
+export const useDnD = () => {
+  return useContext(DnDContext);
+};
+
 export const DnDProvider = ({ children }) => {
   const [type, setType] = useState(null);
 
@@ -9,7 +13,3 @@ export const DnDProvider = ({ children }) => {
 };
 
 export default DnDContext;
-
-export const useDnD = () => {
-  return useContext(DnDContext);
-};
