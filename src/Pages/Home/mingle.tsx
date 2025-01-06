@@ -5,19 +5,17 @@ import { X } from "lucide-react";
 import {
   ReactFlow,
   Background,
-  Controls,
-  addEdge,
-  Connection,
   ReactFlowProvider,
-  useNodesState,
-  useEdgesState,
   useReactFlow,
   Panel,
+  applyNodeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import { DnDProvider, useDnD } from "./dndContext";
-import DownloadPanel from "./downloadImage";
+import DownloadPanel from "./panelAddon/downloadImage";
+import ZoomPanel from "./panelAddon/zoomTransition";
+import SavePanel from "./panelAddon/saveRestore";
 
 import SITE_SEARCH from "./siteSearch";
 import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
@@ -26,7 +24,6 @@ import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
 import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
 import MUI_MENU from "@/components/_MUI/MUI_MENU";
 import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
-import ZoomPanel from "./zoomTransition";
 
 const initialNodes = [
   {
@@ -54,19 +51,21 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
  * @returns react-flow 활용한 node-base 플레이그라운드 구현
  */
 function MinglePage() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes] = useState(initialNodes);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedComp, setSelectedComp] = useState("");
+
+  const [savedNode, setSavedNode] = useState(null);
 
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
-  useEffect(() => {
-    console.log(nodes);
-  }, [nodes]);
+  // useEffect(() => {
+  //   console.log(nodes);
+  // }, [nodes]);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -80,10 +79,21 @@ function MinglePage() {
     setNodes(nodeLoader);
   }, []);
 
-  const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => {
+        const onUpdateNode = applyNodeChanges(changes, nds);
+        encodeUrl(onUpdateNode);
+        return onUpdateNode;
+      });
+    },
+    [setNodes]
   );
+
+  // const onConnect = useCallback(
+  //   (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
+  //   [setEdges]
+  // );
 
   const onDragStart = (event, nodeType) => {
     setType(nodeType);
@@ -324,20 +334,24 @@ function MinglePage() {
             nodes={nodes}
             nodeTypes={nodeTypes}
             onNodesChange={onNodesChange}
-            edges={edges}
+            // edges={edges}
             // edgeTypes={edgeTypes}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
+            // onEdgesChange={onEdgesChange}
+            // onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
             defaultViewport={defaultViewport}
+            onInit={setSavedNode}
             fitView
           >
             <Background />
 
-            <Panel position="top-right" className="flex gap-[12px]">
+            <Panel position="top-right" className="flex gap-[6px] items-center">
               <ZoomPanel />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
               <DownloadPanel />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <SavePanel savedNode={savedNode} setNodes={setNodes} />
             </Panel>
           </ReactFlow>
         </div>
