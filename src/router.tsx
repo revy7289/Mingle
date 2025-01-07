@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import Header from "./commons/layout/header";
 
 import LandingPage from "./pages/home/landing";
-import MinglePage from "./pages/home";
+import MinglePage from "./pages/home/mingle";
 
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
