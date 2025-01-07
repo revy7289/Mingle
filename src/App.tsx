@@ -1,4 +1,4 @@
-import ApolloSetting from "./Commons/Settings/apolloSetting";
+import ApolloSetting from "./commons/settings/apolloSetting";
 import Router from "./router";
 
 export default function App() {

@@ -18,7 +18,7 @@ import {
   CreateBoardDocument,
   FetchBoardDocument,
   UpdateBoardDocument,
-} from "@/Commons/graphql/graphql";
+} from "@/commons/graphql/graphql";
 
 export default function NewPage() {
   const location = window.location.pathname;

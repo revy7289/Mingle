@@ -5,9 +5,9 @@ import {
   FetchBoardDocument,
   LikeBoardDocument,
   UpdateBoardCommentDocument,
-} from "@/Commons/graphql/graphql";
-import Comment from "@/components/Comments/comment";
-import CommentWrite from "@/components/Comments/commentWrite";
+} from "@/commons/graphql/graphql";
+import Comment from "@/components/comments/comment";
+import CommentWrite from "@/components/comments/commentWrite";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, Heart } from "lucide-react";
 import { useState } from "react";

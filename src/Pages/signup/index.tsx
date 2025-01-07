@@ -1,10 +1,10 @@
-import { CreateUserDocument } from "@/Commons/graphql/graphql";
+import { CreateUserDocument } from "@/commons/graphql/graphql";
+import UseInputField from "@/components/input";
 import { useMutation } from "@apollo/client";
 import { ChevronLeft } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import UseInputField from "@/components/input";
 
 interface IFormType {
   email: string;

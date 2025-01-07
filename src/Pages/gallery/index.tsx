@@ -1,4 +1,4 @@
-import { TagAntd, TagChakra } from "@/Components/tag";
+import { TagAntd, TagChakra } from "@/components/tag";
 
 export default function GalleryPage() {
   // 예시 이미지 리스트들

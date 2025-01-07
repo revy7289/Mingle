@@ -1,5 +1,5 @@
-import Reply from "@/Components/Comments/reply";
-import PostList from "@/Components/postList";
+import Reply from "@/components/comments/reply";
+import PostList from "@/components/postList";
 import { TagReact } from "@/components/tag";
 import { useState } from "react";
 

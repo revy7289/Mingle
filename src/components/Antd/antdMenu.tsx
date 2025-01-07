@@ -29,7 +29,7 @@ const items: MenuProps["items"] = [
   },
 ];
 
-export default function ANTD_MENU() {
+export default function AntdMenu() {
   return (
     <Dropdown menu={{ items }}>
       <a onClick={(e) => e.preventDefault()}>

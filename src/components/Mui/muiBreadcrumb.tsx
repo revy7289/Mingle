@@ -1,6 +1,6 @@
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 
-export default function MUI_BREADCRUMB() {
+export default function MuiBreadcrumb() {
   return (
     <Breadcrumbs aria-label="breadcrumb">
       <Link underline="hover" color="inherit" href="/">

@@ -1,21 +1,21 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { ReactNode } from "react";
 
-import Header from "./Commons/Layout/header";
+import Header from "./commons/layout/header";
 
-import LandingPage from "./Pages/Home/landing";
-import MinglePage from "./Pages/Home/mingle";
+import LandingPage from "./pages/home/landing";
+import MinglePage from "./pages/home";
 
-import LoginPage from "./Pages/Login/login";
-import SignupPage from "./Pages/Signup/signup";
-import FindPwPage from "./Pages/FindPw/findpw";
+import LoginPage from "./pages/login";
+import SignupPage from "./pages/signup";
+import FindPwPage from "./pages/findPw";
 
-import Mypage from "./Pages/Mypage/mypage";
+import Mypage from "./pages/mypage";
 
-import ListPage from "./Pages/Community/List/list";
-import PostPage from "./Pages/Community/Post/post";
-import NewPage from "./Pages/Community/New/new";
-import GalleryPage from "./Pages/Gallery/gallery";
+import ListPage from "./pages/community/list";
+import PostPage from "./pages/community/post";
+import NewPage from "./pages/community/new";
+import GalleryPage from "./pages/gallery";
 
 const HIDDEN_HEADER = ["/", "/home", "/login", "/signup", "/findpw"];
 

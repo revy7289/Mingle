@@ -1,6 +1,6 @@
 import { Breadcrumb } from "antd";
 
-export default function ANTD_BREADCRUMB() {
+export default function AntdBreadcrumb() {
   return (
     <Breadcrumb
       items={[

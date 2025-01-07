@@ -18,117 +18,117 @@ import ZoomPanel from "./panelAddon/zoomTransition";
 import SavePanel from "./panelAddon/saveRestore";
 
 import SiteSearch from "./siteSearch";
-import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
-import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
-import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
-import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
-import MUI_MENU from "@/components/_MUI/MUI_MENU";
-import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
+import MUI_ALERT from "@/components/mui/muiAlert";
+import ANTD_ALERT from "@/components/antd/antdAlert";
+import MUI_BREADCRUMB from "@/components/mui/muiBreadcrumb";
+import ANTD_BREADCRUMB from "@/components/antd/antdBreadcrumb";
+import MUI_MENU from "@/components/mui/muiMenu";
+import ANTD_MENU from "@/components/antd/antdMenu";
 
 // Accordion Components
-import AntdAccordion from "@/components/Antd/antdAccordion";
-import MuiAccordion from "@/components/Mui/muiAccordion";
-import ChakraAccordion from "@/components/Chakra/chakraAccordion";
-import ShadcnAccordion from "@/components/Shadcn/shadcnAccordion";
+import AntdAccordion from "@/components/antd/antdAccordion";
+import MuiAccordion from "@/components/mui/muiAccordion";
+import ChakraAccordion from "@/components/chakra/chakraAccordion";
+import ShadcnAccordion from "@/components/shadcn/shadcnAccordion";
 
 // Button Components
-import AntdButton from "@/components/Antd/antdButton";
-import ChakraButton from "@/components/Chakra/chakraButton";
-import MuiButton from "@/components/Mui/muiButton";
-import ShadcnButton from "@/components/Shadcn/shadcnButton";
+import AntdButton from "@/components/antd/antdButton";
+import ChakraButton from "@/components/chakra/chakraButton";
+import MuiButton from "@/components/mui/muiButton";
+import ShadcnButton from "@/components/shadcn/shadcnButton";
 
 // Calendar Components
-import MuiCalendar from "@/components/Mui/muiCalendar";
-import ShadcnCalendar from "@/components/Shadcn/shadcnCalendar";
-import AntdCalendar from "@/components/Antd/antdCalendar";
+import MuiCalendar from "@/components/mui/muiCalendar";
+import ShadcnCalendar from "@/components/shadcn/shadcnCalendar";
+import AntdCalendar from "@/components/antd/antdCalendar";
 
 // Avatar Components
-import MuiAvatar from "@/components/Mui/muiAvatar";
-import AntdAvatar from "@/components/Antd/antdAvatar";
-import ChakraAvatar from "@/components/Chakra/chakraAvatar";
-import ShadcnAvatar from "@/components/Shadcn/shadcnAvatar";
+import MuiAvatar from "@/components/mui/muiAvatar";
+import AntdAvatar from "@/components/antd/antdAvatar";
+import ChakraAvatar from "@/components/chakra/chakraAvatar";
+import ShadcnAvatar from "@/components/shadcn/shadcnAvatar";
 
 // Checkbox Components
-import AntdCheckbox from "@/components/Antd/antdCheckbox";
-import MuiCheckbox from "@/components/Mui/muiCheckbox";
-import ChakraCheckbox from "@/components/Chakra/chakraCheckbox";
-import ShadcnCheckbox from "@/components/Shadcn/shadcnCheckbox";
+import AntdCheckbox from "@/components/antd/antdCheckbox";
+import MuiCheckbox from "@/components/mui/muiCheckbox";
+import ChakraCheckbox from "@/components/chakra/chakraCheckbox";
+import ShadcnCheckbox from "@/components/shadcn/shadcnCheckbox";
 
 // Badge/Status Components
-import AntdBadge from "@/components/Antd/antdBadge";
-import MuiBadge from "@/components/Mui/muiBadge";
-import ChakraBadge from "@/components/Chakra/chakraBadge";
+import AntdBadge from "@/components/antd/antdBadge";
+import MuiBadge from "@/components/mui/muiBadge";
+import ChakraBadge from "@/components/chakra/chakraBadge";
 
 // Badge/Tag Components
-import ChakraTag from "@/components/Chakra/chakraTag";
-import ShadcnTag from "@/components/Shadcn/shadcnTag";
-import MuiTag from "@/components/Mui/muiTag";
+import ChakraTag from "@/components/chakra/chakraTag";
+import ShadcnTag from "@/components/shadcn/shadcnTag";
+import MuiTag from "@/components/mui/muiTag";
 
 // Card Components
-import AntdCard from "@/components/Antd/antdCard";
-import MuiCard from "@/components/Mui/muiCard";
-import ChakraCard from "@/components/Chakra/chakraCard";
-import ShadcnCard from "@/components/Shadcn/shadcnCard";
+import AntdCard from "@/components/antd/antdCard";
+import MuiCard from "@/components/mui/muiCard";
+import ChakraCard from "@/components/chakra/chakraCard";
+import ShadcnCard from "@/components/shadcn/shadcnCard";
 
 // Carousel Components
-import AntdCarousel from "@/components/Antd/antdCarousel";
-import ShadcnCarousel from "@/components/Shadcn/shadcnCarousel";
+import AntdCarousel from "@/components/antd/antdCarousel";
+import ShadcnCarousel from "@/components/shadcn/shadcnCarousel";
 
 // Collapsible Components
-import MuiCollapse from "@/components/Mui/muiCollapse";
-import AntdCollapse from "@/components/Antd/antdCollapse";
-import ShadcnCollapse from "@/components/Shadcn/shadcnCollapse";
+import MuiCollapse from "@/components/mui/muiCollapse";
+import AntdCollapse from "@/components/antd/antdCollapse";
+import ShadcnCollapse from "@/components/shadcn/shadcnCollapse";
 
 // Color-Picker Components
-import AntdColorpicker from "@/components/Antd/antdColorpicker";
-import ChakraColorpicker from "@/components/Chakra/chakraColorpicker";
+import AntdColorpicker from "@/components/antd/antdColorpicker";
+import ChakraColorpicker from "@/components/chakra/chakraColorpicker";
 
 // Description Components
-import AntdDescription from "@/components/Antd/antdDescription";
-import ChakraDescription from "@/components/Chakra/chakraDescription";
-import ShadcnDescription from "@/components/Shadcn/shadcnDescription";
+import AntdDescription from "@/components/antd/antdDescription";
+import ChakraDescription from "@/components/chakra/chakraDescription";
+import ShadcnDescription from "@/components/shadcn/shadcnDescription";
 
 // Drawer Components
-import AntdDrawer from "@/components/Antd/antdDrawer";
-import MuiDrawer from "@/components/Mui/muiDrawer";
-import ChakraDrawer from "@/components/Chakra/chakraDrawer";
-import ShadcnDrawer from "@/components/Shadcn/shadcnDrawer";
+import AntdDrawer from "@/components/antd/antdDrawer";
+import MuiDrawer from "@/components/mui/muiDrawer";
+import ChakraDrawer from "@/components/chakra/chakraDrawer";
+import ShadcnDrawer from "@/components/shadcn/shadcnDrawer";
 
 // Radio Components
-import AntdRadio from "@/components/Antd/antdRadio";
-import MuiRadio from "@/components/Mui/muiRadio";
-import ChakraRadio from "@/components/Chakra/chakraRadio";
-import ShadcnRadio from "@/components/Shadcn/shadcnRadio";
+import AntdRadio from "@/components/antd/antdRadio";
+import MuiRadio from "@/components/mui/muiRadio";
+import ChakraRadio from "@/components/chakra/chakraRadio";
+import ShadcnRadio from "@/components/shadcn/shadcnRadio";
 
 // Tab Components
-import AntdTab from "@/components/Antd/antdTab";
-import MuiTab from "@/components/Mui/muiTab";
-import ChakraTab from "@/components/Chakra/chakraTab";
-import ShadcnTab from "@/components/Shadcn/shadcnTab";
+import AntdTab from "@/components/antd/antdTab";
+import MuiTab from "@/components/mui/muiTab";
+import ChakraTab from "@/components/chakra/chakraTab";
+import ShadcnTab from "@/components/shadcn/shadcnTab";
 
 // Select Components
-import AntdSelect from "@/components/Antd/antdSelect";
-import MuiSelect from "@/components/Mui/muiSelect";
-import ChakraSelect from "@/components/Chakra/chakraSelect";
-import ShadcnSelect from "@/components/Shadcn/shadcnSelect";
+import AntdSelect from "@/components/antd/antdSelect";
+import MuiSelect from "@/components/mui/muiSelect";
+import ChakraSelect from "@/components/chakra/chakraSelect";
+import ShadcnSelect from "@/components/shadcn/shadcnSelect";
 
 // Skeleton Componenets
-import AntdSkeleton from "@/components/Antd/antdSkeleton";
-import MuiSkeleton from "@/components/Mui/muiSkeleton";
-import ShadcnSkeleton from "@/components/Shadcn/shadcnSkeleton";
-import ChakraSkeleton from "@/components/Chakra/chakraSkeleton";
+import AntdSkeleton from "@/components/antd/antdSkeleton";
+import MuiSkeleton from "@/components/mui/muiSkeleton";
+import ShadcnSkeleton from "@/components/shadcn/shadcnSkeleton";
+import ChakraSkeleton from "@/components/chakra/chakraSkeleton";
 
 // Toggle Components
-import AntdToggle from "@/components/Antd/antdToggle";
-import ChakraToggle from "@/components/Chakra/chakraToggle";
-import MuiToggle from "@/components/Mui/muiToggle";
-import ShadcnToggle from "@/components/Shadcn/shadcnToggle";
+import AntdToggle from "@/components/antd/antdToggle";
+import ChakraToggle from "@/components/chakra/chakraToggle";
+import MuiToggle from "@/components/mui/muiToggle";
+import ShadcnToggle from "@/components/shadcn/shadcnToggle";
 
 // Table Components
-import AntdTable from "@/components/Antd/antdTable";
-import MuiTable from "@/components/Mui/muiTable";
-import ShadcnTable from "@/components/Shadcn/shadcnTable";
-import ChakraTable from "@/components/Chakra/chakraTable";
+import AntdTable from "@/components/antd/antdTable";
+import MuiTable from "@/components/mui/muiTable";
+import ShadcnTable from "@/components/shadcn/shadcnTable";
+import ChakraTable from "@/components/chakra/chakraTable";
 
 const initialNodes = [
   {
