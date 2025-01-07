@@ -17,7 +17,7 @@ import DownloadPanel from "./panelAddon/downloadImage";
 import ZoomPanel from "./panelAddon/zoomTransition";
 import SavePanel from "./panelAddon/saveRestore";
 
-import SITE_SEARCH from "./siteSearch";
+import SiteSearch from "./siteSearch";
 import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
 import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
 import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
@@ -133,7 +133,7 @@ import ChakraTable from "@/components/Chakra/chakraTable";
 const initialNodes = [
   {
     id: "node-00",
-    type: "SITE_SEARCH",
+    type: "SiteSearch",
     position: { x: 0, y: 0 },
   },
 ];
