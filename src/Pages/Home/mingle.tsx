@@ -18,12 +18,18 @@ import ZoomPanel from "./panelAddon/zoomTransition";
 import SavePanel from "./panelAddon/saveRestore";
 
 import SiteSearch from "./siteSearch";
-import MUI_ALERT from "@/components/mui/muiAlert";
-import ANTD_ALERT from "@/components/antd/antdAlert";
-import MUI_BREADCRUMB from "@/components/mui/muiBreadcrumb";
-import ANTD_BREADCRUMB from "@/components/antd/antdBreadcrumb";
-import MUI_MENU from "@/components/mui/muiMenu";
-import ANTD_MENU from "@/components/antd/antdMenu";
+
+// Alert Components
+import MuiAlert from "@/components/mui/muiAlert";
+import AntdAlert from "@/components/antd/antdAlert";
+
+// Breadcrumb Components
+import MuiBreadcrumb from "@/components/mui/muiBreadcrumb";
+import AntdBreadcrumb from "@/components/antd/antdBreadcrumb";
+
+// Menu Components
+import MuiMenu from "@/components/mui/muiMenu";
+import AntdMenu from "@/components/antd/antdMenu";
 
 // Accordion Components
 import AntdAccordion from "@/components/antd/antdAccordion";
@@ -140,12 +146,12 @@ const initialNodes = [
 
 const nodeTypes = {
   SiteSearch,
-  MUI_ALERT,
-  ANTD_ALERT,
-  MUI_BREADCRUMB,
-  ANTD_BREADCRUMB,
-  MUI_MENU,
-  ANTD_MENU,
+  MuiAlert,
+  AntdAlert,
+  MuiBreadcrumb,
+  AntdBreadcrumb,
+  MuiMenu,
+  AntdMenu,
   AntdAccordion,
   MuiAccordion,
   ChakraAccordion,
@@ -328,7 +334,7 @@ function MinglePage() {
 
   function onClickComp(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    const menu = target.textContent?.toUpperCase() || "";
+    const menu = target.textContent || "";
 
     setDrawerOpen((prev) => !prev);
     setSelectedComp(menu);
