@@ -14,7 +14,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import SITE_SEARCH from "./siteSearch";
+import SiteSearch from "./siteSearch";
 
 import { X } from "lucide-react";
 
@@ -27,27 +27,222 @@ import ANTD_BREADCRUMB from "@/components/_ANTD/ANTD_BREADCRUMB";
 import MUI_MENU from "@/components/_MUI/MUI_MENU";
 import ANTD_MENU from "@/components/_ANTD/ANTD_MENU";
 
+// Accordion Components
+import AntdAccordion from "@/components/Antd/antdAccordion";
+import MuiAccordion from "@/components/Mui/muiAccordion";
+import ChakraAccordion from "@/components/Chakra/chakraAccordion";
+import ShadcnAccordion from "@/components/Shadcn/shadcnAccordion";
+
+// Button Components
+import AntdButton from "@/components/Antd/antdButton";
+import ChakraButton from "@/components/Chakra/chakraButton";
+import MuiButton from "@/components/Mui/muiButton";
+import ShadcnButton from "@/components/Shadcn/shadcnButton";
+
+// Calendar Components
+import MuiCalendar from "@/components/Mui/muiCalendar";
+import ShadcnCalendar from "@/components/Shadcn/shadcnCalendar";
+import AntdCalendar from "@/components/Antd/antdCalendar";
+
+// Avatar Components
+import MuiAvatar from "@/components/Mui/muiAvatar";
+import AntdAvatar from "@/components/Antd/antdAvatar";
+import ChakraAvatar from "@/components/Chakra/chakraAvatar";
+import ShadcnAvatar from "@/components/Shadcn/shadcnAvatar";
+
+// Checkbox Components
+import AntdCheckbox from "@/components/Antd/antdCheckbox";
+import MuiCheckbox from "@/components/Mui/muiCheckbox";
+import ChakraCheckbox from "@/components/Chakra/chakraCheckbox";
+import ShadcnCheckbox from "@/components/Shadcn/shadcnCheckbox";
+
+// Badge/Status Components
+import AntdBadge from "@/components/Antd/antdBadge";
+import MuiBadge from "@/components/Mui/muiBadge";
+import ChakraBadge from "@/components/Chakra/chakraBadge";
+
+// Badge/Tag Components
+import ChakraTag from "@/components/Chakra/chakraTag";
+import ShadcnTag from "@/components/Shadcn/shadcnTag";
+import MuiTag from "@/components/Mui/muiTag";
+
+// Card Components
+import AntdCard from "@/components/Antd/antdCard";
+import MuiCard from "@/components/Mui/muiCard";
+import ChakraCard from "@/components/Chakra/chakraCard";
+import ShadcnCard from "@/components/Shadcn/shadcnCard";
+
+// Carousel Components
+import AntdCarousel from "@/components/Antd/antdCarousel";
+import ShadcnCarousel from "@/components/Shadcn/shadcnCarousel";
+
+// Collapsible Components
+import MuiCollapse from "@/components/Mui/muiCollapse";
+import AntdCollapse from "@/components/Antd/antdCollapse";
+import ShadcnCollapse from "@/components/Shadcn/shadcnCollapse";
+
+// Color-Picker Components
+import AntdColorpicker from "@/components/Antd/antdColorpicker";
+import ChakraColorpicker from "@/components/Chakra/chakraColorpicker";
+
+// Description Components
+import AntdDescription from "@/components/Antd/antdDescription";
+import ChakraDescription from "@/components/Chakra/chakraDescription";
+import ShadcnDescription from "@/components/Shadcn/shadcnDescription";
+
+// Drawer Components
+import AntdDrawer from "@/components/Antd/antdDrawer";
+import MuiDrawer from "@/components/Mui/muiDrawer";
+import ChakraDrawer from "@/components/Chakra/chakraDrawer";
+import ShadcnDrawer from "@/components/Shadcn/shadcnDrawer";
+
+// Radio Components
+import AntdRadio from "@/components/Antd/antdRadio";
+import MuiRadio from "@/components/Mui/muiRadio";
+import ChakraRadio from "@/components/Chakra/chakraRadio";
+import ShadcnRadio from "@/components/Shadcn/shadcnRadio";
+
+// Tab Components
+import AntdTab from "@/components/Antd/antdTab";
+import MuiTab from "@/components/Mui/muiTab";
+import ChakraTab from "@/components/Chakra/chakraTab";
+import ShadcnTab from "@/components/Shadcn/shadcnTab";
+
+// Select Components
+import AntdSelect from "@/components/Antd/antdSelect";
+import MuiSelect from "@/components/Mui/muiSelect";
+import ChakraSelect from "@/components/Chakra/chakraSelect";
+import ShadcnSelect from "@/components/Shadcn/shadcnSelect";
+
+// Skeleton Componenets
+import AntdSkeleton from "@/components/Antd/antdSkeleton";
+import MuiSkeleton from "@/components/Mui/muiSkeleton";
+import ShadcnSkeleton from "@/components/Shadcn/shadcnSkeleton";
+import ChakraSkeleton from "@/components/Chakra/chakraSkeleton";
+
+// Toggle Components
+import AntdToggle from "@/components/Antd/antdToggle";
+import ChakraToggle from "@/components/Chakra/chakraToggle";
+import MuiToggle from "@/components/Mui/muiToggle";
+import ShadcnToggle from "@/components/Shadcn/shadcnToggle";
+
+// Table Components
+import AntdTable from "@/components/Antd/antdTable";
+import MuiTable from "@/components/Mui/muiTable";
+import ShadcnTable from "@/components/Shadcn/shadcnTable";
+import ChakraTable from "@/components/Chakra/chakraTable";
+
 const initialNodes = [
   {
     id: "node-1",
-    type: "SITE_SEARCH",
+    type: "SiteSearch",
     position: { x: 0, y: 0 },
     data: { value: "사이트 검색용 기본 노드" },
   },
 ];
 
 const nodeTypes = {
-  SITE_SEARCH,
+  SiteSearch,
   MUI_ALERT,
   ANTD_ALERT,
   MUI_BREADCRUMB,
   ANTD_BREADCRUMB,
   MUI_MENU,
   ANTD_MENU,
+  AntdAccordion,
+  MuiAccordion,
+  ChakraAccordion,
+  ShadcnAccordion,
+  AntdButton,
+  ChakraButton,
+  MuiButton,
+  ShadcnButton,
+  MuiCalendar,
+  ShadcnCalendar,
+  AntdCalendar,
+  MuiAvatar,
+  AntdAvatar,
+  ChakraAvatar,
+  ShadcnAvatar,
+  AntdCheckbox,
+  MuiCheckbox,
+  ChakraCheckbox,
+  ShadcnCheckbox,
+  AntdBadge,
+  MuiBadge,
+  ChakraBadge,
+  ShadcnTag,
+  ChakraTag,
+  MuiTag,
+  AntdCard,
+  MuiCard,
+  ChakraCard,
+  ShadcnCard,
+  AntdCarousel,
+  ShadcnCarousel,
+  MuiCollapse,
+  AntdCollapse,
+  ShadcnCollapse,
+  AntdColorpicker,
+  ChakraColorpicker,
+  AntdDescription,
+  ChakraDescription,
+  ShadcnDescription,
+  AntdDrawer,
+  MuiDrawer,
+  ChakraDrawer,
+  ShadcnDrawer,
+  AntdRadio,
+  MuiRadio,
+  ChakraRadio,
+  ShadcnRadio,
+  AntdTab,
+  MuiTab,
+  ChakraTab,
+  ShadcnTab,
+  AntdSelect,
+  MuiSelect,
+  ChakraSelect,
+  ShadcnSelect,
+  AntdSkeleton,
+  MuiSkeleton,
+  ShadcnSkeleton,
+  ChakraSkeleton,
+  AntdToggle,
+  ChakraToggle,
+  MuiToggle,
+  ShadcnToggle,
+  AntdTable,
+  MuiTable,
+  ShadcnTable,
+  ChakraTable,
 };
 
 // const prefixes = ["MUI", "ANTD", "CHAKRA", "SHADCN"];
-const menuList = ["Alert", "Menu", "Breadcrumb"];
+const menuList = [
+  "Accordion",
+  "Alert",
+  "Avatar",
+  "Badge",
+  "Breadcrumb",
+  "Button",
+  "Calendar",
+  "Card",
+  "Carousel",
+  "Checkbox",
+  "Collapse",
+  "Colorpicker",
+  "Description",
+  "Drawer",
+  "Menu",
+  "Radio",
+  "Select",
+  "Skeleton",
+  "Tab",
+  "Table",
+  "Tag",
+  "Toggle",
+];
 
 // prefixes.forEach((prefix) => {
 //   menuList.forEach((menu) => {
@@ -145,17 +340,17 @@ function MinglePage() {
 
   function onClickComp(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    const component = target.textContent?.toUpperCase() || "";
+    const component = target.textContent || "";
 
     setDrawerOpen((prev) => !prev);
     setSelectedComp(component);
     console.log(component);
   }
 
-  const MUI_COMP = nodeTypes[`MUI_${selectedComp}` as keyof typeof nodeTypes];
-  const ANTD_COMP = nodeTypes[`ANTD_${selectedComp}` as keyof typeof nodeTypes];
-  const CHAKRA_COMP = nodeTypes[`CHAKRA_${selectedComp}` as keyof typeof nodeTypes];
-  const SHADCN_COMP = nodeTypes[`SHADCN_${selectedComp}` as keyof typeof nodeTypes];
+  const MUI_COMP = nodeTypes[`Mui${selectedComp}` as keyof typeof nodeTypes];
+  const ANTD_COMP = nodeTypes[`Antd${selectedComp}` as keyof typeof nodeTypes];
+  const CHAKRA_COMP = nodeTypes[`Chakra${selectedComp}` as keyof typeof nodeTypes];
+  const SHADCN_COMP = nodeTypes[`Shadcn${selectedComp}` as keyof typeof nodeTypes];
 
   return (
     <div className="w-screen h-screen bg-[#222222] flex relative">
@@ -184,7 +379,6 @@ function MinglePage() {
         >
           Component
         </p>
-
         {/* 검색 바 */}
         <input
           type="text"
@@ -246,11 +440,11 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
               onClick={MUI_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `MUI_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Mui${selectedComp}`)}
               draggable
-              id={`MUI_${selectedComp}`}
+              id={`Mui${selectedComp}`}
             >
               {MUI_COMP ? <MUI_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -263,11 +457,11 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
               onClick={ANTD_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `ANTD_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Antd${selectedComp}`)}
               draggable
-              id={`ANTD_${selectedComp}`}
+              id={`Antd${selectedComp}`}
             >
               {ANTD_COMP ? <ANTD_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -280,11 +474,11 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
               onClick={CHAKRA_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `CHAKRA_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Chakra${selectedComp}`)}
               draggable
-              id={`CHAKRA_${selectedComp}`}
+              id={`Chakra${selectedComp}`}
             >
               {CHAKRA_COMP ? <CHAKRA_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -295,13 +489,12 @@ function MinglePage() {
               <img src="/SHADCN.svg" alt="shadcn" className="mt-[4px]" />
               <p className="text-[24px] font-semibold">shadcn/ui</p>
             </div>
-
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
               onClick={SHADCN_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `SHADCN_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Shadcn${selectedComp}`)}
               draggable
-              id={`SHADCN_${selectedComp}`}
+              id={`Shadcn${selectedComp}`}
             >
               {SHADCN_COMP ? <SHADCN_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
