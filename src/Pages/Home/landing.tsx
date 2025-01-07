@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "/logo.svg";
 
 export default function LandingPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="bg-gradient-to-b from-[#343434] to-[#222222] w-screen h-full flex flex-col justify-between overflow-clip">
@@ -14,7 +14,10 @@ export default function LandingPage() {
         <p className="text-white text-[40px] font-semibold tracking-wider transform translate-y-[-20px]">
           복잡한 셋팅과 설치 없이 내 사이트에 바로 적용해 보는 UI 플랫폼
         </p>
-        <button className="w-[200px] h-[56px] rounded-2xl bg-[#32CBFF] text-white text-[24px] mb-[40px]" onClick={() => navigate('/home')}>
+        <button
+          className="w-[200px] h-[56px] rounded-2xl bg-[#32CBFF] text-white text-[24px] mb-[40px]"
+          onClick={() => navigate("/home")}
+        >
           시작하기
         </button>
       </div>

@@ -1,90 +1,305 @@
 import logo from "/logo.svg";
-import { MouseEvent, useCallback, useRef, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 
 import {
   ReactFlow,
   Background,
-  Controls,
-  addEdge,
-  Connection,
   ReactFlowProvider,
-  useNodesState,
-  useEdgesState,
   useReactFlow,
+  Panel,
+  applyNodeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import SITE_SEARCH from "./siteSearch";
-
-import { X } from "lucide-react";
-
 import { DnDProvider, useDnD } from "./dndContext";
+import DownloadPanel from "./panelAddon/downloadImage";
+import ZoomPanel from "./panelAddon/zoomTransition";
+import SavePanel from "./panelAddon/saveRestore";
 
-import MUI_ALERT from "@/Components/_MUI/MUI_ALERT";
-import ANTD_ALERT from "@/Components/_ANTD/ANTD_ALERT";
-import MUI_BREADCRUMB from "@/Components/_MUI/MUI_BREADCRUMB";
-import ANTD_BREADCRUMB from "@/Components/_ANTD/ANTD_BREADCRUMB";
-import MUI_MENU from "@/Components/_MUI/MUI_MENU";
-import ANTD_MENU from "@/Components/_ANTD/ANTD_MENU";
+import SiteSearch from "./siteSearch";
+
+// Alert Components
+import MuiAlert from "@/components/mui/muiAlert";
+import AntdAlert from "@/components/antd/antdAlert";
+
+// Breadcrumb Components
+import MuiBreadcrumb from "@/components/mui/muiBreadcrumb";
+import AntdBreadcrumb from "@/components/antd/antdBreadcrumb";
+
+// Menu Components
+import MuiMenu from "@/components/mui/muiMenu";
+import AntdMenu from "@/components/antd/antdMenu";
+
+// Accordion Components
+import AntdAccordion from "@/components/antd/antdAccordion";
+import MuiAccordion from "@/components/mui/muiAccordion";
+import ChakraAccordion from "@/components/chakra/chakraAccordion";
+import ShadcnAccordion from "@/components/shadcn/shadcnAccordion";
+
+// Button Components
+import AntdButton from "@/components/antd/antdButton";
+import ChakraButton from "@/components/chakra/chakraButton";
+import MuiButton from "@/components/mui/muiButton";
+import ShadcnButton from "@/components/shadcn/shadcnButton";
+
+// Calendar Components
+import MuiCalendar from "@/components/mui/muiCalendar";
+import ShadcnCalendar from "@/components/shadcn/shadcnCalendar";
+import AntdCalendar from "@/components/antd/antdCalendar";
+
+// Avatar Components
+import MuiAvatar from "@/components/mui/muiAvatar";
+import AntdAvatar from "@/components/antd/antdAvatar";
+import ChakraAvatar from "@/components/chakra/chakraAvatar";
+import ShadcnAvatar from "@/components/shadcn/shadcnAvatar";
+
+// Checkbox Components
+import AntdCheckbox from "@/components/antd/antdCheckbox";
+import MuiCheckbox from "@/components/mui/muiCheckbox";
+import ChakraCheckbox from "@/components/chakra/chakraCheckbox";
+import ShadcnCheckbox from "@/components/shadcn/shadcnCheckbox";
+
+// Badge/Status Components
+import AntdBadge from "@/components/antd/antdBadge";
+import MuiBadge from "@/components/mui/muiBadge";
+import ChakraBadge from "@/components/chakra/chakraBadge";
+
+// Badge/Tag Components
+import ChakraTag from "@/components/chakra/chakraTag";
+import ShadcnTag from "@/components/shadcn/shadcnTag";
+import MuiTag from "@/components/mui/muiTag";
+
+// Card Components
+import AntdCard from "@/components/antd/antdCard";
+import MuiCard from "@/components/mui/muiCard";
+import ChakraCard from "@/components/chakra/chakraCard";
+import ShadcnCard from "@/components/shadcn/shadcnCard";
+
+// Carousel Components
+import AntdCarousel from "@/components/antd/antdCarousel";
+import ShadcnCarousel from "@/components/shadcn/shadcnCarousel";
+
+// Collapsible Components
+import MuiCollapse from "@/components/mui/muiCollapse";
+import AntdCollapse from "@/components/antd/antdCollapse";
+import ShadcnCollapse from "@/components/shadcn/shadcnCollapse";
+
+// Color-Picker Components
+import AntdColorpicker from "@/components/antd/antdColorpicker";
+import ChakraColorpicker from "@/components/chakra/chakraColorpicker";
+
+// Description Components
+import AntdDescription from "@/components/antd/antdDescription";
+import ChakraDescription from "@/components/chakra/chakraDescription";
+import ShadcnDescription from "@/components/shadcn/shadcnDescription";
+
+// Drawer Components
+import AntdDrawer from "@/components/antd/antdDrawer";
+import MuiDrawer from "@/components/mui/muiDrawer";
+import ChakraDrawer from "@/components/chakra/chakraDrawer";
+import ShadcnDrawer from "@/components/shadcn/shadcnDrawer";
+
+// Radio Components
+import AntdRadio from "@/components/antd/antdRadio";
+import MuiRadio from "@/components/mui/muiRadio";
+import ChakraRadio from "@/components/chakra/chakraRadio";
+import ShadcnRadio from "@/components/shadcn/shadcnRadio";
+
+// Tab Components
+import AntdTab from "@/components/antd/antdTab";
+import MuiTab from "@/components/mui/muiTab";
+import ChakraTab from "@/components/chakra/chakraTab";
+import ShadcnTab from "@/components/shadcn/shadcnTab";
+
+// Select Components
+import AntdSelect from "@/components/antd/antdSelect";
+import MuiSelect from "@/components/mui/muiSelect";
+import ChakraSelect from "@/components/chakra/chakraSelect";
+import ShadcnSelect from "@/components/shadcn/shadcnSelect";
+
+// Skeleton Componenets
+import AntdSkeleton from "@/components/antd/antdSkeleton";
+import MuiSkeleton from "@/components/mui/muiSkeleton";
+import ShadcnSkeleton from "@/components/shadcn/shadcnSkeleton";
+import ChakraSkeleton from "@/components/chakra/chakraSkeleton";
+
+// Toggle Components
+import AntdToggle from "@/components/antd/antdToggle";
+import ChakraToggle from "@/components/chakra/chakraToggle";
+import MuiToggle from "@/components/mui/muiToggle";
+import ShadcnToggle from "@/components/shadcn/shadcnToggle";
+
+// Table Components
+import AntdTable from "@/components/antd/antdTable";
+import MuiTable from "@/components/mui/muiTable";
+import ShadcnTable from "@/components/shadcn/shadcnTable";
+import ChakraTable from "@/components/chakra/chakraTable";
 
 const initialNodes = [
   {
-    id: "node-1",
-    type: "SITE_SEARCH",
+    id: "node-00",
+    type: "SiteSearch",
     position: { x: 0, y: 0 },
-    data: { value: "사이트 검색용 기본 노드" },
   },
 ];
 
 const nodeTypes = {
-  SITE_SEARCH,
-  MUI_ALERT,
-  ANTD_ALERT,
-  MUI_BREADCRUMB,
-  ANTD_BREADCRUMB,
-  MUI_MENU,
-  ANTD_MENU,
+  SiteSearch,
+  MuiAlert,
+  AntdAlert,
+  MuiBreadcrumb,
+  AntdBreadcrumb,
+  MuiMenu,
+  AntdMenu,
+  AntdAccordion,
+  MuiAccordion,
+  ChakraAccordion,
+  ShadcnAccordion,
+  AntdButton,
+  ChakraButton,
+  MuiButton,
+  ShadcnButton,
+  MuiCalendar,
+  ShadcnCalendar,
+  AntdCalendar,
+  MuiAvatar,
+  AntdAvatar,
+  ChakraAvatar,
+  ShadcnAvatar,
+  AntdCheckbox,
+  MuiCheckbox,
+  ChakraCheckbox,
+  ShadcnCheckbox,
+  AntdBadge,
+  MuiBadge,
+  ChakraBadge,
+  ShadcnTag,
+  ChakraTag,
+  MuiTag,
+  AntdCard,
+  MuiCard,
+  ChakraCard,
+  ShadcnCard,
+  AntdCarousel,
+  ShadcnCarousel,
+  MuiCollapse,
+  AntdCollapse,
+  ShadcnCollapse,
+  AntdColorpicker,
+  ChakraColorpicker,
+  AntdDescription,
+  ChakraDescription,
+  ShadcnDescription,
+  AntdDrawer,
+  MuiDrawer,
+  ChakraDrawer,
+  ShadcnDrawer,
+  AntdRadio,
+  MuiRadio,
+  ChakraRadio,
+  ShadcnRadio,
+  AntdTab,
+  MuiTab,
+  ChakraTab,
+  ShadcnTab,
+  AntdSelect,
+  MuiSelect,
+  ChakraSelect,
+  ShadcnSelect,
+  AntdSkeleton,
+  MuiSkeleton,
+  ShadcnSkeleton,
+  ChakraSkeleton,
+  AntdToggle,
+  ChakraToggle,
+  MuiToggle,
+  ShadcnToggle,
+  AntdTable,
+  MuiTable,
+  ShadcnTable,
+  ChakraTable,
 };
 
-// const prefixes = ["MUI", "ANTD", "CHAKRA", "SHADCN"];
-const menuList = ["Alert", "Menu", "Breadcrumb"];
+const menuList = [
+  "Accordion",
+  "Alert",
+  "Avatar",
+  "Badge",
+  "Breadcrumb",
+  "Button",
+  "Calendar",
+  "Card",
+  "Carousel",
+  "Checkbox",
+  "Collapse",
+  "Colorpicker",
+  "Description",
+  "Drawer",
+  "Menu",
+  "Radio",
+  "Select",
+  "Skeleton",
+  "Tab",
+  "Table",
+  "Tag",
+  "Toggle",
+];
 
-// prefixes.forEach((prefix) => {
-//   menuList.forEach((menu) => {
-//     const key = `${prefix}_${menu.toUpperCase()}`;
-//     nodeTypes[key] = `${prefix}_${menu.toUpperCase()}`;
-//   });
-// });
+const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
-// console.log(nodeTypes);
-
-// const loadComponents = async () => {
-//   const imports = {};
-
-//   for (const key in nodeTypes) {
-//     const componentName = nodeTypes[key];
-//     imports[key] = await import(`../../components/Libraries/${componentName}`).then(
-//       (module) => module.default
-//     );
-//   }
-//   console.log(imports);
-// };
-
+/**
+ * @returns react-flow 활용한 node-base 플레이그라운드 구현
+ */
 function MinglePage() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes] = useState(initialNodes);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedComp, setSelectedComp] = useState("");
+
+  const [savedNode, setSavedNode] = useState(null);
 
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
-  const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
+  // useEffect(() => {
+  //   console.log(nodes);
+  // }, [nodes]);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    console.log(hash);
+
+    if (!hash.startsWith("#node&")) return;
+
+    const nodeParams = hash.replace("#node&", "");
+    const nodeLoader = JSON.parse(atob(nodeParams));
+
+    setNodes(nodeLoader);
+  }, []);
+
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => {
+        const onUpdateNode = applyNodeChanges(changes, nds);
+        encodeUrl(onUpdateNode);
+        return onUpdateNode;
+      });
+    },
+    [setNodes]
   );
+
+  // const onConnect = useCallback(
+  //   (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
+  //   [setEdges]
+  // );
+
+  const onDragStart = (event, nodeType) => {
+    setType(nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -95,67 +310,69 @@ function MinglePage() {
     (event) => {
       event.preventDefault();
 
-      // check if the dropped element is valid
-      if (!type) {
-        return;
-      }
+      if (!type) return;
 
-      let id = 0;
-      const getId = () => `dndnode_${id++}`;
-
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
-      const newNode = {
-        id: getId(),
-        type,
-        position,
-        data: { label: `${type} node` },
-      };
+      setNodes((nds) => {
+        const newNode = {
+          id: getId(nds.length),
+          type,
+          position,
+        };
 
-      setNodes((nds) => nds.concat(newNode));
+        const dndUpdateNode = nds.concat(newNode);
+        encodeUrl(dndUpdateNode);
+        return dndUpdateNode;
+      });
     },
     [screenToFlowPosition, type]
   );
 
-  const onDragStart = (event, nodeType) => {
-    setType(nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-
-  function onClickLib(e: MouseEvent) {
-    console.log(e.currentTarget.id);
-    const currentNode = String(e.currentTarget.id);
-
-    setNodes((prev) => [
-      ...prev, // 기존 노드들
-      {
-        id: `node-${prev.length + 1}`,
-        type: `${currentNode}`,
-        position: { x: prev.length * 10, y: prev.length * 10 },
-        data: { value: `${currentNode}` },
-      },
-    ]);
-  }
-
   function onClickComp(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    const component = target.textContent?.toUpperCase() || "";
+    const menu = target.textContent || "";
 
     setDrawerOpen((prev) => !prev);
-    setSelectedComp(component);
-    console.log(component);
+    setSelectedComp(menu);
+    console.log(menu);
   }
 
-  const MUI_COMP = nodeTypes[`MUI_${selectedComp}` as keyof typeof nodeTypes];
-  const ANTD_COMP = nodeTypes[`ANTD_${selectedComp}` as keyof typeof nodeTypes];
-  const CHAKRA_COMP = nodeTypes[`CHAKRA_${selectedComp}` as keyof typeof nodeTypes];
-  const SHADCN_COMP = nodeTypes[`SHADCN_${selectedComp}` as keyof typeof nodeTypes];
+  function onClickLib(e: MouseEvent) {
+    const currentNode = String(e.currentTarget.id);
+    console.log(e.currentTarget.id);
+
+    setNodes((prev) => {
+      const updateNode = [
+        ...prev, // 기존 노드들
+        {
+          id: getId(prev.length),
+          type: `${currentNode}`,
+          position: { x: prev.length * 10, y: prev.length * 10 },
+        },
+      ];
+      encodeUrl(updateNode);
+      return updateNode;
+    });
+  }
+
+  function getId(nodeIndex) {
+    return `node-${String(nodeIndex).padStart(2, "0")}`;
+  }
+
+  function encodeUrl(updateNode) {
+    const encoded = btoa(JSON.stringify(updateNode));
+
+    window.history.pushState({}, "", "#node&" + encoded);
+  }
+
+  const MUI_COMP = nodeTypes[`Mui${selectedComp}` as keyof typeof nodeTypes];
+  const ANTD_COMP = nodeTypes[`Antd${selectedComp}` as keyof typeof nodeTypes];
+  const CHAKRA_COMP = nodeTypes[`Chakra${selectedComp}` as keyof typeof nodeTypes];
+  const SHADCN_COMP = nodeTypes[`Shadcn${selectedComp}` as keyof typeof nodeTypes];
 
   return (
     <div className="w-screen h-screen bg-[#222222] flex relative">
@@ -184,7 +401,6 @@ function MinglePage() {
         >
           Component
         </p>
-
         {/* 검색 바 */}
         <input
           type="text"
@@ -246,11 +462,11 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
               onClick={MUI_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `MUI_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Mui${selectedComp}`)}
               draggable
-              id={`MUI_${selectedComp}`}
+              id={`Mui${selectedComp}`}
             >
               {MUI_COMP ? <MUI_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -263,11 +479,11 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
               onClick={ANTD_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `ANTD_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Antd${selectedComp}`)}
               draggable
-              id={`ANTD_${selectedComp}`}
+              id={`Antd${selectedComp}`}
             >
               {ANTD_COMP ? <ANTD_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -280,11 +496,11 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
               onClick={CHAKRA_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `CHAKRA_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Chakra${selectedComp}`)}
               draggable
-              id={`CHAKRA_${selectedComp}`}
+              id={`Chakra${selectedComp}`}
             >
               {CHAKRA_COMP ? <CHAKRA_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -295,13 +511,12 @@ function MinglePage() {
               <img src="/SHADCN.svg" alt="shadcn" className="mt-[4px]" />
               <p className="text-[24px] font-semibold">shadcn/ui</p>
             </div>
-
             <div
-              className="w-full h-[80px] rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
               onClick={SHADCN_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `SHADCN_${selectedComp}`)}
+              onDragStart={(event) => onDragStart(event, `Shadcn${selectedComp}`)}
               draggable
-              id={`SHADCN_${selectedComp}`}
+              id={`Shadcn${selectedComp}`}
             >
               {SHADCN_COMP ? <SHADCN_COMP /> : <div>검색 결과가 없습니다.</div>}
             </div>
@@ -318,16 +533,25 @@ function MinglePage() {
             nodes={nodes}
             nodeTypes={nodeTypes}
             onNodesChange={onNodesChange}
-            edges={edges}
+            // edges={edges}
             // edgeTypes={edgeTypes}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
+            // onEdgesChange={onEdgesChange}
+            // onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            defaultViewport={defaultViewport}
+            onInit={setSavedNode}
             fitView
           >
             <Background />
-            <Controls />
+
+            <Panel position="top-right" className="flex gap-[6px] items-center">
+              <ZoomPanel />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <DownloadPanel />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <SavePanel savedNode={savedNode} setNodes={setNodes} />
+            </Panel>
           </ReactFlow>
         </div>
       </div>
@@ -335,7 +559,7 @@ function MinglePage() {
   );
 }
 
-export default function DnDTest() {
+export default function DnDFlow() {
   return (
     <ReactFlowProvider>
       <DnDProvider>
