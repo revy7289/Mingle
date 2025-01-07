@@ -1,25 +1,23 @@
 import logo from "/logo.svg";
-import { MouseEvent, useCallback, useRef, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 
 import {
   ReactFlow,
   Background,
-  Controls,
-  addEdge,
-  Connection,
   ReactFlowProvider,
-  useNodesState,
-  useEdgesState,
   useReactFlow,
+  Panel,
+  applyNodeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import SiteSearch from "./siteSearch";
-
-import { X } from "lucide-react";
-
 import { DnDProvider, useDnD } from "./dndContext";
+import DownloadPanel from "./panelAddon/downloadImage";
+import ZoomPanel from "./panelAddon/zoomTransition";
+import SavePanel from "./panelAddon/saveRestore";
 
+import SITE_SEARCH from "./siteSearch";
 import MUI_ALERT from "@/components/_MUI/MUI_ALERT";
 import ANTD_ALERT from "@/components/_ANTD/ANTD_ALERT";
 import MUI_BREADCRUMB from "@/components/_MUI/MUI_BREADCRUMB";
@@ -134,10 +132,9 @@ import ChakraTable from "@/components/Chakra/chakraTable";
 
 const initialNodes = [
   {
-    id: "node-1",
-    type: "SiteSearch",
+    id: "node-00",
+    type: "SITE_SEARCH",
     position: { x: 0, y: 0 },
-    data: { value: "사이트 검색용 기본 노드" },
   },
 ];
 
@@ -218,7 +215,6 @@ const nodeTypes = {
   ChakraTable,
 };
 
-// const prefixes = ["MUI", "ANTD", "CHAKRA", "SHADCN"];
 const menuList = [
   "Accordion",
   "Alert",
@@ -244,42 +240,60 @@ const menuList = [
   "Toggle",
 ];
 
-// prefixes.forEach((prefix) => {
-//   menuList.forEach((menu) => {
-//     const key = `${prefix}_${menu.toUpperCase()}`;
-//     nodeTypes[key] = `${prefix}_${menu.toUpperCase()}`;
-//   });
-// });
+const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
-// console.log(nodeTypes);
-
-// const loadComponents = async () => {
-//   const imports = {};
-
-//   for (const key in nodeTypes) {
-//     const componentName = nodeTypes[key];
-//     imports[key] = await import(`../../components/Libraries/${componentName}`).then(
-//       (module) => module.default
-//     );
-//   }
-//   console.log(imports);
-// };
-
+/**
+ * @returns react-flow 활용한 node-base 플레이그라운드 구현
+ */
 function MinglePage() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes] = useState(initialNodes);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedComp, setSelectedComp] = useState("");
+
+  const [savedNode, setSavedNode] = useState(null);
 
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
-  const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
+  // useEffect(() => {
+  //   console.log(nodes);
+  // }, [nodes]);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    console.log(hash);
+
+    if (!hash.startsWith("#node&")) return;
+
+    const nodeParams = hash.replace("#node&", "");
+    const nodeLoader = JSON.parse(atob(nodeParams));
+
+    setNodes(nodeLoader);
+  }, []);
+
+  const onNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => {
+        const onUpdateNode = applyNodeChanges(changes, nds);
+        encodeUrl(onUpdateNode);
+        return onUpdateNode;
+      });
+    },
+    [setNodes]
   );
+
+  // const onConnect = useCallback(
+  //   (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
+  //   [setEdges]
+  // );
+
+  const onDragStart = (event, nodeType) => {
+    setType(nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -290,61 +304,63 @@ function MinglePage() {
     (event) => {
       event.preventDefault();
 
-      // check if the dropped element is valid
-      if (!type) {
-        return;
-      }
+      if (!type) return;
 
-      let id = 0;
-      const getId = () => `dndnode_${id++}`;
-
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
-      const newNode = {
-        id: getId(),
-        type,
-        position,
-        data: { label: `${type} node` },
-      };
+      setNodes((nds) => {
+        const newNode = {
+          id: getId(nds.length),
+          type,
+          position,
+        };
 
-      setNodes((nds) => nds.concat(newNode));
+        const dndUpdateNode = nds.concat(newNode);
+        encodeUrl(dndUpdateNode);
+        return dndUpdateNode;
+      });
     },
     [screenToFlowPosition, type]
   );
 
-  const onDragStart = (event, nodeType) => {
-    setType(nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-
-  function onClickLib(e: MouseEvent) {
-    console.log(e.currentTarget.id);
-    const currentNode = String(e.currentTarget.id);
-
-    setNodes((prev) => [
-      ...prev, // 기존 노드들
-      {
-        id: `node-${prev.length + 1}`,
-        type: `${currentNode}`,
-        position: { x: prev.length * 10, y: prev.length * 10 },
-        data: { value: `${currentNode}` },
-      },
-    ]);
-  }
-
   function onClickComp(e: MouseEvent) {
     const target = e.target as HTMLElement;
-    const component = target.textContent || "";
+    const menu = target.textContent?.toUpperCase() || "";
 
     setDrawerOpen((prev) => !prev);
-    setSelectedComp(component);
-    console.log(component);
+    setSelectedComp(menu);
+    console.log(menu);
+  }
+
+  function onClickLib(e: MouseEvent) {
+    const currentNode = String(e.currentTarget.id);
+    console.log(e.currentTarget.id);
+
+    setNodes((prev) => {
+      const updateNode = [
+        ...prev, // 기존 노드들
+        {
+          id: getId(prev.length),
+          type: `${currentNode}`,
+          position: { x: prev.length * 10, y: prev.length * 10 },
+        },
+      ];
+      encodeUrl(updateNode);
+      return updateNode;
+    });
+  }
+
+  function getId(nodeIndex) {
+    return `node-${String(nodeIndex).padStart(2, "0")}`;
+  }
+
+  function encodeUrl(updateNode) {
+    const encoded = btoa(JSON.stringify(updateNode));
+
+    window.history.pushState({}, "", "#node&" + encoded);
   }
 
   const MUI_COMP = nodeTypes[`Mui${selectedComp}` as keyof typeof nodeTypes];
@@ -511,16 +527,25 @@ function MinglePage() {
             nodes={nodes}
             nodeTypes={nodeTypes}
             onNodesChange={onNodesChange}
-            edges={edges}
+            // edges={edges}
             // edgeTypes={edgeTypes}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
+            // onEdgesChange={onEdgesChange}
+            // onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            defaultViewport={defaultViewport}
+            onInit={setSavedNode}
             fitView
           >
             <Background />
-            <Controls />
+
+            <Panel position="top-right" className="flex gap-[6px] items-center">
+              <ZoomPanel />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <DownloadPanel />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <SavePanel savedNode={savedNode} setNodes={setNodes} />
+            </Panel>
           </ReactFlow>
         </div>
       </div>
@@ -528,7 +553,7 @@ function MinglePage() {
   );
 }
 
-export default function DnDTest() {
+export default function DnDFlow() {
   return (
     <ReactFlowProvider>
       <DnDProvider>

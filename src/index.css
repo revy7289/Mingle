@@ -80,8 +80,13 @@ body,
   }
 }
 
-[data-id="node-1"] {
+[data-id="node-00"] {
   z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+[data-id="siteSearch"] {
+  pointer-events: all !important;
 }
 
 .react-flow__attribution {
