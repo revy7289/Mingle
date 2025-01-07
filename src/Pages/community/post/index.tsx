@@ -10,6 +10,7 @@ import {
 } from "@/commons/graphql/graphql";
 import Comment from "@/components/comments/comment";
 import CommentWrite from "@/components/comments/commentWrite";
+import Modal from "@/components/comments/modal";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
