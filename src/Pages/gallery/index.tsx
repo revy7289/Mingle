@@ -1,5 +1,3 @@
-import { TagAntd, TagChakra } from "@/components/tag";
-
 export default function GalleryPage() {
   // 예시 이미지 리스트들
   const items: string[] = [
@@ -197,10 +195,7 @@ export default function GalleryPage() {
               <div className="w-full h-full absolute inset-0 bg-gradient-to-b from-transparent to-[#000000] opacity-0 group-hover:opacity-80 transition-opacity duration-300 rounded-lg flex justify-end items-end cursor-pointer">
                 <div className="w-full h-[130px] p-[20px] flex flex-col gap-[8px]">
                   <p className="text-[#fcfcfc] text-[24px]">작성자이름은최대열두글자</p>
-                  <div className="flex gap-[10px]">
-                    <TagAntd />
-                    <TagChakra />
-                  </div>
+                  <div className="flex gap-[10px]">태그들</div>
                   <p className="text-[#fcfcfc] text-[12px] ml-[10px]">2024. 12. 13 23:54</p>
                 </div>
               </div>

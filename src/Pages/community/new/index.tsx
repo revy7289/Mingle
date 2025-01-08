@@ -4,16 +4,7 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  TagAngular,
-  TagAntd,
-  TagChakra,
-  TagMui,
-  TagReact,
-  TagShardcn,
-  TagSvelte,
-  TagVue,
-} from "@/Components/tag";
+import { Tag } from "@/Components/tag";
 import {
   CreateBoardDocument,
   FetchBoardDocument,
@@ -21,6 +12,10 @@ import {
 } from "@/Commons/graphql/graphql";
 
 export default function NewPage() {
+  const tagList = ["MUI", "ANTD", "chakra", "shardcn", "React", "Vue", "Angular", "Svelte"];
+  const [seletedTag, setSeletedTag] = useState([]);
+  console.log(seletedTag);
+
   const location = window.location.pathname;
   const isEdit = location.includes("edit");
 
@@ -33,7 +28,6 @@ export default function NewPage() {
 
   const [title, setTitle] = useState("");
   const [editor, setEditor] = useState("");
-  // const [tag, setTag] = useState([""]);
 
   const [createBoard] = useMutation(CreateBoardDocument);
   const [updateBoard] = useMutation(UpdateBoardDocument);
@@ -59,34 +53,36 @@ export default function NewPage() {
     setEditor(content);
   };
 
-  // const onClickSubmit = async () => {
-  //   if (!isEdit) {
-  //     const createResult = await createBoard({
-  //       variables: {
-  //         createBoardInput: {
-  //           writer: "작성자",
-  //           password: "123",
-  //           title: title,
-  //           contents: editor,
-  //         },
-  //       },
-  //     });
-  //     console.log(createResult);
-  //     navigate(`/community/post/${createResult.data?.createBoard._id}`);
-  //   } else {
-  //     const updateResult = await updateBoard({
-  //       variables: {
-  //         updateBoardInput: {
-  //           title: title || data?.fetchBoard.title,
-  //           contents: editor || data?.fetchBoard.contents,
-  //         },
-  //         boardId: params.boardId as string,
-  //         password: "123",
-  //       },
-  //     });
-  //     navigate(`/community/post/${updateResult.data?.updateBoard._id}`);
-  //   }
-  // };
+  const onClickSubmit = async () => {
+    if (!isEdit) {
+      const createResult = await createBoard({
+        variables: {
+          createBoardInput: {
+            writer: "작성자",
+            password: "123",
+            title: title,
+            contents: editor,
+            images: seletedTag,
+          },
+        },
+      });
+      console.log(createResult);
+      navigate(`/community/post/${createResult.data?.createBoard._id}`);
+    } else {
+      const updateResult = await updateBoard({
+        variables: {
+          updateBoardInput: {
+            title: title || data?.fetchBoard.title,
+            contents: editor || data?.fetchBoard.contents,
+            images: seletedTag || data?.fetchBoard.images,
+          },
+          boardId: params.boardId as string,
+          password: "123",
+        },
+      });
+      navigate(`/community/post/${updateResult.data?.updateBoard._id}`);
+    }
+  };
 
   return (
     <div className="w-screen h-full flex flex-col items-center">
@@ -136,7 +132,7 @@ export default function NewPage() {
         </div>
         <div className="w-[1120px] flex justify-end gap-[20px] relative bottom-[0px] left-[315px]">
           {isModalOpen && (
-            <div className="pt-[60px] px-[60px] w-[576px] h-[386px] border border-[#dadde6] flex flex-col justify-between rounded-2xl absolute bottom-[80px] bg-white z-10">
+            <div className="pt-[60px] px-[56px] w-[576px] h-[386px] border border-[#dadde6] flex flex-col justify-between rounded-2xl absolute bottom-[80px] bg-white z-10">
               <div className="flex gap-[54px]">
                 <span>카테고리</span>
                 <div className="flex gap-[8px]">
@@ -148,29 +144,32 @@ export default function NewPage() {
                   <label for="Free">자유게시판</label>
                 </div>
               </div>
-              <div className="flex gap-[54px]">
+              <div className="flex mt-[40px]  gap-[54px]">
                 <span>태그편집</span>
-                <div className="flex flex-col">
-                  <div className="flex gap-[10px]">
-                    <TagMui />
-                    <TagAntd />
-                    <TagChakra />
-                    <TagShardcn />
-                  </div>
-                  <div className="flex gap-[10px] mt-[10px]">
-                    <TagReact />
-                    <TagVue />
-                    <TagAngular />
-                    <TagSvelte />
+                <div className="flex w-[350px]">
+                  <div className="flex flex-wrap gap-[10px]">
+                    {tagList.map((tag, index) => (
+                      <div key={index}>
+                        <Tag tagName={tag} seletedTag={seletedTag} setSeletedTag={setSeletedTag} />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
               <div>
-                <input
+                <textarea
                   type="text"
-                  className="w-full h-[48px] px-[15px] bg-[#fcfcfc] border-[#bdbdbd] border-b-[1px] outline-none mt-[10px]"
-                  placeholder="태그 직접 입력하기"
+                  className="w-full h-[84px] px-[12px] py-[14px] bg-[#F5F5F5] outline-none border-b border-[#BDBDBD] mt-[40px] resize-none"
+                  placeholder="#태그 직접 입력하기"
                 />
+              </div>
+              <div className="flex justify-center my-[20px]">
+                <button
+                  className="w-[80px] h-[40px] bg-[#32CBFF] rounded-[8px] text-[20px] text-[#FCFCFC]"
+                  onClick={onClickSubmit}
+                >
+                  확인
+                </button>
               </div>
             </div>
           )}

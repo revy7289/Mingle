@@ -50,6 +50,7 @@ export const CREATE_BOARD = gql`
       writer
       title
       contents
+      images
     }
   }
 `;
@@ -61,6 +62,7 @@ export const UPDATE_BOARD = gql`
       writer
       title
       contents
+      images
     }
   }
 `;
@@ -72,6 +74,7 @@ export const FETCH_BOARD = gql`
       writer
       title
       contents
+      images
       likeCount
       dislikeCount
       createdAt

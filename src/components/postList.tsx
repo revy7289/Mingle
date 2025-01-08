@@ -1,5 +1,4 @@
 import { Eye, Heart, MessageCircle } from "lucide-react";
-import { TagReact } from "./tag";
 
 const PostList = ({ Boards }) => {
   return (
@@ -14,9 +13,7 @@ const PostList = ({ Boards }) => {
       <div className="flex flex-col justify-between w-full h-[140px] border border-[#E0E0E0] rounded-[16px] px-[20px] py-[10px] mt-[20px]">
         <div className="line-clamp-3 ">{Boards.contents}</div>
         <div className="flex justify-between">
-          <div>
-            <TagReact />
-          </div>
+          <div>태그</div>
           <span className="text-[#767676] text-[12px]">작성자이름은최대열두글자</span>
         </div>
       </div>

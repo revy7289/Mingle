@@ -11,6 +11,7 @@ import {
 import Comment from "@/components/comments/comment";
 import CommentWrite from "@/components/comments/commentWrite";
 import Modal from "@/components/comments/modal";
+import { Tag } from "@/Components/tag";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -258,7 +259,11 @@ export default function PostPage() {
             {data?.fetchBoard.contents}
           </div>
           <div className="w-full h-[24px] mt-[30px] flex justify-between">
-            <div className="w-[350px] h-full flex gap-[10px]">태그</div>
+            <div className="w-[350px] h-full flex gap-[10px]">
+              {data?.fetchBoard.images?.map((tagName) => (
+                <Tag tagName={tagName} />
+              ))}
+            </div>
             <div className="flex gap-[20px]">
               <Link to={`/community/post/${params.boardId}/edit`}>
                 <button className="text-[#767676]">수정하기</button>
