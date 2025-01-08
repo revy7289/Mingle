@@ -1,6 +1,6 @@
 import logo from "/logo.svg";
 import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { Copy, Settings2, Trash2, X } from "lucide-react";
 
 import {
   ReactFlow,
@@ -9,6 +9,7 @@ import {
   useReactFlow,
   Panel,
   applyNodeChanges,
+  NodeToolbar,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -144,7 +145,33 @@ const initialNodes = [
   },
 ];
 
+function NodeWithToolbar({ data }) {
+  const { currentNode } = data;
+  const Component = nodeTypes[currentNode];
+
+  return (
+    <>
+      <NodeToolbar className="flex gap-[8px]" align="end">
+        <button className="w-[24px] h-[24px] flex justify-center items-center">
+          <Settings2 color="#222" size={16} />
+        </button>
+
+        <button className="w-[24px] h-[24px] flex justify-center items-center">
+          <Copy color="#222" size={16} />
+        </button>
+
+        <button className="w-[24px] h-[24px] flex justify-center items-center">
+          <Trash2 color="#222" size={16} />
+        </button>
+      </NodeToolbar>
+
+      {Component ? <Component /> : <div>No Component</div>}
+    </>
+  );
+}
+
 const nodeTypes = {
+  "node-with-toolbar": NodeWithToolbar,
   SiteSearch,
   MuiAlert,
   AntdAlert,
@@ -309,7 +336,6 @@ function MinglePage() {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-
       if (!type) return;
 
       const position = screenToFlowPosition({
@@ -317,11 +343,14 @@ function MinglePage() {
         y: event.clientY,
       });
 
+      const currentNode = String(type);
+
       setNodes((nds) => {
         const newNode = {
           id: getId(nds.length),
-          type,
+          type: "node-with-toolbar",
           position,
+          data: { currentNode },
         };
 
         const dndUpdateNode = nds.concat(newNode);
@@ -342,7 +371,7 @@ function MinglePage() {
   }
 
   function onClickLib(e: MouseEvent) {
-    const currentNode = String(e.currentTarget.id);
+    const currentNode = e.currentTarget.id;
     console.log(e.currentTarget.id);
 
     setNodes((prev) => {
@@ -350,8 +379,9 @@ function MinglePage() {
         ...prev, // 기존 노드들
         {
           id: getId(prev.length),
-          type: `${currentNode}`,
-          position: { x: prev.length * 10, y: prev.length * 10 },
+          type: "node-with-toolbar",
+          position: { x: prev.length * 10, y: 60 + prev.length * 10 },
+          data: { currentNode },
         },
       ];
       encodeUrl(updateNode);
