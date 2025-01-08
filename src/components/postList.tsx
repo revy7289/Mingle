@@ -1,6 +1,9 @@
 import { Eye, Heart, MessageCircle } from "lucide-react";
+import { Tag } from "./tag";
+import { useNavigate } from "react-router-dom";
 
 const PostList = ({ Boards }) => {
+  const navigate = useNavigate();
   return (
     <div className="w-[1080px]">
       <div className="flex gap-[20px] items-center">
@@ -10,10 +13,19 @@ const PostList = ({ Boards }) => {
         <span className="text-[#222222] font-semibold text-[24px]">{Boards.title}</span>
       </div>
 
-      <div className="flex flex-col justify-between w-full h-[140px] border border-[#E0E0E0] rounded-[16px] px-[20px] py-[10px] mt-[20px]">
+      <div
+        onClick={() => navigate(`/community/post/${Boards._id}`)}
+        className="flex flex-col justify-between w-full h-[140px] border border-[#E0E0E0] rounded-[16px] px-[20px] py-[10px] mt-[20px]"
+      >
         <div className="line-clamp-3 ">{Boards.contents}</div>
         <div className="flex justify-between">
-          <div>태그</div>
+          <div className="flex gap-[10px]">
+            {Boards.images.map((tagName, index) => (
+              <div key={index}>
+                <Tag tagName={tagName} />
+              </div>
+            ))}
+          </div>
           <span className="text-[#767676] text-[12px]">작성자이름은최대열두글자</span>
         </div>
       </div>

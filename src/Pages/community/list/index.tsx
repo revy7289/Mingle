@@ -1,20 +1,25 @@
 import { FetchBoardsDocument, FetchTravelproductsDocument } from "@/Commons/graphql/graphql";
 import PostList from "@/Components/postList";
+import { Tag } from "@/Components/tag";
 import { useQuery } from "@apollo/client";
 import { Heart, Pencil, Search } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ListPage() {
+  const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
   const tabs = ["질문과답변", "자유게시판"];
   const { data: dataBoards } = useQuery(FetchBoardsDocument);
+  console.log(dataBoards);
   const { data: dataQuestionBoards } = useQuery(FetchTravelproductsDocument);
 
   const popularBoards = dataBoards?.fetchBoards
-    .filter((boards) => boards.likeCount > 1)
+    .filter((boards) => boards.likeCount > 0)
     .sort((a, b) => b.likeCount - a.likeCount)
     .slice(0, 3);
+
+  console.log(popularBoards);
 
   return (
     <>
@@ -30,11 +35,13 @@ export default function ListPage() {
               const matches = text.match(imagePattern);
 
               return (
-                <div className="w-[360px] h-[280px] overflow-hidden">
+                <div
+                  className="w-[360px] h-[280px] overflow-hidden"
+                  onClick={() => navigate(`/community/post/${post._id}`)}
+                >
                   {matches ? (
                     matches?.map((match) => {
                       const imgSrc = match.replace("![](", "").replace(")", "");
-                      console.log(imgSrc);
                       return (
                         <img
                           className="w-full h-[180px] rounded-t-2xl object-cover  border-[#BDBDBD] border-x border-t"
@@ -47,14 +54,14 @@ export default function ListPage() {
                   )}
 
                   <div className="w-full h-[100px] rounded-b-2xl border border-solid border-[#bdbdbd] flex flex-col justify-between p-[16px]">
-                    <div className="text-[24px] text-semibold">{post.title}</div>
+                    <div className="text-[24px] text-semibold whitespace-pre overflow-hidden">
+                      {post.title}
+                    </div>
 
                     <div className="flex justify-between">
                       <div className="flex gap-[8px]">
-                        {new Array(3).fill("태그").map((tag) => (
-                          <div className="w-[80px] h-[24px] rounded-lg bg-[#767676] flex justify-center items-center text-white">
-                            {tag}
-                          </div>
+                        {post?.images?.map((tagName) => (
+                          <Tag tagName={tagName} />
                         ))}
                       </div>
 
@@ -101,15 +108,19 @@ export default function ListPage() {
             {tabIndex === 0 ? (
               //질문과답변
               <>
-                {dataQuestionBoards?.fetchTravelproducts.map((questionBoards) => (
-                  <PostList Boards={questionBoards} />
+                {dataQuestionBoards?.fetchTravelproducts.map((questionBoards, index) => (
+                  <div key={index}>
+                    <PostList Boards={questionBoards} />
+                  </div>
                 ))}
               </>
             ) : (
               //자유게시판
               <>
-                {dataBoards?.fetchBoards.map((freeBoards) => (
-                  <PostList Boards={freeBoards} />
+                {dataBoards?.fetchBoards.map((freeBoards, index) => (
+                  <div key={index}>
+                    <PostList Boards={freeBoards} />
+                  </div>
                 ))}
               </>
             )}
