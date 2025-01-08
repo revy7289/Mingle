@@ -20,123 +20,6 @@ import SavePanel from "./panelAddon/saveRestore";
 
 import SiteSearch from "./siteSearch";
 
-// // Alert Components
-// import MuiAlert from "@/components/mui/muiAlert";
-// import AntdAlert from "@/components/antd/antdAlert";
-
-// // Breadcrumb Components
-// import MuiBreadcrumb from "@/components/mui/muiBreadcrumb";
-// import AntdBreadcrumb from "@/components/antd/antdBreadcrumb";
-
-// // Menu Components
-// import MuiMenu from "@/components/mui/muiMenu";
-// import AntdMenu from "@/components/antd/antdMenu";
-
-// // Accordion Components
-// import AntdAccordion from "@/components/antd/antdAccordion";
-// import MuiAccordion from "@/components/mui/muiAccordion";
-// import ChakraAccordion from "@/components/chakra/chakraAccordion";
-// import ShadcnAccordion from "@/components/shadcn/shadcnAccordion";
-
-// // Button Components
-// import AntdButton from "@/components/antd/antdButton";
-// import ChakraButton from "@/components/chakra/chakraButton";
-// import MuiButton from "@/components/mui/muiButton";
-// import ShadcnButton from "@/components/shadcn/shadcnButton";
-
-// // Calendar Components
-// import MuiCalendar from "@/components/mui/muiCalendar";
-// import ShadcnCalendar from "@/components/shadcn/shadcnCalendar";
-// import AntdCalendar from "@/components/antd/antdCalendar";
-
-// // Avatar Components
-// import MuiAvatar from "@/components/mui/muiAvatar";
-// import AntdAvatar from "@/components/antd/antdAvatar";
-// import ChakraAvatar from "@/components/chakra/chakraAvatar";
-// import ShadcnAvatar from "@/components/shadcn/shadcnAvatar";
-
-// // Checkbox Components
-// import AntdCheckbox from "@/components/antd/antdCheckbox";
-// import MuiCheckbox from "@/components/mui/muiCheckbox";
-// import ChakraCheckbox from "@/components/chakra/chakraCheckbox";
-// import ShadcnCheckbox from "@/components/shadcn/shadcnCheckbox";
-
-// // Badge/Status Components
-// import AntdBadge from "@/components/antd/antdBadge";
-// import MuiBadge from "@/components/mui/muiBadge";
-// import ChakraBadge from "@/components/chakra/chakraBadge";
-
-// // Badge/Tag Components
-// import ChakraTag from "@/components/chakra/chakraTag";
-// import ShadcnTag from "@/components/shadcn/shadcnTag";
-// import MuiTag from "@/components/mui/muiTag";
-
-// // Card Components
-// import AntdCard from "@/components/antd/antdCard";
-// import MuiCard from "@/components/mui/muiCard";
-// import ChakraCard from "@/components/chakra/chakraCard";
-// import ShadcnCard from "@/components/shadcn/shadcnCard";
-
-// // Carousel Components
-// import AntdCarousel from "@/components/antd/antdCarousel";
-// import ShadcnCarousel from "@/components/shadcn/shadcnCarousel";
-
-// // Collapsible Components
-// import MuiCollapse from "@/components/mui/muiCollapse";
-// import AntdCollapse from "@/components/antd/antdCollapse";
-// import ShadcnCollapse from "@/components/shadcn/shadcnCollapse";
-
-// // Color-Picker Components
-// import AntdColorpicker from "@/components/antd/antdColorpicker";
-// import ChakraColorpicker from "@/components/chakra/chakraColorpicker";
-
-// // Description Components
-// import AntdDescription from "@/components/antd/antdDescription";
-// import ChakraDescription from "@/components/chakra/chakraDescription";
-// import ShadcnDescription from "@/components/shadcn/shadcnDescription";
-
-// // Drawer Components
-// import AntdDrawer from "@/components/antd/antdDrawer";
-// import MuiDrawer from "@/components/mui/muiDrawer";
-// import ChakraDrawer from "@/components/chakra/chakraDrawer";
-// import ShadcnDrawer from "@/components/shadcn/shadcnDrawer";
-
-// // Radio Components
-// import AntdRadio from "@/components/antd/antdRadio";
-// import MuiRadio from "@/components/mui/muiRadio";
-// import ChakraRadio from "@/components/chakra/chakraRadio";
-// import ShadcnRadio from "@/components/shadcn/shadcnRadio";
-
-// // Tab Components
-// import AntdTab from "@/components/antd/antdTab";
-// import MuiTab from "@/components/mui/muiTab";
-// import ChakraTab from "@/components/chakra/chakraTab";
-// import ShadcnTab from "@/components/shadcn/shadcnTab";
-
-// // Select Components
-// import AntdSelect from "@/components/antd/antdSelect";
-// import MuiSelect from "@/components/mui/muiSelect";
-// import ChakraSelect from "@/components/chakra/chakraSelect";
-// import ShadcnSelect from "@/components/shadcn/shadcnSelect";
-
-// // Skeleton Componenets
-// import AntdSkeleton from "@/components/antd/antdSkeleton";
-// import MuiSkeleton from "@/components/mui/muiSkeleton";
-// import ShadcnSkeleton from "@/components/shadcn/shadcnSkeleton";
-// import ChakraSkeleton from "@/components/chakra/chakraSkeleton";
-
-// // Toggle Components
-// import AntdToggle from "@/components/antd/antdToggle";
-// import ChakraToggle from "@/components/chakra/chakraToggle";
-// import MuiToggle from "@/components/mui/muiToggle";
-// import ShadcnToggle from "@/components/shadcn/shadcnToggle";
-
-// // Table Components
-// import AntdTable from "@/components/antd/antdTable";
-// import MuiTable from "@/components/mui/muiTable";
-// import ShadcnTable from "@/components/shadcn/shadcnTable";
-// import ChakraTable from "@/components/chakra/chakraTable";
-
 const initialNodes = [
   {
     id: "node-00",
@@ -173,79 +56,6 @@ function NodeWithToolbar({ data }) {
 const initialNodeTypes = {
   "node-with-toolbar": NodeWithToolbar,
   SiteSearch,
-  // MuiAlert,
-  // AntdAlert,
-  // MuiBreadcrumb,
-  // AntdBreadcrumb,
-  // MuiMenu,
-  // AntdMenu,
-  // AntdAccordion,
-  // MuiAccordion,
-  // ChakraAccordion,
-  // ShadcnAccordion,
-  // AntdButton,
-  // ChakraButton,
-  // MuiButton,
-  // ShadcnButton,
-  // MuiCalendar,
-  // ShadcnCalendar,
-  // AntdCalendar,
-  // MuiAvatar,
-  // AntdAvatar,
-  // ChakraAvatar,
-  // ShadcnAvatar,
-  // AntdCheckbox,
-  // MuiCheckbox,
-  // ChakraCheckbox,
-  // ShadcnCheckbox,
-  // AntdBadge,
-  // MuiBadge,
-  // ChakraBadge,
-  // ShadcnTag,
-  // ChakraTag,
-  // MuiTag,
-  // AntdCard,
-  // MuiCard,
-  // ChakraCard,
-  // ShadcnCard,
-  // AntdCarousel,
-  // ShadcnCarousel,
-  // MuiCollapse,
-  // AntdCollapse,
-  // ShadcnCollapse,
-  // AntdColorpicker,
-  // ChakraColorpicker,
-  // AntdDescription,
-  // ChakraDescription,
-  // ShadcnDescription,
-  // AntdDrawer,
-  // MuiDrawer,
-  // ChakraDrawer,
-  // ShadcnDrawer,
-  // AntdRadio,
-  // MuiRadio,
-  // ChakraRadio,
-  // ShadcnRadio,
-  // AntdTab,
-  // MuiTab,
-  // ChakraTab,
-  // ShadcnTab,
-  // AntdSelect,
-  // MuiSelect,
-  // ChakraSelect,
-  // ShadcnSelect,
-  // AntdSkeleton,
-  // MuiSkeleton,
-  // ShadcnSkeleton,
-  // ChakraSkeleton,
-  // AntdToggle,
-  // ChakraToggle,
-  // MuiToggle,
-  // ShadcnToggle,
-  // AntdTable,
-  // MuiTable,
-  // ShadcnTable,
-  // ChakraTable,
 };
 
 const menuList = [
@@ -281,7 +91,6 @@ const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 function MinglePage() {
   const [nodes, setNodes] = useState(initialNodes);
   const [nodeTypes, setNodeTypes] = useState(initialNodeTypes);
-  // const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [selectedComp, setSelectedComp] = useState("");
@@ -292,20 +101,42 @@ function MinglePage() {
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
-  // useEffect(() => {
-  //   console.log(nodes);
-  // }, [nodes]);
-
   useEffect(() => {
     const hash = window.location.hash;
-    console.log(hash);
-
     if (!hash.startsWith("#node&")) return;
 
     const nodeParams = hash.replace("#node&", "");
     const nodeLoader = JSON.parse(atob(nodeParams));
 
     setNodes(nodeLoader);
+
+    const loadModules = async () => {
+      const updateNode = await Promise.all(
+        nodeLoader.map(async (node) => {
+          if (node.data.currentNode) {
+            const key = node.data.currentNode;
+            const [prefix, ...rest] = key.match(/[A-Z][a-z]+/g) || [];
+            const comp = rest.join("");
+
+            try {
+              const module = await import(
+                `@/components/${prefix.toLowerCase()}/${prefix.toLowerCase()}${comp}.tsx`
+              );
+              nodeTypes[key] = module.default;
+              setNodeTypes((prev) => ({
+                ...prev,
+                [key]: module.default,
+              }));
+            } catch (error) {
+              console.error(`Failed to import module for ${key}:`, error);
+            }
+          }
+          return node;
+        })
+      );
+      setNodes(updateNode);
+    };
+    loadModules();
   }, []);
 
   const onNodesChange = useCallback(
@@ -318,11 +149,6 @@ function MinglePage() {
     },
     [setNodes]
   );
-
-  // const onConnect = useCallback(
-  //   (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-  //   [setEdges]
-  // );
 
   const onDragStart = (event, nodeType) => {
     setType(nodeType);
@@ -372,14 +198,13 @@ function MinglePage() {
         const module = await import(
           `@/components/${prefix.toLowerCase()}/${prefix.toLowerCase()}${menu}.tsx`
         );
-        nodeTypes[key] = module.default;
-        setNodeTypes((prev) => ({ ...prev, [key]: module.default }));
+
+        if (module) {
+          nodeTypes[key] = module.default;
+          setNodeTypes((prev) => ({ ...prev, [key]: module.default }));
+        }
       } catch (error) {
         console.error(`Failed to import module for ${key}:`, error);
-        setNodeTypes((prev) => ({
-          ...prev,
-          [key]: () => <div>Component not found</div>,
-        }));
       }
     });
 
@@ -437,28 +262,6 @@ function MinglePage() {
   const ANTD_COMP = nodeTypes[`Antd${selectedComp}` as keyof typeof nodeTypes];
   const CHAKRA_COMP = nodeTypes[`Chakra${selectedComp}` as keyof typeof nodeTypes];
   const SHADCN_COMP = nodeTypes[`Shadcn${selectedComp}` as keyof typeof nodeTypes];
-
-  console.log(
-    "@MUI_COMP: ",
-    MUI_COMP,
-    "@ANTD_COMP: ",
-    ANTD_COMP,
-    "@CHAKRA_COMP: ",
-    CHAKRA_COMP,
-    "@SHADCN_COMP: ",
-    SHADCN_COMP
-  );
-
-  console.log(
-    nodeTypes[`Mui${selectedComp}`],
-    nodeTypes[`Antd${selectedComp}`],
-    nodeTypes[`Chakra${selectedComp}`],
-    nodeTypes[`Shadcn${selectedComp}`]
-  );
-
-  console.log(Object.keys(nodeTypes));
-
-  console.log(nodeTypes);
 
   return (
     <div className="w-screen h-screen bg-[#222222] flex relative">
