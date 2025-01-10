@@ -72,7 +72,7 @@ export default function SignupPage() {
             <ChevronLeft className="text-[#767676]" /> 뒤로가기
           </p>
           <Link to="/">
-            <img src="/login-logo.png" alt="logo" className="w-[240px] h-[80px]" />
+            <img src="/logoBlack.svg" alt="logo" className="w-[240px] h-[80px]" />
           </Link>
         </div>
         <div className="w-full h-[400px] flex flex-col justify-between">

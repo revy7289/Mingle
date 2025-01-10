@@ -1,6 +1,6 @@
 import { FetchBoardsDocument, FetchTravelproductsDocument } from "@/commons/graphql/graphql";
-import PostList from "@/Components/postList";
-import { Tag } from "@/Components/tag";
+import PostList from "@/components/postList";
+import { Tag } from "@/components/tag";
 import { useQuery } from "@apollo/client";
 import { Heart, Pencil, Search } from "lucide-react";
 import { useState } from "react";

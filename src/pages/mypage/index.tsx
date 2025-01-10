@@ -1,5 +1,6 @@
 import Reply from "@/components/comments/reply";
 import PostList from "@/components/postList";
+import { Mail, Pencil, UsersRound } from "lucide-react";
 import { useState } from "react";
 
 const Mypage = () => {
@@ -14,7 +15,7 @@ const Mypage = () => {
           <div className="flex justify-between items-center w-[245px] h-[48px] mt-[20px]">
             <span className="text-[#222222] text-[40px] font-medium">닉네임</span>
             <div>
-              <img src="/edit.png" />
+              <Pencil />
             </div>
           </div>
           <div className="flex flex-col gap-[8px] mt-[12px] w-[245px]">
@@ -23,7 +24,7 @@ const Mypage = () => {
               <span className="text-[#767676]">000,000 XP</span>
             </div>
             <div className="flex gap-[10px]">
-              <img src="/follow.png" />
+              <UsersRound />
               <div>
                 <span>팔로잉 0</span>
                 <span> · </span>
@@ -37,7 +38,7 @@ const Mypage = () => {
             <div className="flex justify-between">
               <span className="text-[24px] font-semibold">한 줄 소개</span>
               <div>
-                <img src="/edit.png" />
+                <Pencil />
               </div>
             </div>
             <div className="px-[16px] py-[15px]">
@@ -51,7 +52,7 @@ const Mypage = () => {
             <div className="flex justify-between mb-[20px]">
               <span className="text-[24px] font-semibold">기술스택</span>
               <div>
-                <img src="/edit.png" />
+                <Pencil />
               </div>
             </div>
             태그
@@ -60,7 +61,7 @@ const Mypage = () => {
             <span className="text-[24px] font-semibold">연락처</span>
             <div className="flex gap-[12px] mt-[17px]">
               <div>
-                <img src="/email.png" />
+                <Mail />
               </div>
               <span>www.contact@mail.com</span>
             </div>
@@ -92,7 +93,7 @@ const Mypage = () => {
                 <div className="flex justify-between items-center">
                   <h2 className="text-[24px]">untitled.mingle</h2>
                   <div>
-                    <img src="/edit.png" />
+                    <Pencil />
                   </div>
                 </div>
                 <div className="text-[#767676]">2024.12.13 23.54</div>

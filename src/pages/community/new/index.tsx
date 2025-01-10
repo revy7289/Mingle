@@ -4,7 +4,7 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tag } from "@/Components/tag";
+import { Tag } from "@/components/tag";
 import {
   CreateBoardDocument,
   FetchBoardDocument,

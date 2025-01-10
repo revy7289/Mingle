@@ -1,4 +1,4 @@
-import logo from "/logo.svg";
+import logo from "/logoColor.svg";
 import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Copy, Settings2, Trash2, X } from "lucide-react";
 

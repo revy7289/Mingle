@@ -8,7 +8,7 @@ export default function FindPwPage() {
         <div className=" w-full flex justify-center">
           <div className="w-[240px] h-[80px]">
             <Link to="/">
-              <img src="/login-logo.png" alt="login-logo" />
+              <img src="/logoBlack.svg" alt="login-logo" />
             </Link>
           </div>
         </div>

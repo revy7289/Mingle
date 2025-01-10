@@ -41,7 +41,7 @@ const Header = () => {
     <div className="h-[100px] bg-[#343434] justify-center flex items-center mb-[120px]">
       <div className="flex justify-between w-[1120px]">
         <Link to="/">
-          <img src="/logo.svg" className="cursor-pointer" />
+          <img src="/logoColor.svg" className="cursor-pointer" />
         </Link>
         <ul className="flex gap-[20px] text-[#767676] text-[24px]">
           {menuItems.map((item) => (
