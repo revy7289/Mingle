@@ -50,6 +50,7 @@ export const CREATE_BOARD = gql`
       writer
       title
       contents
+      images
     }
   }
 `;
@@ -61,6 +62,7 @@ export const UPDATE_BOARD = gql`
       writer
       title
       contents
+      images
     }
   }
 `;
@@ -72,6 +74,7 @@ export const FETCH_BOARD = gql`
       writer
       title
       contents
+      images
       likeCount
       dislikeCount
       createdAt
@@ -112,6 +115,7 @@ export const UPDATE_BOARD_COMMENT = gql`
       _id
       writer
       contents
+      rating
       createdAt
       updatedAt
       deletedAt
@@ -126,7 +130,7 @@ export const DELETE_BOARD_COMMENT = gql`
 `;
 
 export const FETCH_BOARD_COMMENTS = gql`
-  query FetchBoardComments($page: Int, $boardId: ID!) {
+  query fetchBoardComments($page: Int, $boardId: ID!) {
     fetchBoardComments(boardId: $boardId, page: $page) {
       _id
       writer
@@ -140,7 +144,92 @@ export const FETCH_BOARD_COMMENTS = gql`
 `;
 
 export const LIKE_COUNT = gql`
-  mutation LikeBoard($boardId: ID!) {
+  mutation likeBoard($boardId: ID!) {
     likeBoard(boardId: $boardId)
+  }
+`;
+
+export const DISLIKE_BOARD = gql`
+  mutation dislikeBoard($boardId: ID!) {
+    dislikeBoard(boardId: $boardId)
+  }
+`;
+
+export const FETCH_BOARDS = gql`
+  query fetchBoards {
+    fetchBoards {
+      _id
+      writer
+      title
+      contents
+      likeCount
+      dislikeCount
+      images
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const FETCH_TRAVEL_PRODUCTS = gql`
+  query fetchTravelproducts {
+    fetchTravelproducts {
+      _id
+      name
+      remarks
+      contents
+      tags
+      images
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const CREATE_TRAVEL_PRODUCT = gql`
+  mutation createTravelproduct($createTravelproductInput: CreateTravelproductInput!) {
+    createTravelproduct(createTravelproductInput: $createTravelproductInput) {
+      _id
+      name
+      remarks
+      contents
+      tags
+      images
+      pickedCount
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const UPDATE_TRAVEL_PRODUCT = gql`
+  mutation updateTravelproduct(
+    $updateTravelproductInput: UpdateTravelproductInput!
+    $travelproductId: ID!
+  ) {
+    updateTravelproduct(
+      updateTravelproductInput: $updateTravelproductInput
+      travelproductId: $travelproductId
+    ) {
+      _id
+      name
+      remarks
+      contents
+      tags
+      images
+      pickedCount
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const DELETE_TRAVEL_PRODUCT = gql`
+  mutation deleteTravelproduct($travelproductId: ID!) {
+    deleteTravelproduct(travelproductId: $travelproductId)
   }
 `;

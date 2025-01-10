@@ -1,16 +1,20 @@
 import {
   CreateBoardCommentDocument,
   DeleteBoardDocument,
+  DislikeBoardDocument,
   FetchBoardCommentsDocument,
   FetchBoardDocument,
+  FetchUserLoggedInDocument,
   LikeBoardDocument,
   UpdateBoardCommentDocument,
 } from "@/commons/graphql/graphql";
 import Comment from "@/components/comments/comment";
 import CommentWrite from "@/components/comments/commentWrite";
+import Modal from "@/components/comments/modal";
+import { Tag } from "@/Components/tag";
 import { useMutation, useQuery } from "@apollo/client";
 import { Eye, Heart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function PostPage() {
@@ -21,11 +25,47 @@ export default function PostPage() {
   const [contents, setContents] = useState("");
   const [commentId, setCommentId] = useState("");
   const [replyId, setReplyId] = useState("");
+  const [likeCountActive, setLikeCountActive] = useState(false);
 
   const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
   const [likeBoard] = useMutation(LikeBoardDocument);
+  const [viewBoard] = useMutation(DislikeBoardDocument);
+
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
+  console.log("유저정보", userData);
+
+  //조회수
+  const mount = useRef(false);
+  useEffect(() => {
+    if (!mount.current) {
+      // 처음 마운트될 때 실행 // 본인도 업, 여러번 업
+      console.log("조회수 업");
+      viewBoard({
+        variables: {
+          boardId: params.boardId as string,
+        },
+      });
+      mount.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isModal) {
+      document.body.style.overflow = "hidden"; // 스크롤 숨김
+    } else {
+      document.body.style.overflow = "auto"; // 스크롤 복원
+    }
+  }, [isModal]);
+
+  useEffect(() => {
+    const a = JSON.parse(localStorage.getItem(`likeCount_${params.boardId}`));
+    console.log(a);
+    if (a === userData?.fetchUserLoggedIn._id) {
+      setLikeCountActive(true);
+    }
+  }, [userData]);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -45,7 +85,6 @@ export default function PostPage() {
 
   // 게시글 삭제
   const onClickDelPost = () => {
-    console.log(isModal);
     deleteBoard({
       variables: {
         boardId: params.boardId as string,
@@ -68,7 +107,7 @@ export default function PostPage() {
           writer: "작성자",
           password: "123",
           contents: contents,
-          rating: 22321, // 임의로적어둠 -> 댓글 좋아요로 사용?
+          rating: 0, // 임의로적어둠 -> 댓글 좋아요로 사용,처음생성될때 무조건0
         },
         boardId: params.boardId as string,
       },
@@ -89,7 +128,7 @@ export default function PostPage() {
       variables: {
         updateBoardCommentInput: {
           contents: contents,
-          rating: 13123,
+          rating: 0, // 디비에있는 좋아요가져오기
         },
         password: "123",
         boardCommentId: String(commentId),
@@ -136,7 +175,7 @@ export default function PostPage() {
       variables: {
         updateBoardCommentInput: {
           contents: contents,
-          rating: 13123,
+          rating: 0,
         },
         password: "123",
         boardCommentId: String(replyId),
@@ -158,20 +197,28 @@ export default function PostPage() {
   };
 
   const onClickLikeCount = () => {
-    likeBoard({
-      variables: {
-        boardId: String(params.boardId),
-      },
-      refetchQueries: [
-        {
-          query: FetchBoardDocument,
-          variables: {
-            boardId: String(params.boardId),
-            page: 1,
-          },
+    // TODO: 로그인 되어있을때만, 좋아요 처리
+    if (localStorage.getItem(`likeCount_${params.boardId}`) === null) {
+      likeBoard({
+        variables: {
+          boardId: String(params.boardId),
         },
-      ],
-    });
+        refetchQueries: [
+          {
+            query: FetchBoardDocument,
+            variables: {
+              boardId: String(params.boardId),
+              page: 1,
+            },
+          },
+        ],
+      });
+      setLikeCountActive(true);
+    }
+    localStorage.setItem(
+      `likeCount_${params.boardId}`,
+      JSON.stringify(userData?.fetchUserLoggedIn._id)
+    );
   };
 
   return (
@@ -185,8 +232,11 @@ export default function PostPage() {
           <div className="w-[170px] h-[68px] flex flex-col justify-between mt-[15px]">
             <div className="flex w-full h-[24px] justify-between mt-[7px]">
               <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
-                {/* <Heart fill="#ff3179" stroke="0" onClick={onClickLikeCount} /> */}
-                <Heart color="#767676" onClick={onClickLikeCount} />
+                {likeCountActive ? (
+                  <Heart fill="#ff3179" stroke="0" />
+                ) : (
+                  <Heart color="#767676" onClick={onClickLikeCount} />
+                )}
 
                 <p className="text-[#767676] text-[16px]">{String(data?.fetchBoard.likeCount)}</p>
               </div>
@@ -209,7 +259,11 @@ export default function PostPage() {
             {data?.fetchBoard.contents}
           </div>
           <div className="w-full h-[24px] mt-[30px] flex justify-between">
-            <div className="w-[350px] h-full flex gap-[10px]">태그</div>
+            <div className="w-[350px] h-full flex gap-[10px]">
+              {data?.fetchBoard.images?.map((tagName) => (
+                <Tag tagName={tagName} />
+              ))}
+            </div>
             <div className="flex gap-[20px]">
               <Link to={`/community/post/${params.boardId}/edit`}>
                 <button className="text-[#767676]">수정하기</button>
@@ -217,27 +271,7 @@ export default function PostPage() {
               <button className="text-[#767676]" onClick={() => setIsModal((prev) => !prev)}>
                 삭제하기
               </button>
-              {isModal && (
-                <div className="absolute top-0 left-0 w-full h-screen overflow-hidden bg-black bg-opacity-50">
-                  <div className="flex flex-col justify-center items-center w-[512px] h-[340px] bg-white absolute top-2/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-[8px]">
-                    <span>삭제하시겠습니까?</span>
-                    <div className="flex w-full h-[32px] justify-center gap-[20px] mt-[15px]">
-                      <button
-                        className="w-[100px] h-full rounded-[8px] bg-[#32CBFF] text-[#fcfcfc]"
-                        onClick={onClickDelPost}
-                      >
-                        삭제
-                      </button>
-                      <button
-                        className="w-[100px] h-full rounded-[8px] bg-[#767676] text-[#fcfcfc]"
-                        onClick={() => setIsModal((prev) => !prev)}
-                      >
-                        취소
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {isModal && <Modal onClickDelete={onClickDelPost} setIsModal={setIsModal} />}
             </div>
           </div>
         </div>

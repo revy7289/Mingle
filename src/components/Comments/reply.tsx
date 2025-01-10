@@ -1,8 +1,18 @@
 import { DeleteBoardCommentDocument, FetchBoardCommentsDocument } from "@/Commons/graphql/graphql";
 import { useMutation } from "@apollo/client";
 import { Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import Modal from "./modal";
 
 const Reply = ({ reply, el, setIsEdit, setReplyId }) => {
+  const [isModal, setIsModal] = useState(false);
+
+  if (isModal) {
+    document.body.style.overflow = "hidden"; // 스크롤 숨김
+  } else {
+    document.body.style.overflow = "auto"; // 스크롤 복원
+  }
+
   const time = new Date(reply.createdAt);
 
   const [deleteBoardComment] = useMutation(DeleteBoardCommentDocument);
@@ -42,9 +52,10 @@ const Reply = ({ reply, el, setIsEdit, setReplyId }) => {
           >
             <Pencil />
           </div>
-          <div onClick={onClickDelPostReply}>
+          <div onClick={() => setIsModal((prev) => !prev)}>
             <Trash2 />
           </div>
+          {isModal && <Modal onClickDelete={onClickDelPostReply} setIsModal={setIsModal} />}
         </div>
       </div>
       <div className="mt-[14px] h-[50px]">{reply.contents}</div>

@@ -1,9 +1,16 @@
-import { DeleteBoardCommentDocument, FetchBoardCommentsDocument } from "@/Commons/graphql/graphql";
+import {
+  DeleteBoardCommentDocument,
+  FetchBoardCommentsDocument,
+  FetchUserLoggedInDocument,
+  UpdateBoardCommentDocument,
+} from "@/Commons/graphql/graphql";
 import { useMutation, useQuery } from "@apollo/client";
 import Reply from "./reply";
 import { Heart, MessageCircleReply, Pencil, Trash2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import CommentWrite from "./commentWrite";
+import { useEffect, useState } from "react";
+import Modal from "./modal";
 
 const Comment = ({
   el,
@@ -19,13 +26,32 @@ const Comment = ({
 }) => {
   const params = useParams();
   const time = new Date(el.createdAt);
+  const [isModal, setIsModal] = useState(false);
+  const [likeActive, setLikeActive] = useState(false);
 
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
   const { data: dataReply } = useQuery(FetchBoardCommentsDocument, {
     variables: {
       page: 1,
       boardId: el._id as string,
     },
   });
+  const [updateLikeComment] = useMutation(UpdateBoardCommentDocument);
+
+  useEffect(() => {
+    if (isModal) {
+      document.body.style.overflow = "hidden"; // 스크롤 숨김
+    } else {
+      document.body.style.overflow = "auto"; // 스크롤 복원
+    }
+  }, [isModal]);
+
+  useEffect(() => {
+    const a = JSON.parse(localStorage.getItem(`likeCount_Comment_${el._id}`));
+    if (a === userData?.fetchUserLoggedIn._id) {
+      setLikeActive(true);
+    }
+  }, [userData]);
 
   const [deleteBoardComment] = useMutation(DeleteBoardCommentDocument);
 
@@ -45,6 +71,27 @@ const Comment = ({
         },
       ],
     });
+  };
+
+  // 좋아요 누를때마다 댓글 업데이트함
+  const onClickUpdateLike = () => {
+    if (localStorage.getItem(`likeCount_Comment_${el._id}`) === null) {
+      const likeCount = el.rating;
+      setLikeActive(true);
+      updateLikeComment({
+        variables: {
+          updateBoardCommentInput: {
+            rating: likeCount + 1,
+          },
+          password: "123",
+          boardCommentId: el._id as string,
+        },
+      });
+      localStorage.setItem(
+        `likeCount_Comment_${el._id}`,
+        JSON.stringify(userData?.fetchUserLoggedIn._id)
+      );
+    }
   };
 
   return (
@@ -75,9 +122,10 @@ const Comment = ({
               >
                 <Pencil />
               </div>
-              <div onClick={onClickDelPostComment}>
+              <div onClick={() => setIsModal(true)}>
                 <Trash2 />
               </div>
+              {isModal && <Modal onClickDelete={onClickDelPostComment} setIsModal={setIsModal} />}
             </div>
           </div>
           <div className="h-[50px] flex items-center">{el.contents}</div>
@@ -86,9 +134,13 @@ const Comment = ({
               time.getHours()
             ).padStart(2, "0")}:${String(time.getMinutes()).padStart(2, "0")}`}</div>
             <div className="flex gap-[20px] items-center">
-              <div className="flex gap-[8px]">
+              <div className="flex w-[75px] justify-between px-[8px] gap-[8px]">
                 <div>
-                  <Heart color="#767676" />
+                  {likeActive ? (
+                    <Heart fill="#ff3179" stroke="0" />
+                  ) : (
+                    <Heart color="#767676" onClick={onClickUpdateLike} />
+                  )}
                 </div>
                 <span className="text-[#767676]">{String(el.rating)}</span>
               </div>
