@@ -4,16 +4,9 @@
 
 @font-face {
   font-family: "PretendardVariable";
+  src: url("../public/PretendardVariable.woff2") format("woff2");
   font-weight: 400;
-  src: url("@/public/PretendardVariable.woff2") format("woff2");
-}
-
-:root {
-  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
-  line-height: 1.5;
-  font-weight: 400;
-  font-family: "PretendardVariable", sans-serif;
-  font-size: 10px;
+  font-style: normal;
 }
 
 html,
@@ -21,8 +14,18 @@ body,
 #root {
   height: 100%;
   margin: 0;
+}
+
+html {
   font-family: "PretendardVariable", sans-serif;
-  font-size: 16px;
+  font-size: 62.5%;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+  font-size: 1.6rem;
 }
 
 @layer base {

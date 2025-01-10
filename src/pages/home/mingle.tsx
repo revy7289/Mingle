@@ -280,10 +280,10 @@ function MinglePage() {
         <div className="w-full border-b-2 border-[#767676] mt-[20px]"></div>
 
         {/* 메뉴 리스트 */}
-        <ul className="text-white text-[24px] tracking-wider font-semibold flex flex-col gap-[20px] mt-[40px] px-[10px]">
-          <li>Community</li>
-          <li>My Page</li>
-          <li>Gallery</li>
+        <ul className="flex flex-col gap-[20px] mt-[40px] px-[10px]">
+          <li className="text-white text-[24px] tracking-wider font-semibold">Community</li>
+          <li className="text-white text-[24px] tracking-wider font-semibold">My Page</li>
+          <li className="text-white text-[24px] tracking-wider font-semibold">Gallery</li>
         </ul>
 
         <div className="w-full border-b-2 border-[#767676] mt-[40px]"></div>

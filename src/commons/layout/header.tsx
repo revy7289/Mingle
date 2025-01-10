@@ -7,7 +7,7 @@ import { FetchUserLoggedInDocument, LogoutUserDocument } from "../graphql/graphq
 const Header = () => {
   const location = useLocation();
   const menuItems = [
-    { label: "Playground", path: "/" },
+    { label: "Playground", path: "/home" },
     { label: "Community", path: "/community" },
     { label: "Gallery", path: "/gallery" },
   ];
@@ -43,15 +43,20 @@ const Header = () => {
         <Link to="/">
           <img src="/logoColor.svg" className="cursor-pointer" />
         </Link>
-        <ul className="flex gap-[20px] text-[#767676] text-[24px]">
+        <ul className="flex gap-[20px] ">
           {menuItems.map((item) => (
             <li
               key={item.path}
-              className={`w-[170px] h-[60px] flex justify-center items-center cursor-pointer ${
-                location.pathname === item.path ? "text-[#fcfcfc]" : "text-[#767676]"
-              }`}
+              className={"w-[170px] h-[60px] flex justify-center items-center cursor-pointer"}
             >
-              <Link to={item.path}>{item.label}</Link>
+              <Link
+                to={item.path}
+                className={`text-[24px] ${
+                  location.pathname === item.path ? "text-[#fcfcfc]" : "text-[#767676]"
+                }`}
+              >
+                {item.label}
+              </Link>
             </li>
           ))}
           <div className="flex items-center gap-[7px] w-[170px] h-[60px] text-[22px]">
@@ -81,7 +86,7 @@ const Header = () => {
               </div>
             ) : (
               <Link to="/login">
-                <button className="w-[120px] h-[48px] bg-[#222222] rounded-[8px] text-[#fcfcfc]">
+                <button className="w-[120px] h-[48px] bg-[#222222] rounded-[8px] text-[20px] text-[#fcfcfc] font-semibold">
                   LOGIN
                 </button>
               </Link>
