@@ -10,6 +10,7 @@ import {
   Panel,
   applyNodeChanges,
   NodeToolbar,
+  NodeResizer,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -19,6 +20,7 @@ import ZoomPanel from "./panelAddon/zoomTransition";
 import SavePanel from "./panelAddon/saveRestore";
 
 import SiteSearch from "./siteSearch";
+import CleanupPanel from "./panelAddon/cleanupNode";
 
 const initialNodes = [
   {
@@ -28,12 +30,14 @@ const initialNodes = [
   },
 ];
 
-function NodeWithToolbar({ data }) {
+function NodeWithToolbar({ data, selected = false }) {
   const { currentNode } = data;
   const Component = initialNodeTypes[currentNode];
 
   return (
     <>
+      <NodeResizer color="#ff0071" isVisible={selected} minWidth={100} minHeight={30} />
+
       <NodeToolbar className="flex gap-[8px]" align="end">
         <button className="w-[24px] h-[24px] flex justify-center items-center">
           <Settings2 color="#222" size={16} />
@@ -122,7 +126,7 @@ function MinglePage() {
               const module = await import(
                 `@/components/${prefix.toLowerCase()}/${prefix.toLowerCase()}${comp}.tsx`
               );
-              nodeTypes[key] = module.default;
+              initialNodeTypes[key] = module.default;
               setNodeTypes((prev) => ({
                 ...prev,
                 [key]: module.default,
@@ -200,7 +204,7 @@ function MinglePage() {
         );
 
         if (module) {
-          nodeTypes[key] = module.default;
+          initialNodeTypes[key] = module.default;
           setNodeTypes((prev) => ({ ...prev, [key]: module.default }));
         }
       } catch (error) {
@@ -440,6 +444,8 @@ function MinglePage() {
               <DownloadPanel />
               <div className="w-[2px] h-[20px] bg-[#767676]"></div>
               <SavePanel savedNode={savedNode} setNodes={setNodes} />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <CleanupPanel setNodes={setNodes} />
             </Panel>
           </ReactFlow>
         </div>
