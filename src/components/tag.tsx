@@ -1,14 +1,15 @@
 // 라이브러리: mui / antd / chakra / shardcn
 
-export const Tag = ({ tagName, seletedTag, setSeletedTag }) => {
+export const Tag = ({ tagName, selectedTag, setSelectedTag }) => {
   const onClickTagName = (tag) => {
-    if (!seletedTag.includes(tag)) {
-      setSeletedTag((prev) => [...prev, tag]);
+    if (!selectedTag.includes(tag)) {
+      setSelectedTag((prev) => [...prev, tag]);
     }
   };
+  console.log(selectedTag);
 
-  const tagColor = (tagNames) => {
-    switch (tagNames) {
+  const tagColor = (tagName) => {
+    switch (tagName) {
       case "MUI":
         return "bg-[#0073E6]";
       case "ANTD":
@@ -25,6 +26,8 @@ export const Tag = ({ tagName, seletedTag, setSeletedTag }) => {
         return "bg-[#FF3E00]";
       case "Svelte":
         return "bg-[#FF3E00]";
+      default:
+        return "bg-[#BDBDBD]";
     }
   };
   return (

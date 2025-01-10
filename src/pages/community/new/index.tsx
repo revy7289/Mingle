@@ -7,14 +7,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Tag } from "@/Components/tag";
 import {
   CreateBoardDocument,
+  CreateTravelproductDocument,
   FetchBoardDocument,
+  FetchTravelproductDocument,
   UpdateBoardDocument,
-} from "@/commons/graphql/graphql";
+  UpdateTravelproductDocument,
+} from "@/Commons/graphql/graphql";
 
 export default function NewPage() {
   const tagList = ["MUI", "ANTD", "chakra", "shardcn", "React", "Vue", "Angular", "Svelte"];
-  const [seletedTag, setSeletedTag] = useState([]);
-  console.log(seletedTag);
+  const [inputTag, setInputTag] = useState("");
+  const [inputSaveTag, setInputSaveTag] = useState([]);
+  const [selectedTag, setSelectedTag] = useState([]);
+  const [checkbox, setCheckbox] = useState(0);
 
   const location = window.location.pathname;
   const isEdit = location.includes("edit");
@@ -31,10 +36,18 @@ export default function NewPage() {
 
   const [createBoard] = useMutation(CreateBoardDocument);
   const [updateBoard] = useMutation(UpdateBoardDocument);
+  const [createQuestionBoard] = useMutation(CreateTravelproductDocument);
+  const [updateQuestionBoard] = useMutation(UpdateTravelproductDocument);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
       boardId: params.boardId as string,
+    },
+  });
+
+  const { data: dataQuestionBoard } = useQuery(FetchTravelproductDocument, {
+    variables: {
+      travelproductId: params.boardId as string,
     },
   });
 
@@ -53,34 +66,73 @@ export default function NewPage() {
     setEditor(content);
   };
 
+  const onKeyDownEnter = (e) => {
+    if (e.key === "Enter" && e.target.value.length !== 0) {
+      console.log("엔터입력");
+      console.log(inputTag);
+
+      setInputSaveTag((prevArr) => [...prevArr, inputTag]);
+      setInputTag("");
+    }
+  };
+  console.log(inputSaveTag);
+
   const onClickSubmit = async () => {
-    if (!isEdit) {
-      const createResult = await createBoard({
-        variables: {
-          createBoardInput: {
-            writer: "작성자",
+    if (checkbox === 1) {
+      if (!isEdit) {
+        await createQuestionBoard({
+          variables: {
+            createTravelproductInput: {
+              name: "작성자",
+              remarks: "",
+              contents: editor,
+              price: 123,
+              tags: selectedTag,
+            },
+          },
+        });
+      } else {
+        await updateQuestionBoard({
+          variables: {
+            updateTravelproductInput: {
+              name: "작성자",
+              remarks: "",
+              contents: editor || dataQuestionBoard?.fetchTravelproduct.contents,
+              price: 123,
+              tags: selectedTag || dataQuestionBoard?.fetchTravelproduct.tags,
+            },
+            travelproductId: params.boardId as string,
+          },
+        });
+      }
+    } else if (checkbox === 2) {
+      if (!isEdit) {
+        const createResult = await createBoard({
+          variables: {
+            createBoardInput: {
+              writer: "작성자",
+              password: "123",
+              title: title,
+              contents: editor,
+              images: selectedTag,
+            },
+          },
+        });
+        navigate(`/community/post/${createResult.data?.createBoard._id}`);
+      } else {
+        const updateResult = await updateBoard({
+          variables: {
+            updateBoardInput: {
+              title: title || data?.fetchBoard.title,
+              contents: editor || data?.fetchBoard.contents,
+              images: selectedTag || data?.fetchBoard.images,
+            },
+            boardId: params.boardId as string,
             password: "123",
-            title: title,
-            contents: editor,
-            images: seletedTag,
           },
-        },
-      });
-      console.log(createResult);
-      navigate(`/community/post/${createResult.data?.createBoard._id}`);
-    } else {
-      const updateResult = await updateBoard({
-        variables: {
-          updateBoardInput: {
-            title: title || data?.fetchBoard.title,
-            contents: editor || data?.fetchBoard.contents,
-            images: seletedTag || data?.fetchBoard.images,
-          },
-          boardId: params.boardId as string,
-          password: "123",
-        },
-      });
-      navigate(`/community/post/${updateResult.data?.updateBoard._id}`);
+        });
+        navigate(`/community/post/${updateResult.data?.updateBoard._id}`);
+      }
     }
   };
 
@@ -136,12 +188,26 @@ export default function NewPage() {
               <div className="flex gap-[54px]">
                 <span>카테고리</span>
                 <div className="flex gap-[8px]">
-                  <input type="checkbox" className="w-[24px] h-[24px] accent-[#E0E0E0]" id="QNA" />
-                  <label className="mr-[12px]" for="QNA">
+                  <input
+                    onClick={() => {
+                      setCheckbox(1);
+                    }}
+                    type="checkbox"
+                    className="w-[24px] h-[24px] accent-[#E0E0E0]"
+                    id="QNA"
+                  />
+                  <label className="mr-[12px]" htmlFor="QNA">
                     질문과답변
                   </label>
-                  <input type="checkbox" className="w-[24px] h-[24px] accent-[#E0E0E0]" id="Free" />
-                  <label for="Free">자유게시판</label>
+                  <input
+                    onClick={() => {
+                      setCheckbox(2);
+                    }}
+                    type="checkbox"
+                    className="w-[24px] h-[24px] accent-[#E0E0E0]"
+                    id="Free"
+                  />
+                  <label htmlFor="Free">자유게시판</label>
                 </div>
               </div>
               <div className="flex mt-[40px]  gap-[54px]">
@@ -150,18 +216,37 @@ export default function NewPage() {
                   <div className="flex flex-wrap gap-[10px]">
                     {tagList.map((tag, index) => (
                       <div key={index}>
-                        <Tag tagName={tag} seletedTag={seletedTag} setSeletedTag={setSeletedTag} />
+                        <Tag
+                          tagName={tag}
+                          selectedTag={selectedTag}
+                          setSelectedTag={setSelectedTag}
+                        />
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-              <div>
-                <textarea
-                  type="text"
-                  className="w-full h-[84px] px-[12px] py-[14px] bg-[#F5F5F5] outline-none border-b border-[#BDBDBD] mt-[40px] resize-none"
-                  placeholder="#태그 직접 입력하기"
-                />
+              <div className="w-full h-[84px] px-[12px] py-[14px] bg-[#F5F5F5]  border-b border-[#BDBDBD] mt-[40px]">
+                <div className="flex flex-wrap gap-[10px]">
+                  {inputSaveTag &&
+                    inputSaveTag.map((el, index) => (
+                      <span
+                        key={index}
+                        className="w-[80px] h-[24px] px-[10px] bg-[#BDBDBD] rounded-[4px] flex justify-center"
+                      >
+                        #{el}
+                      </span>
+                    ))}
+                </div>
+                <div>
+                  <input
+                    className="bg-[#F5F5F5] outline-none resize-none ml-[10px]"
+                    placeholder="#태그"
+                    onKeyDown={onKeyDownEnter}
+                    value={inputTag}
+                    onChange={(e) => setInputTag(e.target.value)}
+                  />
+                </div>
               </div>
               <div className="flex justify-center my-[20px]">
                 <button

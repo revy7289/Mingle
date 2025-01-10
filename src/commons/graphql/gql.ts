@@ -34,6 +34,7 @@ const documents = {
     "\n  mutation createTravelproduct($createTravelproductInput: CreateTravelproductInput!) {\n    createTravelproduct(createTravelproductInput: $createTravelproductInput) {\n      _id\n      name\n      remarks\n      contents\n      tags\n      images\n      pickedCount\n      createdAt\n      updatedAt\n      deletedAt\n    }\n  }\n": types.CreateTravelproductDocument,
     "\n  mutation updateTravelproduct(\n    $updateTravelproductInput: UpdateTravelproductInput!\n    $travelproductId: ID!\n  ) {\n    updateTravelproduct(\n      updateTravelproductInput: $updateTravelproductInput\n      travelproductId: $travelproductId\n    ) {\n      _id\n      name\n      remarks\n      contents\n      tags\n      images\n      pickedCount\n      createdAt\n      updatedAt\n      deletedAt\n    }\n  }\n": types.UpdateTravelproductDocument,
     "\n  mutation deleteTravelproduct($travelproductId: ID!) {\n    deleteTravelproduct(travelproductId: $travelproductId)\n  }\n": types.DeleteTravelproductDocument,
+    "\n  query fetchTravelproduct($travelproductId: ID!) {\n    fetchTravelproduct(travelproductId: $travelproductId) {\n      _id\n      name\n      remarks\n      contents\n      price\n      tags\n      images\n      createdAt\n      updatedAt\n      deletedAt\n    }\n  }\n": types.FetchTravelproductDocument,
 };
 
 /**
@@ -130,6 +131,10 @@ export function graphql(source: "\n  mutation updateTravelproduct(\n    $updateT
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation deleteTravelproduct($travelproductId: ID!) {\n    deleteTravelproduct(travelproductId: $travelproductId)\n  }\n"): (typeof documents)["\n  mutation deleteTravelproduct($travelproductId: ID!) {\n    deleteTravelproduct(travelproductId: $travelproductId)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query fetchTravelproduct($travelproductId: ID!) {\n    fetchTravelproduct(travelproductId: $travelproductId) {\n      _id\n      name\n      remarks\n      contents\n      price\n      tags\n      images\n      createdAt\n      updatedAt\n      deletedAt\n    }\n  }\n"): (typeof documents)["\n  query fetchTravelproduct($travelproductId: ID!) {\n    fetchTravelproduct(travelproductId: $travelproductId) {\n      _id\n      name\n      remarks\n      contents\n      price\n      tags\n      images\n      createdAt\n      updatedAt\n      deletedAt\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
