@@ -21,9 +21,9 @@ export const Tag = ({ tagName, selectedTag, setSelectedTag }) => {
       case "React":
         return "bg-[#64DBFE]";
       case "Vue":
-        return "bg-[#E23237]";
+        return "bg-[#41B883]";
       case "Angular":
-        return "bg-[#FF3E00]";
+        return "bg-[#E23237]";
       case "Svelte":
         return "bg-[#FF3E00]";
       default:
@@ -32,7 +32,7 @@ export const Tag = ({ tagName, selectedTag, setSelectedTag }) => {
   };
   return (
     <div
-      className={`w-[80px] h-[24px] rounded-[8px] text-[#FFFFFF] flex justify-center text-[16px] cursor-pointer ${tagColor(
+      className={`w-full h-[24px] rounded-[8px] text-[#FFFFFF] flex justify-center text-[16px] cursor-pointer ${tagColor(
         tagName
       )}`}
       onClick={() => {

@@ -17,7 +17,6 @@ import {
 export default function NewPage() {
   const tagList = ["MUI", "ANTD", "chakra", "shardcn", "React", "Vue", "Angular", "Svelte"];
   const [inputTag, setInputTag] = useState("");
-  const [inputSaveTag, setInputSaveTag] = useState([]);
   const [selectedTag, setSelectedTag] = useState([]);
   const [checkbox, setCheckbox] = useState(0);
 
@@ -67,15 +66,19 @@ export default function NewPage() {
   };
 
   const onKeyDownEnter = (e) => {
-    if (e.key === "Enter" && e.target.value.length !== 0) {
+    if (
+      e.key === "Enter" &&
+      e.target.value.length !== 0 &&
+      !e.nativeEvent.isComposing &&
+      selectedTag.length < 8
+    ) {
       console.log("엔터입력");
       console.log(inputTag);
 
-      setInputSaveTag((prevArr) => [...prevArr, inputTag]);
+      setSelectedTag((prevArr) => [...prevArr, inputTag]);
       setInputTag("");
     }
   };
-  console.log(inputSaveTag);
 
   const onClickSubmit = async () => {
     if (checkbox === 1) {
@@ -215,7 +218,7 @@ export default function NewPage() {
                 <div className="flex w-[350px]">
                   <div className="flex flex-wrap gap-[10px]">
                     {tagList.map((tag, index) => (
-                      <div key={index}>
+                      <div key={index} className="w-[80px]">
                         <Tag
                           tagName={tag}
                           selectedTag={selectedTag}
@@ -226,26 +229,23 @@ export default function NewPage() {
                   </div>
                 </div>
               </div>
-              <div className="w-full h-[84px] px-[12px] py-[14px] bg-[#F5F5F5]  border-b border-[#BDBDBD] mt-[40px]">
-                <div className="flex flex-wrap gap-[10px]">
-                  {inputSaveTag &&
-                    inputSaveTag.map((el, index) => (
-                      <span
-                        key={index}
-                        className="w-[80px] h-[24px] px-[10px] bg-[#BDBDBD] rounded-[4px] flex justify-center"
-                      >
-                        #{el}
-                      </span>
+              <div className="w-full h-full mt-[40px] flex flex-col items-center">
+                <div className="flex flex-wrap items-center gap-[8px] w-[500px] h-[84px] px-[12px] py-[14px]  border-b border-[#BDBDBD] bg-[#F5F5F5] overflow-hidden">
+                  {selectedTag &&
+                    selectedTag.map((el, index) => (
+                      <div key={index} className="w-[113px]">
+                        <Tag tagName={el} />
+                      </div>
                     ))}
-                </div>
-                <div>
-                  <input
-                    className="bg-[#F5F5F5] outline-none resize-none ml-[10px]"
-                    placeholder="#태그"
-                    onKeyDown={onKeyDownEnter}
-                    value={inputTag}
-                    onChange={(e) => setInputTag(e.target.value)}
-                  />
+                  {selectedTag.length === 8 || (
+                    <input
+                      className="bg-[#F5F5F5] outline-none resize-none w-[113px]"
+                      placeholder="#태그"
+                      onKeyDown={onKeyDownEnter}
+                      value={inputTag}
+                      onChange={(e) => setInputTag(e.target.value)}
+                    />
+                  )}
                 </div>
               </div>
               <div className="flex justify-center my-[20px]">
