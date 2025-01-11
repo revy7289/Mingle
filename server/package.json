@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "mini-server for project mingle; bypass CORS, crawling external WEB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "revy7289",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "playwright": "^1.49.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5"
+  }
+}
