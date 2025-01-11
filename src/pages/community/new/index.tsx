@@ -18,6 +18,7 @@ import {
 export default function NewPage() {
   const location = window.location.pathname;
   const isEdit = location.includes("edit");
+  const isQnA = location.includes("qna");
 
   const editorRef = useRef<Editor>(null);
   const params = useParams();
@@ -25,7 +26,7 @@ export default function NewPage() {
 
   const tagList = ["MUI", "ANTD", "chakra", "shadcn", "React", "Vue", "Angular", "Svelte"];
   const [inputTag, setInputTag] = useState("");
-  const [selectedTag, setSelectedTag] = useState([]);
+  const [selectedTag, setSelectedTag] = useState<string[]>([]);
   const [checkbox, setCheckbox] = useState(0);
   const [isModalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -48,9 +49,31 @@ export default function NewPage() {
     },
   });
 
+  // 게시글 내용
   useEffect(() => {
-    editorRef.current?.getInstance().setMarkdown(data?.fetchBoard.contents);
-  }, [data]);
+    editorRef.current
+      ?.getInstance()
+      .setMarkdown(
+        isQnA ? dataQuestionBoard?.fetchTravelproduct.contents : data?.fetchBoard.contents
+      );
+  }, [isQnA, dataQuestionBoard, data]);
+
+  // 게시글 태그
+  useEffect(() => {
+    if (isQnA) {
+      setSelectedTag(dataQuestionBoard?.fetchTravelproduct.tags || []);
+    } else {
+      setSelectedTag(data?.fetchBoard?.images || []);
+    }
+  }, [isQnA, dataQuestionBoard?.fetchTravelproduct.tags, data?.fetchBoard.images]);
+
+  useEffect(() => {
+    if (isQnA && isEdit) {
+      setCheckbox(0);
+    } else if (!isQnA && isEdit) {
+      setCheckbox(1);
+    }
+  }, [isQnA]);
 
   const onChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -59,7 +82,6 @@ export default function NewPage() {
 
   const onChangeEditor = () => {
     const content = editorRef.current?.getInstance().getMarkdown();
-    console.log(content);
     setEditor(content);
   };
 
@@ -95,7 +117,7 @@ export default function NewPage() {
         });
         navigate(`/community/qna/${createQuestionResult.data?.createTravelproduct._id}`);
       } else {
-        await updateQuestionBoard({
+        const updateQuestionResult = await updateQuestionBoard({
           variables: {
             updateTravelproductInput: {
               name: "작성자",
@@ -107,6 +129,7 @@ export default function NewPage() {
             travelproductId: params.boardId as string,
           },
         });
+        navigate(`/community/qna/${updateQuestionResult.data?.updateTravelproduct._id}`);
       }
     } else if (checkbox === 1) {
       if (!isEdit) {
@@ -149,12 +172,16 @@ export default function NewPage() {
           placeholder="제목을 입력해 주세요."
           className="w-full h-[80px] px-[20px] py-[24px] bg-[#fcfcfc] border-[#e0e0e0] border-b-[1px] outline-none text-[24px] mt-[30px] "
           onChange={onChangeTitle}
-          defaultValue={data?.fetchBoard.title}
+          defaultValue={
+            isQnA ? dataQuestionBoard?.fetchTravelproduct.remarks : data?.fetchBoard.title
+          }
         />
 
         <div className="mt-[20px] min-h-[600px] mb-[400px]">
           <Editor
-            initialValue=" "
+            initialValue={
+              isQnA ? dataQuestionBoard?.fetchTravelproduct.contents : data?.fetchBoard.contents
+            }
             placeholder="내용을 입력해주세요."
             previewStyle="vertical"
             height="100%"
@@ -200,9 +227,10 @@ export default function NewPage() {
                       type="checkbox"
                       checked={checkbox === index}
                       className="w-[24px] h-[24px] accent-[#E0E0E0]"
-                      id="QNA"
+                      id={`checkbox-${index}`}
+                      disabled={isEdit ? true : false}
                     />
-                    <label className="mr-[20px]" htmlFor="QNA">
+                    <label className="mr-[20px]" htmlFor={`checkbox-${index}`}>
                       {boards}
                     </label>
                   </div>

@@ -294,14 +294,13 @@ export default function PostPage() {
           </div>
           <div className="w-full h-[24px] mt-[30px] flex justify-between">
             <div className="w-[350px] h-full flex gap-[10px]">
-              {(isQnA
-                ? dataQuestionBoard?.fetchTravelproduct.images
-                : data?.fetchBoard.images
-              )?.map((tagName, index) => (
-                <div key={index} className="w-full">
-                  <Tag tagName={tagName} />
-                </div>
-              ))}
+              {(isQnA ? dataQuestionBoard?.fetchTravelproduct.tags : data?.fetchBoard.images)?.map(
+                (tagName, index) => (
+                  <div key={index} className="w-full">
+                    <Tag tagName={tagName} />
+                  </div>
+                )
+              )}
             </div>
             <div className="flex gap-[20px]">
               <Link to={`/community/${isQnA ? "qna" : "post"}/${params.boardId}/edit`}>

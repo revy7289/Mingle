@@ -1,4 +1,5 @@
-// 라이브러리: mui / antd / chakra / shardcn
+// 라이브러리: mui / antd / chakra / shadcn
+// 프레임워크: React / Vue / Angular / Svelte
 
 export const Tag = ({ tagName, selectedTag, setSelectedTag, children }) => {
   const onClickTagName = (tag) => {
