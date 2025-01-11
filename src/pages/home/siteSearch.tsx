@@ -29,24 +29,30 @@ export default function SiteSearch() {
 
   useEffect(() => {
     if (shadowHostRef.current && htmlContent) {
-      // Shadow DOM이 이미 존재하면 제거하고 다시 생성
+      // Shadow DOM이 이미 존재하면 재사용하고, 없으면 새로 생성
       const shadowRoot =
         shadowHostRef.current.shadowRoot || shadowHostRef.current.attachShadow({ mode: "open" });
 
-      // 기존 콘텐츠 초기화
-      shadowRoot.innerHTML = ""; // 기존 콘텐츠 및 스타일 초기화
+      // 기존 HTML 업데이트
+      const contentWrapper = shadowRoot.querySelector("div");
+      if (contentWrapper) {
+        contentWrapper.innerHTML = htmlContent; // HTML만 업데이트
+      } else {
+        const newContentWrapper = document.createElement("div");
+        newContentWrapper.innerHTML = htmlContent;
+        shadowRoot.appendChild(newContentWrapper); // 새로운 HTML 콘텐츠 추가
+      }
+
+      // 기존 스타일 업데이트
+      const existingStyles = shadowRoot.querySelectorAll("style");
+      existingStyles.forEach((style) => style.remove()); // 기존 스타일 제거
 
       // 외부 CSS 적용
       cssContent.forEach((css) => {
         const style = document.createElement("style");
         style.innerHTML = css;
-        shadowRoot.appendChild(style);
+        shadowRoot.appendChild(style); // 새 CSS 추가
       });
-
-      // 외부 HTML 적용
-      const contentWrapper = document.createElement("div");
-      contentWrapper.innerHTML = htmlContent;
-      shadowRoot.appendChild(contentWrapper);
     }
   }, [htmlContent, cssContent]);
 
