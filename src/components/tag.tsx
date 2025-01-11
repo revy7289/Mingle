@@ -1,12 +1,11 @@
 // 라이브러리: mui / antd / chakra / shardcn
 
-export const Tag = ({ tagName, selectedTag, setSelectedTag }) => {
+export const Tag = ({ tagName, selectedTag, setSelectedTag, children }) => {
   const onClickTagName = (tag) => {
-    if (!selectedTag.includes(tag)) {
+    if (!selectedTag.includes(tag) && selectedTag.length < 8) {
       setSelectedTag((prev) => [...prev, tag]);
     }
   };
-  console.log(selectedTag);
 
   const tagColor = (tagName) => {
     switch (tagName) {
@@ -16,7 +15,7 @@ export const Tag = ({ tagName, selectedTag, setSelectedTag }) => {
         return "bg-[#F74152]";
       case "chakra":
         return "bg-[#10C4AB]";
-      case "shardcn":
+      case "shadcn":
         return "bg-[#000000]";
       case "React":
         return "bg-[#64DBFE]";
@@ -40,6 +39,7 @@ export const Tag = ({ tagName, selectedTag, setSelectedTag }) => {
       }}
     >
       {tagName}
+      {children}
     </div>
   );
 };

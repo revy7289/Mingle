@@ -4,7 +4,8 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tag } from "@/Components/tag";
+import { Tag } from "@/components/tag";
+import { X } from "lucide-react";
 import {
   CreateBoardDocument,
   CreateTravelproductDocument,
@@ -12,24 +13,21 @@ import {
   FetchTravelproductDocument,
   UpdateBoardDocument,
   UpdateTravelproductDocument,
-} from "@/Commons/graphql/graphql";
+} from "@/commons/graphql/graphql";
 
 export default function NewPage() {
-  const tagList = ["MUI", "ANTD", "chakra", "shardcn", "React", "Vue", "Angular", "Svelte"];
-  const [inputTag, setInputTag] = useState("");
-  const [selectedTag, setSelectedTag] = useState([]);
-  const [checkbox, setCheckbox] = useState(0);
-
   const location = window.location.pathname;
   const isEdit = location.includes("edit");
 
   const editorRef = useRef<Editor>(null);
-
   const params = useParams();
   const navigate = useNavigate();
 
+  const tagList = ["MUI", "ANTD", "chakra", "shadcn", "React", "Vue", "Angular", "Svelte"];
+  const [inputTag, setInputTag] = useState("");
+  const [selectedTag, setSelectedTag] = useState([]);
+  const [checkbox, setCheckbox] = useState(0);
   const [isModalOpen, setModalOpen] = useState(false);
-
   const [title, setTitle] = useState("");
   const [editor, setEditor] = useState("");
 
@@ -72,34 +70,36 @@ export default function NewPage() {
       !e.nativeEvent.isComposing &&
       selectedTag.length < 8
     ) {
-      console.log("엔터입력");
-      console.log(inputTag);
-
       setSelectedTag((prevArr) => [...prevArr, inputTag]);
       setInputTag("");
     }
   };
 
+  const onDeleteTag = (tagIndex) => {
+    setSelectedTag((prevArr) => prevArr.filter((_, index) => index !== tagIndex));
+  };
+
   const onClickSubmit = async () => {
-    if (checkbox === 1) {
+    if (checkbox === 0) {
       if (!isEdit) {
-        await createQuestionBoard({
+        const createQuestionResult = await createQuestionBoard({
           variables: {
             createTravelproductInput: {
               name: "작성자",
-              remarks: "",
+              remarks: title, // remarks -> title로 활용
               contents: editor,
               price: 123,
               tags: selectedTag,
             },
           },
         });
+        navigate(`/community/qna/${createQuestionResult.data?.createTravelproduct._id}`);
       } else {
         await updateQuestionBoard({
           variables: {
             updateTravelproductInput: {
               name: "작성자",
-              remarks: "",
+              remarks: title || dataQuestionBoard?.fetchTravelproduct.remarks,
               contents: editor || dataQuestionBoard?.fetchTravelproduct.contents,
               price: 123,
               tags: selectedTag || dataQuestionBoard?.fetchTravelproduct.tags,
@@ -108,7 +108,7 @@ export default function NewPage() {
           },
         });
       }
-    } else if (checkbox === 2) {
+    } else if (checkbox === 1) {
       if (!isEdit) {
         const createResult = await createBoard({
           variables: {
@@ -188,30 +188,25 @@ export default function NewPage() {
         <div className="w-[1120px] flex justify-end gap-[20px] relative bottom-[0px] left-[315px]">
           {isModalOpen && (
             <div className="pt-[60px] px-[56px] w-[576px] h-[386px] border border-[#dadde6] flex flex-col justify-between rounded-2xl absolute bottom-[80px] bg-white z-10">
-              <div className="flex gap-[54px]">
-                <span>카테고리</span>
-                <div className="flex gap-[8px]">
-                  <input
-                    onClick={() => {
-                      setCheckbox(1);
-                    }}
-                    type="checkbox"
-                    className="w-[24px] h-[24px] accent-[#E0E0E0]"
-                    id="QNA"
-                  />
-                  <label className="mr-[12px]" htmlFor="QNA">
-                    질문과답변
-                  </label>
-                  <input
-                    onClick={() => {
-                      setCheckbox(2);
-                    }}
-                    type="checkbox"
-                    className="w-[24px] h-[24px] accent-[#E0E0E0]"
-                    id="Free"
-                  />
-                  <label htmlFor="Free">자유게시판</label>
-                </div>
+              <div className="flex">
+                <span className="mr-[54px]">카테고리</span>
+                {["질문과답변", "자유게시판"].map((boards, index) => (
+                  <div key={index} className="flex gap-[8px]">
+                    <input
+                      onClick={() => {
+                        setCheckbox(index);
+                        console.log(checkbox);
+                      }}
+                      type="checkbox"
+                      checked={checkbox === index}
+                      className="w-[24px] h-[24px] accent-[#E0E0E0]"
+                      id="QNA"
+                    />
+                    <label className="mr-[20px]" htmlFor="QNA">
+                      {boards}
+                    </label>
+                  </div>
+                ))}
               </div>
               <div className="flex mt-[40px]  gap-[54px]">
                 <span>태그편집</span>
@@ -233,14 +228,20 @@ export default function NewPage() {
                 <div className="flex flex-wrap items-center gap-[8px] w-[500px] h-[84px] px-[12px] py-[14px]  border-b border-[#BDBDBD] bg-[#F5F5F5] overflow-hidden">
                   {selectedTag &&
                     selectedTag.map((el, index) => (
-                      <div key={index} className="w-[113px]">
-                        <Tag tagName={el} />
+                      <div key={index} className="w-[113px] relative">
+                        <Tag tagName={el}>
+                          <X
+                            size={16}
+                            className="absolute top-1 right-2"
+                            onClick={() => onDeleteTag(index)}
+                          />
+                        </Tag>
                       </div>
                     ))}
                   {selectedTag.length === 8 || (
                     <input
                       className="bg-[#F5F5F5] outline-none resize-none w-[113px]"
-                      placeholder="#태그"
+                      placeholder="#태그(최대 8개)"
                       onKeyDown={onKeyDownEnter}
                       value={inputTag}
                       onChange={(e) => setInputTag(e.target.value)}
