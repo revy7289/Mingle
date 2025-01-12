@@ -1,7 +1,7 @@
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
 export default function SiteSearch() {
-  const shadowHostRef = useRef(null); // Shadow DOM을 삽입할 DOM 요소
+  const shadowHostRef = useRef<HTMLDivElement | null>(null); // Shadow DOM을 삽입할 DOM 요소
 
   const [htmlContent, setHtmlContent] = useState("");
   const [cssContent, setCssContent] = useState([]);
@@ -58,7 +58,7 @@ export default function SiteSearch() {
 
   return (
     <div className="w-full h-full">
-      <div className="w-full h-[60px] bg-[#bdbdbd] rounded-t-2xl flex gap-2.5 items-center justify-center">
+      <div className="w-full h-[60px] bg-[#bdbdbd] rounded-t-2xl flex gap-2.5 items-center justify-center px-[20px]">
         <div className="w-[20px] h-[20px] bg-[#FD5F57] rounded-full"></div>
         <div className="w-[20px] h-[20px] bg-[#FEBC2F] rounded-full"></div>
         <div className="w-[20px] h-[20px] bg-[#28C840] rounded-full"></div>

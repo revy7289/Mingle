@@ -1,8 +1,14 @@
-import { useReactFlow } from "@xyflow/react";
+import { Node, ReactFlowInstance, useReactFlow } from "@xyflow/react";
 import { History as Undo, Save } from "lucide-react";
-import { useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 
-export default function SavePanel({ savedNode, setNodes }) {
+export default function SavePanel<NodeBase extends Node>({
+  savedNode,
+  setNodes,
+}: {
+  savedNode: ReactFlowInstance<NodeBase>;
+  setNodes: Dispatch<SetStateAction<NodeBase[]>>;
+}) {
   const { setViewport } = useReactFlow();
 
   const onClickSave = useCallback(() => {
@@ -14,11 +20,11 @@ export default function SavePanel({ savedNode, setNodes }) {
 
   const onClickRestore = useCallback(() => {
     const restoreNode = async () => {
-      const restoredNode = JSON.parse(sessionStorage.getItem("savedNode") || "");
+      const node = JSON.parse(sessionStorage.getItem("savedNode") || "");
 
-      if (restoredNode) {
-        const { x = 0, y = 0, zoom = 1 } = restoredNode.viewport;
-        setNodes(restoredNode.nodes || []);
+      if (node) {
+        const { x = 0, y = 0, zoom = 1 } = node.viewport;
+        setNodes(node.nodes || []);
         setViewport({ x, y, zoom });
       }
     };

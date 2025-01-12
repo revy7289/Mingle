@@ -1,15 +1,16 @@
 import { ListRestart } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 
-export default function CleanupPanel({ setNodes }) {
+export default function CleanupPanel<NodeBase>({
+  initialNodes,
+  setNodes,
+}: {
+  initialNodes: NodeBase[];
+  setNodes: Dispatch<SetStateAction<NodeBase[]>>;
+}) {
   function onClickCleanup() {
     window.history.pushState({}, "", window.location.pathname);
-    setNodes([
-      {
-        id: "node-00",
-        type: "SiteSearch",
-        position: { x: 0, y: 0 },
-      },
-    ]);
+    setNodes(initialNodes);
   }
 
   return (
