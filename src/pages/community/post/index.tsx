@@ -1,5 +1,6 @@
 import {
   CreateBoardCommentDocument,
+  CreateTravelproductQuestionDocument,
   DeleteBoardDocument,
   DeleteTravelproductDocument,
   DislikeBoardDocument,
@@ -7,11 +8,14 @@ import {
   FetchBoardDocument,
   FetchBoardsDocument,
   FetchTravelproductDocument,
+  FetchTravelproductQuestionsDocument,
   FetchTravelproductsDocument,
   FetchUserLoggedInDocument,
   LikeBoardDocument,
   UpdateBoardCommentDocument,
+  UpdateTravelproductQuestionDocument,
 } from "@/commons/graphql/graphql";
+import Answer from "@/components/comments/answer";
 import Comment from "@/components/comments/comment";
 import CommentWrite from "@/components/comments/commentWrite";
 import Modal from "@/components/comments/modal";
@@ -35,16 +39,17 @@ export default function PostPage() {
   const [replyId, setReplyId] = useState("");
   const [likeCountActive, setLikeCountActive] = useState(false);
 
+  // 자유게시판
+  const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [createBoardComment] = useMutation(CreateBoardCommentDocument);
   const [updateBoardComment] = useMutation(UpdateBoardCommentDocument);
-  const [deleteBoard] = useMutation(DeleteBoardDocument);
   const [likeBoard] = useMutation(LikeBoardDocument);
   const [viewBoard] = useMutation(DislikeBoardDocument);
 
+  // 질문과답변
   const [deleteQuestionBoard] = useMutation(DeleteTravelproductDocument);
 
   const { data: userData } = useQuery(FetchUserLoggedInDocument);
-  console.log("유저정보", userData);
 
   const { data } = useQuery(FetchBoardDocument, {
     variables: {
@@ -53,19 +58,18 @@ export default function PostPage() {
     skip: isQnA,
   });
 
-  const { data: dataQuestionBoard } = useQuery(FetchTravelproductDocument, {
-    variables: {
-      travelproductId: params.boardId as string,
-    },
-    skip: !isQnA,
-  });
-
   const { data: dataComments } = useQuery(FetchBoardCommentsDocument, {
     variables: {
       page: 1,
       boardId: params.boardId as string,
     },
-    skip: isQnA,
+  });
+
+  const { data: dataQuestionBoard } = useQuery(FetchTravelproductDocument, {
+    variables: {
+      travelproductId: params.boardId as string,
+    },
+    skip: !isQnA,
   });
 
   const time = new Date(
@@ -153,6 +157,7 @@ export default function PostPage() {
         },
       ],
     });
+    setContents("");
   };
 
   const onClickUpdateComment = () => {
@@ -200,6 +205,7 @@ export default function PostPage() {
         },
       ],
     });
+    setContents("");
   };
 
   const onClickUpdateReply = () => {
@@ -296,7 +302,7 @@ export default function PostPage() {
             <div className="w-[350px] h-full flex gap-[10px]">
               {(isQnA ? dataQuestionBoard?.fetchTravelproduct.tags : data?.fetchBoard.images)?.map(
                 (tagName, index) => (
-                  <div key={index} className="w-full">
+                  <div key={index} className="w-[80px]">
                     <Tag tagName={tagName} />
                   </div>
                 )
@@ -321,43 +327,79 @@ export default function PostPage() {
           <CommentWrite
             onChangeComment={onChangeComment}
             onClickComment={onClickComment}
+            contents={contents}
             // onClickUpdateComment={onClickUpdateComment}// 업데이트 필요없음
             // setReplyId={setReplyId} // 필요없긴함
             // isEdit={isEdit}// 필요없음
           />
         </div>
-        <div>
-          {dataComments?.fetchBoardComments.map((el) => (
-            <div key={el._id} className="mt-[45px]">
-              <Comment
-                el={el}
-                replyId={replyId}
-                setReplyId={setReplyId}
-                onChangeComment={onChangeComment}
-                onClickComment={onClickReply} // 대댓글 onClickReply
-                onClickUpdateComment={handleUpdate}
-                setIsEdit={setIsEdit}
-                isEdit={isEdit}
-                setCommentId={setCommentId}
-                commentId={commentId}
-              />
-              {/* 댓글등록 */}
-              {!isEdit && replyId === el._id && (
-                <div className="mt-[20px]">
-                  {/* createBoardComment API로 대댓글 등록 */}
-                  <CommentWrite
-                    onChangeComment={onChangeComment}
-                    onClickComment={onClickReply}
-                    onClickUpdateComment={onClickUpdateComment}
-                    setReplyId={setReplyId}
-                    setCommentId={setCommentId}
-                    isEdit={isEdit}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {isQnA ? (
+          <>
+            {dataComments?.fetchBoardComments.map((answer, index) => (
+              <div>
+                <Answer
+                  key={index}
+                  isEdit={isEdit}
+                  setIsEdit={setIsEdit}
+                  answer={answer}
+                  contents={contents}
+                  setReplyId={setReplyId}
+                  setCommentId={setCommentId}
+                  commentId={commentId}
+                  replyId={replyId}
+                  onClickComment={onClickReply}
+                  onChangeComment={onChangeComment}
+                  onClickUpdateComment={handleUpdate}
+                />
+                {!isEdit && replyId === answer._id && (
+                  <div key={answer._id} className="mt-[45px]">
+                    <CommentWrite
+                      isEdit={isEdit}
+                      contents={contents}
+                      onClickComment={onClickReply}
+                      onChangeComment={onChangeComment}
+                      setCommentId={setCommentId}
+                      setReplyId={setReplyId}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </>
+        ) : (
+          <div>
+            {dataComments?.fetchBoardComments.map((el) => (
+              <div key={el._id} className="mt-[45px]">
+                <Comment
+                  el={el}
+                  replyId={replyId}
+                  setReplyId={setReplyId}
+                  onChangeComment={onChangeComment}
+                  onClickComment={onClickReply} // 대댓글 onClickReply
+                  onClickUpdateComment={handleUpdate}
+                  setIsEdit={setIsEdit}
+                  isEdit={isEdit}
+                  setCommentId={setCommentId}
+                  commentId={commentId}
+                />
+                {/* 댓글등록 */}
+                {!isEdit && replyId === el._id && (
+                  <div className="mt-[20px]">
+                    {/* createBoardComment API로 대댓글 등록 */}
+                    <CommentWrite
+                      onChangeComment={onChangeComment}
+                      onClickComment={onClickReply}
+                      onClickUpdateComment={onClickUpdateComment}
+                      setReplyId={setReplyId}
+                      setCommentId={setCommentId}
+                      isEdit={isEdit}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
