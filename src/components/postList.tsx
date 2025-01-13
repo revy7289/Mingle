@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const PostList = ({ Boards }) => {
   const navigate = useNavigate();
+
   return (
     <div className="w-[1080px]">
       <div className="flex gap-[20px] items-center">
@@ -30,7 +31,7 @@ const PostList = ({ Boards }) => {
         </div>
       </div>
       <div className="flex justify-between mt-[10px] px-[20px]">
-        <span className="text-[#767676] text-[12px]">몇 분 전</span>
+        <span className="text-[#767676] text-[12px]">몇분전</span>
         <div className="flex gap-[16px]">
           <div className="flex gap-[8px] items-center">
             <Eye size={20} color="#767676" />

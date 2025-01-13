@@ -48,6 +48,8 @@ export default function Router() {
           <Route path="/community/post" element={<PostPage />} />
           <Route path="/community/post/:boardId" element={<PostPage />} />
           <Route path="/community/post/:boardId/edit" element={<NewPage />} />
+          <Route path="/community/qna/:boardId" element={<PostPage />} />
+          <Route path="/community/qna/:boardId/edit" element={<NewPage />} />
           <Route path="/community/new" element={<NewPage />} />
 
           <Route path="gallery" element={<GalleryPage />} />

@@ -1,35 +1,38 @@
-// 라이브러리: mui / antd / chakra / shardcn
+// 라이브러리: mui / antd / chakra / shadcn
+// 프레임워크: React / Vue / Angular / Svelte
 
-export const Tag = ({ tagName, seletedTag, setSeletedTag }) => {
+export const Tag = ({ tagName, selectedTag, setSelectedTag, children }) => {
   const onClickTagName = (tag) => {
-    if (!seletedTag.includes(tag)) {
-      setSeletedTag((prev) => [...prev, tag]);
+    if (!selectedTag.includes(tag) && selectedTag.length < 8) {
+      setSelectedTag((prev) => [...prev, tag]);
     }
   };
 
-  const tagColor = (tagNames) => {
-    switch (tagNames) {
+  const tagColor = (tagName) => {
+    switch (tagName) {
       case "MUI":
         return "bg-[#0073E6]";
       case "ANTD":
         return "bg-[#F74152]";
       case "chakra":
         return "bg-[#10C4AB]";
-      case "shardcn":
+      case "shadcn":
         return "bg-[#000000]";
       case "React":
         return "bg-[#64DBFE]";
       case "Vue":
-        return "bg-[#E23237]";
+        return "bg-[#41B883]";
       case "Angular":
-        return "bg-[#FF3E00]";
+        return "bg-[#E23237]";
       case "Svelte":
         return "bg-[#FF3E00]";
+      default:
+        return "bg-[#BDBDBD]";
     }
   };
   return (
     <div
-      className={`w-[80px] h-[24px] rounded-[8px] text-[#FFFFFF] flex justify-center text-[16px] cursor-pointer ${tagColor(
+      className={`w-full h-[24px] rounded-[8px] text-[#FFFFFF] flex justify-center text-[16px] cursor-pointer ${tagColor(
         tagName
       )}`}
       onClick={() => {
@@ -37,6 +40,7 @@ export const Tag = ({ tagName, seletedTag, setSeletedTag }) => {
       }}
     >
       {tagName}
+      {children}
     </div>
   );
 };
