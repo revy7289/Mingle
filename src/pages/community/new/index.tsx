@@ -5,7 +5,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tag } from "@/components/tag";
-import { X } from "lucide-react";
+import { X } from "lucide-react"
 import {
   CreateBoardDocument,
   CreateTravelproductDocument,
