@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import logo from "/logo.svg";
+import logo from "/logoColor.svg";
 
 export default function LandingPage() {
   const navigate = useNavigate();

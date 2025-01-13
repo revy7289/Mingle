@@ -1,5 +1,13 @@
-import logo from "/logo.svg";
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import logo from "/logoColor.svg";
+import {
+  ComponentType,
+  DragEvent,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Copy, Settings2, Trash2, X } from "lucide-react";
 
 import {
@@ -10,30 +18,79 @@ import {
   Panel,
   applyNodeChanges,
   NodeToolbar,
+  NodeResizer,
+  Node,
+  NodeChange,
+  NodeTypes,
+  ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import { DnDProvider, useDnD } from "./dndContext";
-import DownloadPanel from "./panelAddon/downloadImage";
-import ZoomPanel from "./panelAddon/zoomTransition";
-import SavePanel from "./panelAddon/saveRestore";
-
 import SiteSearch from "./siteSearch";
+import ZoomPanel from "./panelAddon/zoomTransition";
+import DownloadPanel from "./panelAddon/downloadImage";
+import SavePanel from "./panelAddon/saveRestore";
+import CleanupPanel from "./panelAddon/cleanupNode";
 
-const initialNodes = [
+const initialNodes: NodeBase[] = [
   {
     id: "node-00",
-    type: "SiteSearch",
+    type: "site-search",
     position: { x: 0, y: 0 },
+    data: { currentNode: "" },
   },
 ];
 
-function NodeWithToolbar({ data }) {
+const initialNodeTypes: Record<string, ComponentType<{}>> = {
+  "site-search": SiteSearch,
+  "ui-components": NodeController as ComponentType,
+  // ... 이후 동적으로 import 수행
+};
+
+/**
+ * @ROLE 글로벌하게 사용할 general NodeType
+ */
+type NodeBase = {
+  id: string;
+  type: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  data: {
+    currentNode: string;
+  };
+};
+
+/**
+ * @ROLE NodeTypes에서 "site-search"를 제외한 key와 type을 지정함
+ */
+type CurrentNodeType = {
+  currentNode: Exclude<keyof typeof initialNodeTypes, "site-search">;
+};
+
+/**
+ * @ROLE ui component를 dynamic import하고 자동으로 매칭되도록 하여 모든 component가 공용으로 사용하는 일종의 provider함수 구현
+ *
+ * @step1 react-flow의 Node가 NodeController를 호출합니다
+ * @step2 Node 내부의 data:currentNode를 호출합니다
+ * @step3 NodeType을 순회하여 currentNode에 대응되는 component를 찾습니다
+ * @step4 이상이 없다면 Resizer, Toolbar와 함께 component가 출력됩니다
+ */
+type NodeControllerProps = {
+  data: CurrentNodeType; // currentNode는 initialNodeTypes의 키 중 하나여야 함
+  selected: boolean;
+};
+
+function NodeController({ data, selected = false }: NodeControllerProps): JSX.Element {
   const { currentNode } = data;
   const Component = initialNodeTypes[currentNode];
 
   return (
     <>
+      <NodeResizer color="#ff3179" isVisible={selected} minWidth={200} minHeight={80} />
+
       <NodeToolbar className="flex gap-[8px]" align="end">
         <button className="w-[24px] h-[24px] flex justify-center items-center">
           <Settings2 color="#222" size={16} />
@@ -53,11 +110,14 @@ function NodeWithToolbar({ data }) {
   );
 }
 
-const initialNodeTypes = {
-  "node-with-toolbar": NodeWithToolbar,
-  SiteSearch,
-};
-
+/**
+ * @ROLE drawer menu에 표현될 menu list
+ *
+ * @step1 메뉴 리스트에 ui 메뉴를 추가함
+ * @step2 자동으로 library + ui 형태로 변수가 생성됨 ex) Alert선택 시 MuiAlert, AntdAlert ...
+ * @step3 생성된 변수는 NodeType의 key로 사용되고 해당 key는 자동으로 dynamic import되어 동일한 이름으로 value가 매칭됨
+ * @step4 따라서 메뉴만 추가하면 자동으로 ui component가 로드되는 로직 구현
+ */
 const menuList = [
   "Accordion",
   "Alert",
@@ -83,24 +143,30 @@ const menuList = [
   "Toggle",
 ];
 
-const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
-
 /**
- * @returns react-flow 활용한 node-base 플레이그라운드 구현
+ * @MAIN react-flow 활용한 node-base 플레이그라운드 구현
  */
 function MinglePage() {
   const [nodes, setNodes] = useState(initialNodes);
   const [nodeTypes, setNodeTypes] = useState(initialNodeTypes);
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [selectedComp, setSelectedComp] = useState("");
+  const [selectedMenu, setSelectedMenu] = useState("");
 
-  const [savedNode, setSavedNode] = useState(null);
+  const [savedNode, setSavedNode] = useState<ReactFlowInstance<NodeBase> | null>(null);
 
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
+  /**
+   * @ROLE 페이지 로드할 때 URL에 통째로 저장된 Node를 parse하여 작업하던 화면 재구축
+   *
+   * @step1 URL에 hashing된 정보를 받아옴
+   * @step2 hash 정보를 json parse하고 Node에 다시 등록함
+   * @step3 등록한 Node에 해당하는 module만 dynamic import 수행하고 NodeType에 등록함
+   * @step4 등록된 Node바탕으로 NodeController 호출하며 화면 재구축 실행
+   */
   useEffect(() => {
     const hash = window.location.hash;
     if (!hash.startsWith("#node&")) return;
@@ -112,17 +178,17 @@ function MinglePage() {
 
     const loadModules = async () => {
       const updateNode = await Promise.all(
-        nodeLoader.map(async (node) => {
+        nodeLoader.map(async (node: Node) => {
           if (node.data.currentNode) {
-            const key = node.data.currentNode;
-            const [prefix, ...rest] = key.match(/[A-Z][a-z]+/g) || [];
+            const key = node.data.currentNode as string;
+            const [prefix, ...rest] = (key.match(/[A-Z][a-z]+/g) || []) as string[];
             const comp = rest.join("");
 
             try {
               const module = await import(
                 `@/components/${prefix.toLowerCase()}/${prefix.toLowerCase()}${comp}.tsx`
               );
-              nodeTypes[key] = module.default;
+              initialNodeTypes[key] = module.default;
               setNodeTypes((prev) => ({
                 ...prev,
                 [key]: module.default,
@@ -139,8 +205,15 @@ function MinglePage() {
     loadModules();
   }, []);
 
+  /**
+   * @ROLE node가 변경될 때 마다 실행될 callback함수
+   *
+   * @step1 node state가 변경될 때 마다 callback 실행
+   * @step2 변경된 노드 실시간으로 react-flow에 반영
+   * @step3 변경 완료된 node 실시간으로 URL 인코딩 실행
+   */
   const onNodesChange = useCallback(
-    (changes) => {
+    (changes: NodeChange<NodeBase>[]) => {
       setNodes((nds) => {
         const onUpdateNode = applyNodeChanges(changes, nds);
         encodeUrl(onUpdateNode);
@@ -150,45 +223,15 @@ function MinglePage() {
     [setNodes]
   );
 
-  const onDragStart = (event, nodeType) => {
-    setType(nodeType);
-    event.dataTransfer.effectAllowed = "move";
-  };
-
-  const onDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
-
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
-      if (!type) return;
-
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      const currentNode = String(type);
-
-      setNodes((nds) => {
-        const newNode = {
-          id: getId(nds.length),
-          type: "node-with-toolbar",
-          position,
-          data: { currentNode },
-        };
-
-        const dndUpdateNode = nds.concat(newNode);
-        encodeUrl(dndUpdateNode);
-        return dndUpdateNode;
-      });
-    },
-    [screenToFlowPosition, type]
-  );
-
-  const dynamicImport = async (menu) => {
+  /**
+   * @ROLE menu를 선택할 때 자동으로 ui component에 해당하는 경로 설정하고 dynamic import 수행하는 기능 구현
+   *
+   * @step1 사용자가 menu를 클릭하면 해당 메뉴를 parameter로 받음
+   * @step2 map 굴려서 자동으로 library + ui 형태로 변수가 생성됨 ex) Alert선택 시 MuiAlert, AntdAlert ...
+   * @step3 생성된 변수는 NodeType의 key로 사용되고 해당 key는 자동으로 dynamic import되어 동일한 이름으로 value가 매칭됨
+   * @step4 따라서 메뉴만 추가하면 자동으로 ui component가 로드되는 로직 구현
+   */
+  const dynamicImport = async (menu: string) => {
     const prefixes = ["Mui", "Antd", "Chakra", "Shadcn"];
 
     const imports = prefixes.map(async (prefix) => {
@@ -200,7 +243,7 @@ function MinglePage() {
         );
 
         if (module) {
-          nodeTypes[key] = module.default;
+          initialNodeTypes[key] = module.default;
           setNodeTypes((prev) => ({ ...prev, [key]: module.default }));
         }
       } catch (error) {
@@ -211,7 +254,26 @@ function MinglePage() {
     await Promise.all(imports);
   };
 
-  function onClickComp(e: MouseEvent) {
+  /**
+   * @ROLE Node추가할 때 Node의 Length로 id 부여하여 id와 node.length 매칭되게 사용 ex.) "node-01" = nodes[1]
+   */
+  function getId(nodeIndex: number) {
+    return `node-${String(nodeIndex).padStart(2, "0")}`;
+  }
+
+  /**
+   * @ROLE Node추가할 때 nodes state를 base.64로 인코딩하여 통째로 URL에 전달
+   */
+  function encodeUrl(updateNode: NodeBase[]) {
+    const encoded = btoa(JSON.stringify(updateNode));
+
+    window.history.pushState({}, "", "#node&" + encoded);
+  }
+
+  /**
+   * @ROLE 메인페이지에서 컴포넌트 메뉴 선택 시 drawer menu 열고 dynamic import 수행
+   */
+  function onClickMenu(e: MouseEvent) {
     const target = e.target as HTMLElement;
     const menu = target.textContent || "";
 
@@ -225,10 +287,15 @@ function MinglePage() {
     });
 
     setDrawerOpen((prev) => !prev);
-    setSelectedComp(menu);
+    setSelectedMenu(menu);
     console.log(menu);
   }
 
+  /**
+   * @ROLE 선택한 라이브러리에 해당하는 Node 추가하는 기능 구현
+   *
+   * @param currentNode 해당하는 타겟에 id 부여한 것을 가져와서 문자열로 전달
+   */
   function onClickLib(e: MouseEvent) {
     const currentNode = e.currentTarget.id;
     console.log(e.currentTarget.id);
@@ -238,7 +305,7 @@ function MinglePage() {
         ...prev, // 기존 노드들
         {
           id: getId(prev.length),
-          type: "node-with-toolbar",
+          type: "ui-components",
           position: { x: prev.length * 10, y: 60 + prev.length * 10 },
           data: { currentNode },
         },
@@ -248,20 +315,56 @@ function MinglePage() {
     });
   }
 
-  function getId(nodeIndex) {
-    return `node-${String(nodeIndex).padStart(2, "0")}`;
-  }
+  /**
+   * @ROLE drag event를 감지하고 선택된 component를 Node로 등록
+   */
+  const onDragStart = (event: DragEvent, nodeType: string) => {
+    setType(nodeType);
+    event.dataTransfer.effectAllowed = "move";
+  };
 
-  function encodeUrl(updateNode) {
-    const encoded = btoa(JSON.stringify(updateNode));
+  const onDragOver = useCallback((event: DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
 
-    window.history.pushState({}, "", "#node&" + encoded);
-  }
+  /**
+   * @ROLE drag & drop으로 node 추가하는 기능 구현
+   *
+   * @param type DragStart함수로 dndContext에 등록된 Node이름을 문자열로 전달
+   */
+  const onDrop = useCallback(
+    (event: DragEvent) => {
+      event.preventDefault();
+      if (!type) return;
 
-  const MUI_COMP = nodeTypes[`Mui${selectedComp}` as keyof typeof nodeTypes];
-  const ANTD_COMP = nodeTypes[`Antd${selectedComp}` as keyof typeof nodeTypes];
-  const CHAKRA_COMP = nodeTypes[`Chakra${selectedComp}` as keyof typeof nodeTypes];
-  const SHADCN_COMP = nodeTypes[`Shadcn${selectedComp}` as keyof typeof nodeTypes];
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const currentNode = type;
+
+      setNodes((nds) => {
+        const newNode = {
+          id: getId(nds.length),
+          type: "ui-components",
+          position,
+          data: { currentNode },
+        };
+
+        const dndUpdateNode = nds.concat(newNode);
+        encodeUrl(dndUpdateNode);
+        return dndUpdateNode;
+      });
+    },
+    [screenToFlowPosition, type]
+  );
+
+  const MuiComp = nodeTypes[`Mui${selectedMenu}` as keyof typeof nodeTypes];
+  const AntdComp = nodeTypes[`Antd${selectedMenu}` as keyof typeof nodeTypes];
+  const ChakraComp = nodeTypes[`Chakra${selectedMenu}` as keyof typeof nodeTypes];
+  const ShadcnComp = nodeTypes[`Shadcn${selectedMenu}` as keyof typeof nodeTypes];
 
   return (
     <div className="w-screen h-screen bg-[#222222] flex relative">
@@ -276,10 +379,10 @@ function MinglePage() {
         <div className="w-full border-b-2 border-[#767676] mt-[20px]"></div>
 
         {/* 메뉴 리스트 */}
-        <ul className="text-white text-[24px] tracking-wider font-semibold flex flex-col gap-[20px] mt-[40px] px-[10px]">
-          <li>Community</li>
-          <li>My Page</li>
-          <li>Gallery</li>
+        <ul className="flex flex-col gap-[20px] mt-[40px] px-[10px]">
+          <li className="text-white text-[24px] tracking-wider font-semibold">Community</li>
+          <li className="text-white text-[24px] tracking-wider font-semibold">My Page</li>
+          <li className="text-white text-[24px] tracking-wider font-semibold">Gallery</li>
         </ul>
 
         <div className="w-full border-b-2 border-[#767676] mt-[40px]"></div>
@@ -303,7 +406,7 @@ function MinglePage() {
           style={{ scrollbarColor: "#ffffff transparent" }}
         >
           {menuList.map((item) => (
-            <li onClick={onClickComp} key={item}>
+            <li onClick={onClickMenu} key={item}>
               {item}
             </li>
           ))}
@@ -352,12 +455,12 @@ function MinglePage() {
 
             <div
               className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
-              onClick={MUI_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `Mui${selectedComp}`)}
+              onClick={MuiComp !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `Mui${selectedMenu}`)}
               draggable
-              id={`Mui${selectedComp}`}
+              id={`Mui${selectedMenu}`}
             >
-              {MUI_COMP ? <MUI_COMP /> : <div>검색 결과가 없습니다.</div>}
+              {MuiComp ? <MuiComp /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -369,12 +472,12 @@ function MinglePage() {
 
             <div
               className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
-              onClick={ANTD_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `Antd${selectedComp}`)}
+              onClick={AntdComp !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `Antd${selectedMenu}`)}
               draggable
-              id={`Antd${selectedComp}`}
+              id={`Antd${selectedMenu}`}
             >
-              {ANTD_COMP ? <ANTD_COMP /> : <div>검색 결과가 없습니다.</div>}
+              {AntdComp ? <AntdComp /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -386,12 +489,12 @@ function MinglePage() {
 
             <div
               className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
-              onClick={CHAKRA_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `Chakra${selectedComp}`)}
+              onClick={ChakraComp !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `Chakra${selectedMenu}`)}
               draggable
-              id={`Chakra${selectedComp}`}
+              id={`Chakra${selectedMenu}`}
             >
-              {CHAKRA_COMP ? <CHAKRA_COMP /> : <div>검색 결과가 없습니다.</div>}
+              {ChakraComp ? <ChakraComp /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -402,12 +505,12 @@ function MinglePage() {
             </div>
             <div
               className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
-              onClick={SHADCN_COMP !== undefined ? onClickLib : () => ""}
-              onDragStart={(event) => onDragStart(event, `Shadcn${selectedComp}`)}
+              onClick={ShadcnComp !== undefined ? onClickLib : () => ""}
+              onDragStart={(event) => onDragStart(event, `Shadcn${selectedMenu}`)}
               draggable
-              id={`Shadcn${selectedComp}`}
+              id={`Shadcn${selectedMenu}`}
             >
-              {SHADCN_COMP ? <SHADCN_COMP /> : <div>검색 결과가 없습니다.</div>}
+              {ShadcnComp ? <ShadcnComp /> : <div>검색 결과가 없습니다.</div>}
             </div>
           </div>
 
@@ -420,16 +523,11 @@ function MinglePage() {
         <div className="w-full h-full bg-[#343434] rounded-2xl" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}
-            nodeTypes={nodeTypes}
+            nodeTypes={nodeTypes as NodeTypes}
             onNodesChange={onNodesChange}
-            // edges={edges}
-            // edgeTypes={edgeTypes}
-            // onEdgesChange={onEdgesChange}
-            // onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            defaultViewport={defaultViewport}
-            onInit={setSavedNode}
+            onInit={(instance: ReactFlowInstance<NodeBase>) => setSavedNode(instance)}
             fitView
           >
             <Background />
@@ -439,7 +537,12 @@ function MinglePage() {
               <div className="w-[2px] h-[20px] bg-[#767676]"></div>
               <DownloadPanel />
               <div className="w-[2px] h-[20px] bg-[#767676]"></div>
-              <SavePanel savedNode={savedNode} setNodes={setNodes} />
+              <SavePanel<NodeBase>
+                savedNode={savedNode as ReactFlowInstance<NodeBase>}
+                setNodes={setNodes}
+              />
+              <div className="w-[2px] h-[20px] bg-[#767676]"></div>
+              <CleanupPanel<NodeBase> initialNodes={initialNodes} setNodes={setNodes} />
             </Panel>
           </ReactFlow>
         </div>
