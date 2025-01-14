@@ -1,6 +1,5 @@
 import {
   CreateBoardCommentDocument,
-  CreateTravelproductQuestionDocument,
   DeleteBoardDocument,
   DeleteTravelproductDocument,
   DislikeBoardDocument,
@@ -8,12 +7,10 @@ import {
   FetchBoardDocument,
   FetchBoardsDocument,
   FetchTravelproductDocument,
-  FetchTravelproductQuestionsDocument,
   FetchTravelproductsDocument,
   FetchUserLoggedInDocument,
   LikeBoardDocument,
   UpdateBoardCommentDocument,
-  UpdateTravelproductQuestionDocument,
 } from "@/commons/graphql/graphql";
 import Answer from "@/components/comments/answer";
 import Comment from "@/components/comments/comment";
@@ -102,9 +99,8 @@ export default function PostPage() {
 
   // 좋아요
   useEffect(() => {
-    const a = JSON.parse(localStorage.getItem(`likeCount_${params.boardId}`));
-    console.log(a);
-    if (a === userData?.fetchUserLoggedIn._id) {
+    const likeUser = JSON.parse(localStorage.getItem(`likeCount_${params.boardId}`));
+    if (likeUser === userData?.fetchUserLoggedIn._id) {
       setLikeCountActive(true);
     }
   }, [userData]);
@@ -338,7 +334,7 @@ export default function PostPage() {
             {dataComments?.fetchBoardComments.map((answer, index) => (
               <div>
                 <Answer
-                  key={index}
+                  // key={index}
                   isEdit={isEdit}
                   setIsEdit={setIsEdit}
                   answer={answer}

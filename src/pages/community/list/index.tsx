@@ -7,19 +7,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function ListPage() {
+  const tabs = ["질문과답변", "자유게시판"];
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  const tabs = ["질문과답변", "자유게시판"];
   const { data: dataBoards } = useQuery(FetchBoardsDocument);
-  console.log(dataBoards);
   const { data: dataQuestionBoards } = useQuery(FetchTravelproductsDocument);
 
   const popularBoards = dataBoards?.fetchBoards
     .filter((boards) => boards.likeCount > 0)
     .sort((a, b) => b.likeCount - a.likeCount)
     .slice(0, 3);
-
-  console.log(popularBoards);
 
   return (
     <>
@@ -61,7 +58,9 @@ export default function ListPage() {
                     <div className="flex justify-between">
                       <div className="flex gap-[8px]">
                         {post?.images?.map((tagName) => (
-                          <Tag tagName={tagName} />
+                          <div className="w-[80px]">
+                            <Tag tagName={tagName} />
+                          </div>
                         ))}
                       </div>
 
@@ -110,7 +109,7 @@ export default function ListPage() {
               <>
                 {dataQuestionBoards?.fetchTravelproducts.map((questionBoards, index) => (
                   <div key={index}>
-                    <PostList Boards={questionBoards} />
+                    <PostList Boards={questionBoards} tabIndex={0} />
                   </div>
                 ))}
               </>
@@ -119,7 +118,7 @@ export default function ListPage() {
               <>
                 {dataBoards?.fetchBoards.map((freeBoards, index) => (
                   <div key={index}>
-                    <PostList Boards={freeBoards} />
+                    <PostList Boards={freeBoards} tabIndex={1} />
                   </div>
                 ))}
               </>

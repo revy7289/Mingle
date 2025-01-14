@@ -42,8 +42,10 @@ const Answer = ({
   });
 
   useEffect(() => {
-    const a = JSON.parse(localStorage.getItem(`likeCount_Comment_${answer._id}`));
-    if (a === userData?.fetchUserLoggedIn._id) {
+    setLikeActive(false);
+
+    const likeUser = JSON.parse(localStorage.getItem(`likeCount_Comment_${answer._id}`));
+    if (likeUser === userData?.fetchUserLoggedIn._id) {
       setLikeActive(true);
     }
   }, [userData]);
@@ -52,7 +54,7 @@ const Answer = ({
   const onClickUpdateLike = () => {
     if (localStorage.getItem(`likeCount_Comment_${answer._id}`) === null) {
       const likeCount = answer.rating;
-      setLikeActive(true);
+
       updateLikeComment({
         variables: {
           updateBoardCommentInput: {
@@ -66,6 +68,8 @@ const Answer = ({
         `likeCount_Comment_${answer._id}`,
         JSON.stringify(userData?.fetchUserLoggedIn._id)
       );
+
+      setLikeActive(true);
     }
   };
 
