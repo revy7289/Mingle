@@ -5,8 +5,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   DeleteBoardCommentDocument,
   FetchBoardCommentsDocument,
-  FetchTravelproductDocument,
-  FetchTravelproductsDocument,
   FetchUserLoggedInDocument,
   UpdateBoardCommentDocument,
   UpdateTravelproductDocument,
@@ -14,6 +12,7 @@ import {
 import { useParams } from "react-router-dom";
 import Modal from "./modal";
 import Reply from "./reply";
+import { useAccessTokenStore } from "@/commons/stores/tokenStore";
 
 const Answer = ({
   isEdit,
@@ -38,6 +37,8 @@ const Answer = ({
   const [updateLikeComment] = useMutation(UpdateBoardCommentDocument);
   const [updateQuestionBoard] = useMutation(UpdateTravelproductDocument);
 
+  const { accessToken } = useAccessTokenStore();
+
   const { data: userData } = useQuery(FetchUserLoggedInDocument);
   const { data: dataAnswerReply } = useQuery(FetchBoardCommentsDocument, {
     variables: {
@@ -46,6 +47,7 @@ const Answer = ({
     },
   });
 
+  //좋아요, 채택하기
   useEffect(() => {
     setLikeActive(false);
 
@@ -170,16 +172,19 @@ const Answer = ({
                     <span className="text-[#767676]">{answer.rating}</span>
                   </div>
                 </div>
-                <button
-                  className={`w-[100px] h-[32px] rounded-[8px] flex justify-center items-center gap-[8px] text-[#FCFCFC] ${
-                    answerBtn === answer._id
-                      ? "bg-[#8BE1FF] border border-solid border-[#32CBFF]"
-                      : "bg-[#32CBFF]"
-                  }`}
-                  onClick={() => onClickAnswerBtn(answer._id)}
-                >
-                  <span>{answerBtn === answer._id ? "채택완료" : "채택하기"}</span>
-                </button>
+                {accessToken && (
+                  <button
+                    className={`w-[100px] h-[32px] rounded-[8px] flex justify-center items-center gap-[8px] text-[#FCFCFC] ${
+                      answerBtn === answer._id
+                        ? "bg-[#8BE1FF] border border-solid border-[#32CBFF]"
+                        : "bg-[#32CBFF]"
+                    }`}
+                    onClick={() => onClickAnswerBtn(answer._id)}
+                  >
+                    <span>{answerBtn === answer._id ? "채택완료" : "채택하기"}</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => {
                     setReplyId(answer._id);

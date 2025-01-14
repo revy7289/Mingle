@@ -58,7 +58,7 @@ const PostList = ({ Boards, tabIndex }) => {
         <div className="line-clamp-3 ">{Boards.contents}</div>
         <div className="flex justify-between items-center">
           <div className="flex gap-[10px]">
-            {(tabIndex === 0 ? Boards.tags : Boards.Images)?.map((tagName, index) => (
+            {(tabIndex === 0 ? Boards.tags : Boards.images)?.map((tagName, index) => (
               <div key={index} className="w-[80px]">
                 <Tag tagName={tagName} />
               </div>
