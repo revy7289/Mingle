@@ -7,19 +7,35 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function ListPage() {
+  const tabs = ["질문과답변", "자유게시판"];
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  const tabs = ["질문과답변", "자유게시판"];
-  const { data: dataBoards } = useQuery(FetchBoardsDocument);
-  console.log(dataBoards);
-  const { data: dataQuestionBoards } = useQuery(FetchTravelproductsDocument);
+  const [search, setSearch] = useState("");
 
-  const popularBoards = dataBoards?.fetchBoards
+  const { data: dataPopularBoards } = useQuery(FetchBoardsDocument);
+  const { data: dataBoards, refetch: refetchBoards } = useQuery(FetchBoardsDocument);
+  const { data: dataQuestionBoards, refetch: refetchQuestionBoards } = useQuery(
+    FetchTravelproductsDocument
+  );
+
+  const popularBoards = dataPopularBoards?.fetchBoards
     .filter((boards) => boards.likeCount > 0)
     .sort((a, b) => b.likeCount - a.likeCount)
     .slice(0, 3);
 
-  console.log(popularBoards);
+  const onClickSearch = () => {
+    if (!tabIndex) {
+      refetchQuestionBoards({ search });
+    } else {
+      refetchBoards({ search });
+    }
+  };
+
+  const onkeyDownEnter = (e) => {
+    if (e.key === "Enter") {
+      onClickSearch();
+    }
+  };
 
   return (
     <>
@@ -50,7 +66,12 @@ export default function ListPage() {
                       );
                     })
                   ) : (
-                    <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl "></div>
+                    <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl ">
+                      <img
+                        src="/noImage.png"
+                        className="w-full h-full rounded-t-2xl object-cover  border-[#BDBDBD] border-x border-t"
+                      />
+                    </div>
                   )}
 
                   <div className="w-full h-[100px] rounded-b-2xl border border-solid border-[#bdbdbd] flex flex-col justify-between p-[16px]">
@@ -60,8 +81,10 @@ export default function ListPage() {
 
                     <div className="flex justify-between">
                       <div className="flex gap-[8px]">
-                        {post?.images?.map((tagName) => (
-                          <Tag tagName={tagName} />
+                        {post?.images?.map((tagName, index) => (
+                          <div key={index} className="w-[80px]">
+                            <Tag tagName={tagName} />
+                          </div>
                         ))}
                       </div>
 
@@ -94,8 +117,16 @@ export default function ListPage() {
               ))}
             </div>
             <div className="flex gap-[40px]">
-              <div className="flex gap-[4px] p-[6px] text-[#767676] w-[200px] h-[40px] rounded-2xl border border-solid border-[#32CBFF]">
-                <Search color="#32CBFF" /> Search
+              <div className="flex gap-[4px] p-[6px] overflow-hidden text-[#767676] w-[200px] h-[40px] rounded-2xl border border-solid border-[#32CBFF]">
+                <div className="ml-[6px]">
+                  <Search size={24} color="#32CBFF" onClick={onClickSearch} />
+                </div>
+                <input
+                  placeholder="Search"
+                  className="outline-none"
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={onkeyDownEnter}
+                />
               </div>
               <Link to="/community/new">
                 <button className="w-[120px] h-[40px] flex justify-center items-center gap-[8px] rounded-2xl bg-[#32CBFF] text-white">
@@ -110,7 +141,11 @@ export default function ListPage() {
               <>
                 {dataQuestionBoards?.fetchTravelproducts.map((questionBoards, index) => (
                   <div key={index}>
-                    <PostList Boards={questionBoards} />
+                    <PostList
+                      Boards={questionBoards}
+                      tabIndex={0}
+                      refetch={refetchQuestionBoards}
+                    />
                   </div>
                 ))}
               </>
@@ -119,7 +154,7 @@ export default function ListPage() {
               <>
                 {dataBoards?.fetchBoards.map((freeBoards, index) => (
                   <div key={index}>
-                    <PostList Boards={freeBoards} />
+                    <PostList Boards={freeBoards} tabIndex={1} refetch={refetchBoards} />
                   </div>
                 ))}
               </>

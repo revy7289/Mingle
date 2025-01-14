@@ -156,8 +156,8 @@ export const DISLIKE_BOARD = gql`
 `;
 
 export const FETCH_BOARDS = gql`
-  query fetchBoards {
-    fetchBoards {
+  query fetchBoards($search: String) {
+    fetchBoards(search: $search) {
       _id
       writer
       title
@@ -173,8 +173,8 @@ export const FETCH_BOARDS = gql`
 `;
 
 export const FETCH_TRAVEL_PRODUCTS = gql`
-  query fetchTravelproducts {
-    fetchTravelproducts {
+  query fetchTravelproducts($search: String) {
+    fetchTravelproducts(search: $search) {
       _id
       name
       remarks

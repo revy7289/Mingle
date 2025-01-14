@@ -5,12 +5,14 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tag } from "@/components/tag";
-import { X } from "lucide-react"
+import { X } from "lucide-react";
 import {
   CreateBoardDocument,
   CreateTravelproductDocument,
   FetchBoardDocument,
+  FetchBoardsDocument,
   FetchTravelproductDocument,
+  FetchTravelproductsDocument,
   UpdateBoardDocument,
   UpdateTravelproductDocument,
 } from "@/commons/graphql/graphql";
@@ -107,20 +109,24 @@ export default function NewPage() {
         const createQuestionResult = await createQuestionBoard({
           variables: {
             createTravelproductInput: {
-              name: "작성자",
+              name: "미해결",
               remarks: title, // remarks -> title로 활용
               contents: editor,
               price: 123,
               tags: selectedTag,
             },
           },
+          refetchQueries: [
+            {
+              query: FetchTravelproductsDocument,
+            },
+          ],
         });
         navigate(`/community/qna/${createQuestionResult.data?.createTravelproduct._id}`);
       } else {
         const updateQuestionResult = await updateQuestionBoard({
           variables: {
             updateTravelproductInput: {
-              name: "작성자",
               remarks: title || dataQuestionBoard?.fetchTravelproduct.remarks,
               contents: editor || dataQuestionBoard?.fetchTravelproduct.contents,
               price: 123,
@@ -128,6 +134,11 @@ export default function NewPage() {
             },
             travelproductId: params.boardId as string,
           },
+          refetchQueries: [
+            {
+              query: FetchTravelproductsDocument,
+            },
+          ],
         });
         navigate(`/community/qna/${updateQuestionResult.data?.updateTravelproduct._id}`);
       }
@@ -143,6 +154,11 @@ export default function NewPage() {
               images: selectedTag,
             },
           },
+          refetchQueries: [
+            {
+              query: FetchBoardsDocument,
+            },
+          ],
         });
         navigate(`/community/post/${createResult.data?.createBoard._id}`);
       } else {
@@ -156,6 +172,11 @@ export default function NewPage() {
             boardId: params.boardId as string,
             password: "123",
           },
+          refetchQueries: [
+            {
+              query: FetchBoardsDocument,
+            },
+          ],
         });
         navigate(`/community/post/${updateResult.data?.updateBoard._id}`);
       }

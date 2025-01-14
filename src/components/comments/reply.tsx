@@ -13,7 +13,7 @@ const Reply = ({ reply, el, setIsEdit, setReplyId }) => {
     document.body.style.overflow = "auto"; // 스크롤 복원
   }
 
-  const time = new Date(reply.createdAt);
+  const time = new Date(reply?.createdAt);
 
   const [deleteBoardComment] = useMutation(DeleteBoardCommentDocument);
 
@@ -47,7 +47,6 @@ const Reply = ({ reply, el, setIsEdit, setReplyId }) => {
             onClick={() => {
               setIsEdit(true);
               setReplyId(reply._id);
-              console.log("대댓글아이디", reply._id);
             }}
           >
             <Pencil />
@@ -58,7 +57,7 @@ const Reply = ({ reply, el, setIsEdit, setReplyId }) => {
           {isModal && <Modal onClickDelete={onClickDelPostReply} setIsModal={setIsModal} />}
         </div>
       </div>
-      <div className="mt-[14px] h-[50px]">{reply.contents}</div>
+      <div className="mt-[14px] h-[50px]">{reply?.contents}</div>
       <div className="text-[#767676] text-[12px] my-[16px]">{`${time.toLocaleDateString()} ${String(
         time.getHours()
       ).padStart(2, "0")}:${String(time.getMinutes()).padStart(2, "0")}`}</div>

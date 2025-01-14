@@ -47,8 +47,8 @@ const Comment = ({
   }, [isModal]);
 
   useEffect(() => {
-    const a = JSON.parse(localStorage.getItem(`likeCount_Comment_${el._id}`));
-    if (a === userData?.fetchUserLoggedIn._id) {
+    const likeUser = JSON.parse(localStorage.getItem(`likeCount_Comment_${el._id}`));
+    if (likeUser === userData?.fetchUserLoggedIn._id) {
       setLikeActive(true);
     }
   }, [userData]);
