@@ -1,5 +1,5 @@
-import Reply from "@/components/comments/reply";
-import PostList from "@/components/postList";
+// import Reply from "@/components/comments/reply";
+// import PostList from "@/components/postList";
 import { Mail, Pencil, UsersRound } from "lucide-react";
 import { useState } from "react";
 
@@ -101,8 +101,11 @@ const Mypage = () => {
             </div>
           )}
         </div>
-        {tabIndex === 1 && <PostList />}
-        {tabIndex === 2 && <Reply />}
+        
+        {/*
+          {tabIndex === 1 && <PostList />}
+          {tabIndex === 2 && <Reply />}
+        */}
       </div>
     </div>
   );

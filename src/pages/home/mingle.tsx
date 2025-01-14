@@ -42,7 +42,7 @@ const initialNodes: NodeBase[] = [
   },
 ];
 
-const initialNodeTypes: Record<string, ComponentType<{}>> = {
+const initialNodeTypes: Record<string, ComponentType> = {
   "site-search": SiteSearch,
   "ui-components": NodeController as ComponentType,
   // ... 이후 동적으로 import 수행
@@ -84,6 +84,8 @@ type NodeControllerProps = {
 };
 
 function NodeController({ data, selected = false }: NodeControllerProps): JSX.Element {
+console.log(data)
+
   const { currentNode } = data;
   const Component = initialNodeTypes[currentNode];
 
@@ -205,6 +207,10 @@ function MinglePage() {
     loadModules();
   }, []);
 
+  useEffect(() => {
+    encodeUrl(nodes)
+  }, [nodes])
+
   /**
    * @ROLE node가 변경될 때 마다 실행될 callback함수
    *
@@ -216,7 +222,7 @@ function MinglePage() {
     (changes: NodeChange<NodeBase>[]) => {
       setNodes((nds) => {
         const onUpdateNode = applyNodeChanges(changes, nds);
-        encodeUrl(onUpdateNode);
+        // encodeUrl(onUpdateNode);
         return onUpdateNode;
       });
     },
@@ -307,10 +313,13 @@ function MinglePage() {
           id: getId(prev.length),
           type: "ui-components",
           position: { x: prev.length * 10, y: 60 + prev.length * 10 },
-          data: { currentNode },
+          data: {
+            currentNode,
+            setNodes
+          },
         },
       ];
-      encodeUrl(updateNode);
+      // encodeUrl(updateNode);
       return updateNode;
     });
   }
@@ -350,11 +359,14 @@ function MinglePage() {
           id: getId(nds.length),
           type: "ui-components",
           position,
-          data: { currentNode },
+          data: {
+            currentNode,
+            setNodes
+          },
         };
 
         const dndUpdateNode = nds.concat(newNode);
-        encodeUrl(dndUpdateNode);
+        // encodeUrl(dndUpdateNode);
         return dndUpdateNode;
       });
     },
