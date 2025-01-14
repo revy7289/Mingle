@@ -1,14 +1,23 @@
 // 라이브러리: mui / antd / chakra / shadcn
 // 프레임워크: React / Vue / Angular / Svelte
 
-export const Tag = ({ tagName, selectedTag, setSelectedTag, children }) => {
-  const onClickTagName = (tag) => {
+import { Dispatch, ReactNode, SetStateAction } from "react";
+
+interface TagProps {
+  tagName: string
+  selectedTag: string[]
+  setSelectedTag: Dispatch<SetStateAction<string[]>>
+  children: ReactNode
+}
+
+export const Tag = ({ tagName, selectedTag, setSelectedTag, children }: TagProps) => {
+  const onClickTagName = (tag: string) => {
     if (!selectedTag.includes(tag) && selectedTag.length < 8) {
       setSelectedTag((prev) => [...prev, tag]);
     }
   };
 
-  const tagColor = (tagName) => {
+  const tagColor = (tagName: string) => {
     switch (tagName) {
       case "MUI":
         return "bg-[#0073E6]";

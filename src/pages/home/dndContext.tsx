@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
 
 type DndContextType = [string | null, Dispatch<SetStateAction<string | null>>];

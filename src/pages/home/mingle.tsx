@@ -42,7 +42,7 @@ const initialNodes: NodeBase[] = [
   },
 ];
 
-const initialNodeTypes: Record<string, ComponentType<{}>> = {
+const initialNodeTypes: Record<string, ComponentType> = {
   "site-search": SiteSearch,
   "ui-components": NodeController as ComponentType,
   // ... 이후 동적으로 import 수행
