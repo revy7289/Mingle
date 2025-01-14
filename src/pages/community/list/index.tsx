@@ -10,13 +10,32 @@ export default function ListPage() {
   const tabs = ["질문과답변", "자유게시판"];
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  const { data: dataBoards } = useQuery(FetchBoardsDocument);
-  const { data: dataQuestionBoards } = useQuery(FetchTravelproductsDocument);
+  const [search, setSearch] = useState("");
 
-  const popularBoards = dataBoards?.fetchBoards
+  const { data: dataPopularBoards } = useQuery(FetchBoardsDocument);
+  const { data: dataBoards, refetch: refetchBoards } = useQuery(FetchBoardsDocument);
+  const { data: dataQuestionBoards, refetch: refetchQuestionBoards } = useQuery(
+    FetchTravelproductsDocument
+  );
+
+  const popularBoards = dataPopularBoards?.fetchBoards
     .filter((boards) => boards.likeCount > 0)
     .sort((a, b) => b.likeCount - a.likeCount)
     .slice(0, 3);
+
+  const onClickSearch = () => {
+    if (!tabIndex) {
+      refetchQuestionBoards({ search });
+    } else {
+      refetchBoards({ search });
+    }
+  };
+
+  const onkeyDownEnter = (e) => {
+    if (e.key === "Enter") {
+      onClickSearch();
+    }
+  };
 
   return (
     <>
@@ -62,8 +81,8 @@ export default function ListPage() {
 
                     <div className="flex justify-between">
                       <div className="flex gap-[8px]">
-                        {post?.images?.map((tagName) => (
-                          <div className="w-[80px]">
+                        {post?.images?.map((tagName, index) => (
+                          <div key={index} className="w-[80px]">
                             <Tag tagName={tagName} />
                           </div>
                         ))}
@@ -98,8 +117,16 @@ export default function ListPage() {
               ))}
             </div>
             <div className="flex gap-[40px]">
-              <div className="flex gap-[4px] p-[6px] text-[#767676] w-[200px] h-[40px] rounded-2xl border border-solid border-[#32CBFF]">
-                <Search color="#32CBFF" /> Search
+              <div className="flex gap-[4px] p-[6px] overflow-hidden text-[#767676] w-[200px] h-[40px] rounded-2xl border border-solid border-[#32CBFF]">
+                <div className="ml-[6px]">
+                  <Search size={24} color="#32CBFF" onClick={onClickSearch} />
+                </div>
+                <input
+                  placeholder="Search"
+                  className="outline-none"
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={onkeyDownEnter}
+                />
               </div>
               <Link to="/community/new">
                 <button className="w-[120px] h-[40px] flex justify-center items-center gap-[8px] rounded-2xl bg-[#32CBFF] text-white">
@@ -114,7 +141,11 @@ export default function ListPage() {
               <>
                 {dataQuestionBoards?.fetchTravelproducts.map((questionBoards, index) => (
                   <div key={index}>
-                    <PostList Boards={questionBoards} tabIndex={0} />
+                    <PostList
+                      Boards={questionBoards}
+                      tabIndex={0}
+                      refetch={refetchQuestionBoards}
+                    />
                   </div>
                 ))}
               </>
@@ -123,7 +154,7 @@ export default function ListPage() {
               <>
                 {dataBoards?.fetchBoards.map((freeBoards, index) => (
                   <div key={index}>
-                    <PostList Boards={freeBoards} tabIndex={1} />
+                    <PostList Boards={freeBoards} tabIndex={1} refetch={refetchBoards} />
                   </div>
                 ))}
               </>

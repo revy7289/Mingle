@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { FetchBoardCommentsDocument, FetchUserLoggedInDocument } from "@/commons/graphql/graphql";
 
-const PostList = ({ Boards, tabIndex }) => {
+const PostList = ({ Boards, tabIndex, refetch }) => {
   const navigate = useNavigate();
 
   const { data: dataLonginUser } = useQuery(FetchUserLoggedInDocument);
