@@ -47,7 +47,12 @@ export default function ListPage() {
                       );
                     })
                   ) : (
-                    <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl "></div>
+                    <div className="w-full h-[180px] bg-[#767676] rounded-t-2xl ">
+                      <img
+                        src="/noImage.png"
+                        className="w-full h-full rounded-t-2xl object-cover  border-[#BDBDBD] border-x border-t"
+                      />
+                    </div>
                   )}
 
                   <div className="w-full h-[100px] rounded-b-2xl border border-solid border-[#bdbdbd] flex flex-col justify-between p-[16px]">

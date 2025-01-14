@@ -5,8 +5,11 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   DeleteBoardCommentDocument,
   FetchBoardCommentsDocument,
+  FetchTravelproductDocument,
+  FetchTravelproductsDocument,
   FetchUserLoggedInDocument,
   UpdateBoardCommentDocument,
+  UpdateTravelproductDocument,
 } from "@/commons/graphql/graphql";
 import { useParams } from "react-router-dom";
 import Modal from "./modal";
@@ -29,9 +32,11 @@ const Answer = ({
   const time = new Date(answer.createdAt);
   const [isModal, setIsModal] = useState(false);
   const [likeActive, setLikeActive] = useState(false);
+  const [answerBtn, setAnswerBtn] = useState("");
 
   const [deleteBoardAnswer] = useMutation(DeleteBoardCommentDocument);
   const [updateLikeComment] = useMutation(UpdateBoardCommentDocument);
+  const [updateQuestionBoard] = useMutation(UpdateTravelproductDocument);
 
   const { data: userData } = useQuery(FetchUserLoggedInDocument);
   const { data: dataAnswerReply } = useQuery(FetchBoardCommentsDocument, {
@@ -49,6 +54,13 @@ const Answer = ({
       setLikeActive(true);
     }
   }, [userData]);
+
+  useEffect(() => {
+    const saveAnswer = localStorage.getItem("selectedAnswer");
+    if (saveAnswer) {
+      setAnswerBtn(saveAnswer);
+    }
+  }, []);
 
   // 좋아요 누를때마다 댓글 업데이트함
   const onClickUpdateLike = () => {
@@ -88,6 +100,21 @@ const Answer = ({
           },
         },
       ],
+    });
+  };
+
+  const onClickAnswerBtn = async (answerId) => {
+    setAnswerBtn(answerId); // 선택된 답변의 _id를 상태로 설정
+
+    localStorage.setItem("selectedAnswer", answerId);
+    alert("채택되었습니다");
+    await updateQuestionBoard({
+      variables: {
+        updateTravelproductInput: {
+          name: "해결",
+        },
+        travelproductId: params.boardId as string,
+      },
     });
   };
 
@@ -143,8 +170,15 @@ const Answer = ({
                     <span className="text-[#767676]">{answer.rating}</span>
                   </div>
                 </div>
-                <button className="w-[100px] h-[32px] bg-[#32CBFF] rounded-[8px] flex justify-center items-center gap-[8px] text-[#FCFCFC] text-[16px]">
-                  <span>채택하기</span>
+                <button
+                  className={`w-[100px] h-[32px] rounded-[8px] flex justify-center items-center gap-[8px] text-[#FCFCFC] ${
+                    answerBtn === answer._id
+                      ? "bg-[#8BE1FF] border border-solid border-[#32CBFF]"
+                      : "bg-[#32CBFF]"
+                  }`}
+                  onClick={() => onClickAnswerBtn(answer._id)}
+                >
+                  <span>{answerBtn === answer._id ? "채택완료" : "채택하기"}</span>
                 </button>
                 <button
                   onClick={() => {

@@ -263,7 +263,9 @@ export default function PostPage() {
             <p className="text-[#222222] text-[40px] font-semibold">
               {isQnA ? dataQuestionBoard?.fetchTravelproduct.remarks : data?.fetchBoard.title}
             </p>
-            <p className="text-[#222222] text-[16px] ">작성자이름은최대열두글자</p>
+            <p className="text-[#222222] text-[16px] ">
+              {userData?.fetchUserLoggedIn.name || "작성자이름은최대열두글자"}
+            </p>
           </div>
           <div className="w-[170px] h-[68px] flex flex-col justify-between mt-[15px]">
             <div className="flex w-full h-[24px] justify-between mt-[7px]">
@@ -334,7 +336,7 @@ export default function PostPage() {
             {dataComments?.fetchBoardComments.map((answer, index) => (
               <div>
                 <Answer
-                  // key={index}
+                  key={index}
                   isEdit={isEdit}
                   setIsEdit={setIsEdit}
                   answer={answer}
