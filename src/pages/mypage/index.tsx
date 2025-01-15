@@ -7,6 +7,28 @@ const Mypage = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const tabs = ["내 작업공간", "내가 쓴 글", "내가 쓴 댓글"];
 
+  // const addToNotion = async (title: string, content: string) => {
+  //   try {
+  //     const response = await fetch("http://localhost:3001/notion", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ title, content }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("데이터를 불러오는 데 실패했습니다.");
+  //     }
+
+  //     const data = await response.json();
+  //     console.log("Response from server:", data);
+  //   } catch (error) {
+  //     console.error("Error fetching from notion:", error);
+  //   }
+  // };
+  
+  // addToNotion(title, content);
+  
+
   return (
     <div className="flex flex-col items-center">
       <div className="flex gap-[115px]">

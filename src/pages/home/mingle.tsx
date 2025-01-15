@@ -32,6 +32,9 @@ import ZoomPanel from "./panelAddon/zoomTransition";
 import DownloadPanel from "./panelAddon/downloadImage";
 import SavePanel from "./panelAddon/saveRestore";
 import CleanupPanel from "./panelAddon/cleanupNode";
+import SharePanel from "./panelAddon/shareMingle";
+import { useQuery } from "@apollo/client";
+import { FetchUserLoggedInDocument } from "@/commons/graphql/graphql";
 
 const initialNodes: NodeBase[] = [
   {
@@ -84,8 +87,6 @@ type NodeControllerProps = {
 };
 
 function NodeController({ data, selected = false }: NodeControllerProps): JSX.Element {
-console.log(data)
-
   const { currentNode } = data;
   const Component = initialNodeTypes[currentNode];
 
@@ -161,6 +162,8 @@ function MinglePage() {
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
 
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
+
   /**
    * @ROLE 페이지 로드할 때 URL에 통째로 저장된 Node를 parse하여 작업하던 화면 재구축
    *
@@ -207,9 +210,12 @@ function MinglePage() {
     loadModules();
   }, []);
 
+  /**
+   * @ROLE nodes가 변경될 때 마다 url hashing 수행
+   */
   useEffect(() => {
-    encodeUrl(nodes)
-  }, [nodes])
+    encodeUrl(nodes);
+  }, [nodes]);
 
   /**
    * @ROLE node가 변경될 때 마다 실행될 callback함수
@@ -315,7 +321,7 @@ function MinglePage() {
           position: { x: prev.length * 10, y: 60 + prev.length * 10 },
           data: {
             currentNode,
-            setNodes
+            setNodes,
           },
         },
       ];
@@ -361,7 +367,7 @@ function MinglePage() {
           position,
           data: {
             currentNode,
-            setNodes
+            setNodes,
           },
         };
 
@@ -555,6 +561,10 @@ function MinglePage() {
               />
               <div className="w-[2px] h-[20px] bg-[#767676]"></div>
               <CleanupPanel<NodeBase> initialNodes={initialNodes} setNodes={setNodes} />
+            </Panel>
+
+            <Panel position="bottom-right">
+              <SharePanel user={userData} />
             </Panel>
           </ReactFlow>
         </div>

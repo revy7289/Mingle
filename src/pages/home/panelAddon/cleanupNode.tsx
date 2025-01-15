@@ -1,4 +1,4 @@
-import { ListRestart } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 
 export default function CleanupPanel<NodeBase>({
@@ -18,7 +18,7 @@ export default function CleanupPanel<NodeBase>({
       className="w-[28px] h-[28px] bg-[#767676] rounded-[4px] flex justify-center items-center"
       onClick={onClickCleanup}
     >
-      <ListRestart color="#fff" size={20} />
+      <RefreshCw color="#fff" size={20} />
     </button>
   );
 }
