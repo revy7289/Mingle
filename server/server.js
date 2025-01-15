@@ -13,6 +13,7 @@ const options = {
   origin: "*", // 모든 출처 허용
   methods: ["GET", "POST"], // 허용할 HTTP 메서드
   allowedHeaders: ["Content-Type"], // 허용할 헤더
+  credentials: true,
 };
 
 const notion = new Client({ auth: process.env.NTN_KEY });
@@ -191,20 +192,6 @@ app.post("/notion", async (req, res) => {
           ],
         },
       },
-      {
-        object: "block",
-        type: "paragraph",
-        paragraph: {
-          rich_text: [
-            {
-              type: "text",
-              text: {
-                content: `Username: ${username}`,
-              },
-            },
-          ],
-        },
-      },
     ];
 
     // URL 청크를 2000자 이하로 나누어 추가
@@ -292,6 +279,41 @@ function splitText(text, maxLength) {
   }
   return chunks;
 }
+
+app.get("/notion", async (req, res) => {
+  const { username } = req.query; // 쿼리 파라미터로 Username 가져오기
+
+  try {
+    // 데이터베이스에서 모든 페이지 가져오기
+    const pages = await notion.databases.query({
+      database_id: process.env.DB_PLAY, // playground 데이터베이스 ID
+    });
+
+    // Username 필터 적용
+    const filteredPages = pages.results.filter((page) => {
+      const pageUsername = page.properties.Username?.rich_text[0]?.text?.content || "";
+      return username ? pageUsername === username : true; // username이 제공되었으면 필터
+    });
+
+    const pagesWithChildren = await Promise.all(
+      filteredPages.map(async (page) => {
+        const children = await notion.blocks.children.list({
+          block_id: page.id, // 페이지 ID
+        });
+
+        return {
+          ...page,
+          children: children.results,
+        };
+      })
+    );
+
+    res.status(200).json(pagesWithChildren);
+  } catch (error) {
+    console.error("Error fetching Notion data:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // 서버 시작
 const PORT = 3001;

@@ -33,8 +33,6 @@ import DownloadPanel from "./panelAddon/downloadImage";
 import SavePanel from "./panelAddon/saveRestore";
 import CleanupPanel from "./panelAddon/cleanupNode";
 import SharePanel from "./panelAddon/shareMingle";
-import { useQuery } from "@apollo/client";
-import { FetchUserLoggedInDocument } from "@/commons/graphql/graphql";
 
 const initialNodes: NodeBase[] = [
   {
@@ -161,8 +159,6 @@ function MinglePage() {
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type, setType] = useDnD();
-
-  const { data: userData } = useQuery(FetchUserLoggedInDocument);
 
   /**
    * @ROLE 페이지 로드할 때 URL에 통째로 저장된 Node를 parse하여 작업하던 화면 재구축
@@ -564,7 +560,7 @@ function MinglePage() {
             </Panel>
 
             <Panel position="bottom-right">
-              <SharePanel user={userData} />
+              <SharePanel />
             </Panel>
           </ReactFlow>
         </div>

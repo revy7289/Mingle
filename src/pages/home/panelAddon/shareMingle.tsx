@@ -1,9 +1,11 @@
+import { FetchUserLoggedInDocument } from "@/commons/graphql/graphql";
+import { useQuery } from "@apollo/client";
 import { getViewportForBounds, useReactFlow } from "@xyflow/react";
 import { toPng } from "html-to-image";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
-export default function SharePanel({ user }) {
+export default function SharePanel() {
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [popupData, setPopupData] = useState({
     popupTitle: "",
@@ -12,6 +14,8 @@ export default function SharePanel({ user }) {
   });
 
   const { getNodes, getNodesBounds } = useReactFlow();
+
+  const { data: user } = useQuery(FetchUserLoggedInDocument);
 
   function onChangePopup(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value, type } = e.target;
@@ -31,7 +35,7 @@ export default function SharePanel({ user }) {
 
   async function createNotionData() {
     const url = window.location.href;
-    const username = user.fetchUserLoggedIn.name;
+    const username = user?.fetchUserLoggedIn.name;
 
     // 입력 데이터 검증
     if (!popupData.popupTitle) {
@@ -66,7 +70,7 @@ export default function SharePanel({ user }) {
       console.error("Error generating thumbnail:", error);
     }
 
-    async function handleOrder(thumbnail) {
+    async function handleOrder(thumbnail: string) {
       // 갤러리와 플레이그라운드 데이터 처리
       if (popupData.popupChecked) {
         await createNotion("playground", thumbnail);
@@ -76,7 +80,7 @@ export default function SharePanel({ user }) {
       }
     }
 
-    async function createNotion(db, thumbnail) {
+    async function createNotion(db: string, thumbnail: string) {
       try {
         const response = await fetch("http://localhost:3001/notion", {
           method: "POST",
@@ -90,6 +94,8 @@ export default function SharePanel({ user }) {
         console.error("Error fail to create notion data:", error);
       }
     }
+
+    setPopupOpen((prev) => !prev);
   }
 
   return (

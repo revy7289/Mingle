@@ -1,33 +1,122 @@
 // import Reply from "@/components/comments/reply";
 // import PostList from "@/components/postList";
+import { FetchUserLoggedInDocument } from "@/commons/graphql/graphql";
+import { useQuery } from "@apollo/client";
 import { Mail, Pencil, UsersRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+type dataType = {
+  id: string;
+  index: number;
+  username: string;
+  time: string;
+
+  title: string;
+  desc: string;
+  url: string;
+  thumbnail: string;
+};
+
+type Page = {
+  id: string;
+  created_time: string;
+  properties: {
+    Index?: { number: number };
+    Username?: { rich_text: { text: { content: string } }[] };
+    Title?: { title: { text: { content: string } }[] };
+  };
+  children: Child[];
+};
+
+type Child = {
+  type: "paragraph"; // Other types like `heading`, `image` can be added if needed
+  paragraph: {
+    rich_text: {
+      text: {
+        content: string;
+      };
+    }[];
+  };
+};
 
 const Mypage = () => {
+  const navigate = useNavigate();
+
   const [tabIndex, setTabIndex] = useState(0);
   const tabs = ["내 작업공간", "내가 쓴 글", "내가 쓴 댓글"];
 
-  // const addToNotion = async (title: string, content: string) => {
-  //   try {
-  //     const response = await fetch("http://localhost:3001/notion", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ title, content }),
-  //     });
+  const [notionData, setNotionData] = useState([]);
 
-  //     if (!response.ok) {
-  //       throw new Error("데이터를 불러오는 데 실패했습니다.");
-  //     }
+  const { data: user } = useQuery(FetchUserLoggedInDocument);
+  const username = user?.fetchUserLoggedIn.name || "guest";
 
-  //     const data = await response.json();
-  //     console.log("Response from server:", data);
-  //   } catch (error) {
-  //     console.error("Error fetching from notion:", error);
-  //   }
-  // };
-  
-  // addToNotion(title, content);
-  
+  useEffect(() => {
+    async function handleData() {
+      const data = await fetchNotionData(username);
+
+      const processedData = data.map((page: Page) => {
+        const children = page.children;
+
+        let desc = "";
+        const urls = [""];
+        const thumbnails = [""];
+
+        children.forEach((child) => {
+          if (child.type === "paragraph" && child.paragraph.rich_text.length > 0) {
+            const textContent = child.paragraph.rich_text[0].text.content;
+
+            // Determine the type of the child based on its content
+            if (textContent.startsWith("Desc:")) {
+              desc = textContent.replace("Desc: ", "").trim();
+            } else if (textContent.startsWith("URL:")) {
+              urls.push(textContent.replace("URL: ", "").trim());
+            } else if (textContent.startsWith("Thumbnail:")) {
+              thumbnails.push(textContent.replace("Thumbnail: ", "").trim());
+            }
+          }
+        });
+
+        // Combine long URLs and thumbnails back into single strings
+        const combinedUrl = urls.join("");
+        const combinedThumbnail = thumbnails.join("");
+
+        // Return processed data
+        return {
+          id: page.id,
+          index: page.properties.Index?.number || 0,
+          username: page.properties.Username?.rich_text[0]?.text?.content || "Unknown",
+          time: page.created_time,
+
+          title: page.properties.Title?.title[0]?.text?.content || "Untitled",
+          desc,
+          url: combinedUrl,
+          thumbnail: combinedThumbnail,
+        };
+      });
+
+      console.log(processedData);
+      setNotionData(processedData);
+    }
+
+    handleData();
+  }, [username]);
+
+  async function fetchNotionData(username: string) {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/notion?username=${encodeURIComponent(username)}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch filtered Notion data");
+      }
+      const data = await response.json();
+      console.log(data);
+      return data; // 받은 데이터를 클라이언트에서 사용
+    } catch (error) {
+      console.error("Error fetching filtered data:", error);
+    }
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -90,7 +179,7 @@ const Mypage = () => {
           </div>
         </div>
       </div>
-      <div className="mt-[95px] w-[1060px]">
+      <div className="my-[95px] w-[1060px]">
         <div className="flex gap-[20px] w-full justify-center text-[24px]">
           {tabs.map((el, index) => (
             <button
@@ -106,28 +195,29 @@ const Mypage = () => {
             </button>
           ))}
         </div>
-        <div className="flex mt-[40px] ">
-          {/* 작업공간 */}
-          {tabIndex === 0 && (
-            <div>
-              <div className="w-[265px] h-[170px] bg-[#E0E0E0] rounded-[16px]"></div>
-              <div className="w-full px-[10px] my-[20px]">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-[24px]">untitled.mingle</h2>
-                  <div>
-                    <Pencil />
-                  </div>
-                </div>
-                <div className="text-[#767676]">2024.12.13 23.54</div>
-              </div>
+
+        {notionData.map((data: dataType) => (
+          <div className="flex mt-[40px] ">
+            <div className="w-[265px] h-[170px] bg-[#E0E0E0] rounded-[16px]">
+              <img src={`${data.thumbnail}`} />
             </div>
-          )}
-        </div>
-        
-        {/*
+
+            <div
+              className="w-full px-[40px] my-[20px] flex flex-col justify-between"
+              onClick={() => navigate(data.url, { replace: true })}
+            >
+              <p className="text-[24px]">{data.title || "untitled.mingle"}</p>
+              <p>{data.desc}</p>
+              <p className="text-[#767676] text-[12px]">{data.time}</p>
+            </div>
+          </div>
+        ))}
+
+        {/* 작업공간
+          {tabIndex === 0 && ( )}
           {tabIndex === 1 && <PostList />}
           {tabIndex === 2 && <Reply />}
-        */}
+           */}
       </div>
     </div>
   );
