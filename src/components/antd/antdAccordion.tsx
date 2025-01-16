@@ -1,29 +1,93 @@
 import { Collapse, CollapseProps } from "antd";
+import { useState } from "react";
+import AccordionForm from "../accordionForm";
+import { ILibraryProps } from "@/commons/types/libraryTypes";
 
-export default function AntdAccordion() {
-  const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
+const items: CollapseProps["items"] = [
+  {
+    key: "1",
+    label: "This is panel header 1",
+    children: "text1",
+  },
+  {
+    key: "2",
+    label: "This is panel header 2",
+    children: "text2",
+  },
+  {
+    key: "3",
+    label: "This is panel header 3",
+    children: "text3",
+  },
+];
 
-  const items: CollapseProps["items"] = [
-    {
-      key: "1",
-      label: "This is panel header 1",
-      children: <p>{text}</p>,
-    },
-    {
-      key: "2",
-      label: "This is panel header 2",
-      children: <p>{text}</p>,
-    },
-    {
-      key: "3",
-      label: "This is panel header 3",
-      children: <p>{text}</p>,
-    },
-  ];
+export default function AntdAccordion({ isOpen, setIsOpen, data, setNodes, id }: ILibraryProps) {
+  const [accordionData, setAccordionData] = useState(items);
 
-  return <Collapse items={items} defaultActiveKey={["1"]} />;
+  // useEffect(() => {
+  //   console.log("111", data);
+  // }, []);
+
+  const handleInputChange = (index: number, field: "label" | "children", value: string) => {
+    setAccordionData((prevData) =>
+      prevData?.map((item, idx) => (idx === index ? { ...item, [field]: value } : item))
+    );
+  };
+  const onClickUpdate = () => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) =>
+        node.id === id
+          ? {
+              ...node,
+              data: {
+                currentNode: data.currentNode,
+                inputData: accordionData,
+              },
+            }
+          : node
+      )
+    );
+    // console.log("ppp", data);
+    setIsOpen(false);
+  };
+
+  const handleCopyCode = () => {
+    const copyCode = `
+import React from "react";
+import { Collapse } from "antd";
+
+const accordionData = ${JSON.stringify(accordionData, null, 2)};
+
+export default function GeneratedAccordion() {
+  return (
+    <Collapse
+      items={accordionData}
+      defaultActiveKey={["1"]}
+    />
+  );
+}`;
+    navigator.clipboard.writeText(copyCode).then(() => {
+      alert("코드가 복사되었습니다!");
+    });
+  };
+
+  return (
+    <>
+      <Collapse
+        items={data?.inputData ? data?.inputData : accordionData}
+        defaultActiveKey={["1"]}
+      />
+      {isOpen && (
+        <AccordionForm
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          accordionData={accordionData}
+          setAccordionData={setAccordionData}
+          handleInputChange={handleInputChange}
+          onClickUpdate={onClickUpdate}
+          handleCopyCode={handleCopyCode}
+        />
+      )}
+    </>
+  );
 }

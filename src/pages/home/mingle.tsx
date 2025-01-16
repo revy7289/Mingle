@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Copy, Settings2, Trash2, X } from "lucide-react";
+import { Settings2, Trash2, X } from "lucide-react";
 
 import {
   ReactFlow,
@@ -33,6 +33,10 @@ import DownloadPanel from "./panelAddon/downloadImage";
 import SavePanel from "./panelAddon/saveRestore";
 import CleanupPanel from "./panelAddon/cleanupNode";
 import SharePanel from "./panelAddon/shareMingle";
+import { Link, useNavigate } from "react-router-dom";
+import { FetchUserLoggedInDocument, LogoutUserDocument } from "@/commons/graphql/graphql";
+import { useMutation, useQuery } from "@apollo/client";
+import { useAccessTokenStore } from "@/commons/stores/tokenStore";
 
 const initialNodes: NodeBase[] = [
   {
@@ -82,31 +86,65 @@ type CurrentNodeType = {
 type NodeControllerProps = {
   data: CurrentNodeType; // currentNode는 initialNodeTypes의 키 중 하나여야 함
   selected: boolean;
+  id: string;
 };
 
-function NodeController({ data, selected = false }: NodeControllerProps): JSX.Element {
+function NodeController({ data, id, selected = false }: NodeControllerProps): JSX.Element {
   const { currentNode } = data;
   const Component = initialNodeTypes[currentNode];
+
+  // 컴포넌트 안에 variation 수정창 state
+  const [isOpen, setIsOpen] = useState(false);
+  const { setNodes } = useReactFlow();
+  // console.log("000:", id);
+
+  // const nodeTest = (event) => {
+  //   setIsOpen(!isOpen);
+  //   console.log(getNodes()[1]);
+  //   const aaa = event.currentTarget.getAttribute("data-id");
+  //   console.log("---", aaa);
+  // };
+  // console.log("nodeTest:", nodeTest);
+
+  const handleDeleteNode = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      // console.log("nodeId:", id);
+      event.stopPropagation();
+      setNodes((nodes) =>
+        nodes.filter((node) => {
+          // console.log("999:", node.id);
+          return node.id !== id;
+        })
+      );
+    },
+    [setNodes]
+  );
 
   return (
     <>
       <NodeResizer color="#ff3179" isVisible={selected} minWidth={200} minHeight={80} />
 
       <NodeToolbar className="flex gap-[8px]" align="end">
-        <button className="w-[24px] h-[24px] flex justify-center items-center">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-[24px] h-[24px] flex justify-center items-center"
+        >
           <Settings2 color="#222" size={16} />
         </button>
 
-        <button className="w-[24px] h-[24px] flex justify-center items-center">
-          <Copy color="#222" size={16} />
-        </button>
-
-        <button className="w-[24px] h-[24px] flex justify-center items-center">
+        <button
+          onClick={(event) => handleDeleteNode(event)}
+          className="w-[24px] h-[24px] flex justify-center items-center"
+        >
           <Trash2 color="#222" size={16} />
         </button>
       </NodeToolbar>
 
-      {Component ? <Component /> : <div>No Component</div>}
+      {Component ? (
+        <Component isOpen={isOpen} setIsOpen={setIsOpen} data={data} setNodes={setNodes} id={id} />
+      ) : (
+        <div>No Component</div>
+      )}
     </>
   );
 }
@@ -173,7 +211,7 @@ function MinglePage() {
     if (!hash.startsWith("#node&")) return;
 
     const nodeParams = hash.replace("#node&", "");
-    const nodeLoader = JSON.parse(atob(nodeParams));
+    const nodeLoader = JSON.parse(decodeURIComponent(escape(atob(nodeParams))));
 
     setNodes(nodeLoader);
 
@@ -255,7 +293,7 @@ function MinglePage() {
           setNodeTypes((prev) => ({ ...prev, [key]: module.default }));
         }
       } catch (error) {
-        console.error(`Failed to import module for ${key}:`, error);
+        // console.error(`Failed to import module for ${key}:`, error);
       }
     });
 
@@ -273,7 +311,7 @@ function MinglePage() {
    * @ROLE Node추가할 때 nodes state를 base.64로 인코딩하여 통째로 URL에 전달
    */
   function encodeUrl(updateNode: NodeBase[]) {
-    const encoded = btoa(JSON.stringify(updateNode));
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(updateNode))));
 
     window.history.pushState({}, "", "#node&" + encoded);
   }
@@ -380,23 +418,96 @@ function MinglePage() {
   const ChakraComp = nodeTypes[`Chakra${selectedMenu}` as keyof typeof nodeTypes];
   const ShadcnComp = nodeTypes[`Shadcn${selectedMenu}` as keyof typeof nodeTypes];
 
+  const navigate = useNavigate();
+
+  const handleMenuClick = (page) => {
+    switch (page) {
+      case "community":
+        navigate("/community");
+        break;
+      case "gallery":
+        navigate("/gallery");
+        break;
+      case "home":
+        navigate("/home");
+        break;
+      default:
+        break;
+    }
+  };
+  const { data: userData } = useQuery(FetchUserLoggedInDocument);
+
+  const { accessToken } = useAccessTokenStore();
+
+  const [dropDown, setDropDown] = useState(false);
+  const openDropDown = () => {
+    setDropDown(!dropDown);
+  };
+  const [logout] = useMutation(LogoutUserDocument);
+
+  const onClickLogout = async () => {
+    try {
+      const data = await logout();
+      useAccessTokenStore.getState().resetAccessToken();
+      console.log(data);
+      alert("로그아웃 성공");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-screen h-screen bg-[#222222] flex relative">
       {/* 사이드바 */}
       <div className="w-[240px] h-full bg-[#343434] rounded-r-2xl p-[20px] flex flex-col">
-        <img src={logo} className="mt-[40px] px-[10px]" />
-
-        <button className="w-[200px] h-[56px] bg-[#222222] mt-[40px] text-white text-[24px] tracking-wider rounded-2xl shrink-0">
-          LOGIN
-        </button>
+        <img onClick={() => handleMenuClick("home")} src={logo} className="mt-[40px] px-[10px]" />
+        {accessToken ? (
+          <>
+            <div
+              onClick={openDropDown}
+              className="font-semibold tracking-wider flex justify-center items-center w-[200px] h-[56px] bg-[#222222] mt-[40px] text-white text-[24px] rounded-2xl shrink-0"
+            >
+              {userData?.fetchUserLoggedIn.name}
+            </div>
+            <div
+              className={`flex absolute top-[230px] left-[30px] justify-center w-[180px] h-[102px] bg-[#eeeeee] text-[#222222] rounded-[8px] p-[10px] overflow-hidden transition-all duration-300 ease-in-out transform origin-top ${
+                dropDown ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"
+              }`}
+            >
+              <ul className="flex flex-col text-[16px] font-semibold w-full">
+                <li className="w-full h-[50%] border-b-[2px] border-[#e0e0e0] flex items-center">
+                  <Link to="/mypage">마이페이지</Link>
+                </li>
+                <li className="w-full h-[50%] flex items-center">
+                  <button onClick={onClickLogout}>로그아웃</button>
+                </li>
+              </ul>
+            </div>
+          </>
+        ) : (
+          <Link to="/login">
+            <button className="w-[200px] h-[56px] bg-[#222222] mt-[40px] text-white text-[24px] tracking-wider rounded-2xl shrink-0">
+              LOGIN
+            </button>
+          </Link>
+        )}
 
         <div className="w-full border-b-2 border-[#767676] mt-[20px]"></div>
 
         {/* 메뉴 리스트 */}
         <ul className="flex flex-col gap-[20px] mt-[40px] px-[10px]">
-          <li className="text-white text-[24px] tracking-wider font-semibold">Community</li>
-          <li className="text-white text-[24px] tracking-wider font-semibold">My Page</li>
-          <li className="text-white text-[24px] tracking-wider font-semibold">Gallery</li>
+          <li
+            onClick={() => handleMenuClick("community")}
+            className="text-white text-[24px] tracking-wider font-semibold"
+          >
+            Community
+          </li>
+          <li
+            onClick={() => handleMenuClick("gallery")}
+            className="text-white text-[24px] tracking-wider font-semibold"
+          >
+            Gallery
+          </li>
         </ul>
 
         <div className="w-full border-b-2 border-[#767676] mt-[40px]"></div>
