@@ -204,7 +204,7 @@ const Mypage = () => {
 
             <div
               className="w-full px-[40px] my-[20px] flex flex-col justify-between"
-              onClick={() => navigate(data.url, { replace: true })}
+              onClick={() => (window.location.href = data.url)}
             >
               <p className="text-[24px]">{data.title || "untitled.mingle"}</p>
               <p>{data.desc}</p>
