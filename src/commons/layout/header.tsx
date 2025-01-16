@@ -40,7 +40,7 @@ const Header = () => {
   return (
     <div className="h-[100px] bg-[#343434] justify-center flex items-center mb-[120px]">
       <div className="flex justify-between w-[1120px]">
-        <Link to="/">
+        <Link to="/home">
           <img src="/logoColor.svg" className="cursor-pointer" />
         </Link>
         <ul className="flex gap-[20px] ">
