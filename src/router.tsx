@@ -1,23 +1,27 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { ReactNode } from "react";
 
-import MinglePage from "./Pages/Main/mingle";
-import Header from "./Commons/Layout/header";
+import Header from "./commons/layout/header";
 
-import LoginPage from "./Pages/Login/login";
-import SignupPage from "./Pages/Signup/signup";
-import FindPwPage from "./Pages/FindPw/findpw";
+import LandingPage from "./pages/home/landing";
+import MinglePage from "./pages/home/mingle";
 
-import Mypage from "./Pages/Mypage/mypage";
+import LoginPage from "./pages/login";
+import SignupPage from "./pages/signup";
+import FindPwPage from "./pages/findPw";
 
-import ListPage from "./Pages/Community/List/list";
-import PostPage from "./Pages/Community/Post/post";
-import NewPage from "./Pages/Community/New/new";
+import Mypage from "./pages/mypage";
 
-const HIDDEN_HEADER = ["/", "/login", "/signup", "/findpw"];
+import ListPage from "./pages/community/list";
+import PostPage from "./pages/community/post";
+import NewPage from "./pages/community/new";
+import GalleryPage from "./pages/gallery";
 
-const Layout = ({ children }) => {
-  const location = window.location.pathname;
-  const isHiddenHeader = HIDDEN_HEADER.includes(location);
+const HIDDEN_HEADER = ["/", "/home", "/login", "/signup", "/findpw"];
+
+const Layout = ({ children }: { children: ReactNode }) => {
+  const location = useLocation();
+  const isHiddenHeader = HIDDEN_HEADER.includes(location.pathname);
   return (
     <>
       {!isHiddenHeader && <Header />}
@@ -31,17 +35,24 @@ export default function Router() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<MinglePage />} />
-          
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/home" element={<MinglePage />} />
+
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/findpw" element={<FindPwPage />} />
-          
+
           <Route path="/mypage" element={<Mypage />} />
-          
+
           <Route path="/community" element={<ListPage />} />
           <Route path="/community/post" element={<PostPage />} />
+          <Route path="/community/post/:boardId" element={<PostPage />} />
+          <Route path="/community/post/:boardId/edit" element={<NewPage />} />
+          <Route path="/community/qna/:boardId" element={<PostPage />} />
+          <Route path="/community/qna/:boardId/edit" element={<NewPage />} />
           <Route path="/community/new" element={<NewPage />} />
+
+          <Route path="gallery" element={<GalleryPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

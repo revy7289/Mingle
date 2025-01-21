@@ -1,5 +1,10 @@
+import ApolloSetting from "./commons/settings/apolloSetting";
 import Router from "./router";
 
 export default function App() {
-    return <Router />;
+  return (
+    <ApolloSetting>
+      <Router />
+    </ApolloSetting>
+  );
 }

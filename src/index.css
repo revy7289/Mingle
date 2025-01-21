@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+@font-face {
+  font-family: "PretendardVariable";
+  src: url("/PretendardVariable.woff2") format("woff2");
   font-weight: 400;
+  font-style: normal;
 }
 
 html,
@@ -13,6 +14,18 @@ body,
 #root {
   height: 100%;
   margin: 0;
+}
+
+html {
+  font-family: "PretendardVariable", sans-serif;
+  font-size: 62.5%;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+  font-size: 1.6rem;
 }
 
 @layer base {
@@ -80,10 +93,28 @@ body,
   }
 }
 
+[data-id="node-00"] {
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+[data-id="siteSearch"] {
+  pointer-events: all !important;
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
 .toastui-editor-contents p {
   font-size: 16px;
 }
 
 .ProseMirror div {
   font-size: 16px;
+}
+
+.ProseMirror {
+  position: relative;
+  z-index: 0;
 }

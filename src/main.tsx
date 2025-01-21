@@ -4,11 +4,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 
 import "./index.css";
-// import Header from "./Commons/Layout/header";
+import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/* <Header /> */}
-    <App />
+    <ChakraProvider value={defaultSystem}>
+      <App />
+    </ChakraProvider>
   </React.StrictMode>
 );
