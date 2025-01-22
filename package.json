@@ -33,7 +33,7 @@
     "@radix-ui/react-tabs": "^1.1.2",
     "@tanstack/react-table": "^8.20.6",
     "@toast-ui/react-editor": "^3.2.3",
-    "@xyflow/react": "^12.3.6",
+    "@xyflow/react": "^12.4.2",
     "antd": "^5.22.3",
     "antd-style": "^3.7.1",
     "class-variance-authority": "^0.7.1",
