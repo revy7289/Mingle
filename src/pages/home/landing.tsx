@@ -30,7 +30,7 @@ export default function LandingPage() {
         <div className="h-[1000px] relative">
           <img
             src="/land-main-bg.png"
-            className="w-full h-full object-cover object-bottom absolute"
+            className="max-w-[1760px] w-full h-full object-cover object-bottom left-1/2 -translate-x-1/2 absolute"
           />
 
           <div className="p-[100px] relative z-1">
