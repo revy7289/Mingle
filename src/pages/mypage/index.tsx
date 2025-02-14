@@ -4,7 +4,6 @@ import { FetchUserLoggedInDocument } from "@/commons/graphql/graphql";
 import { useQuery } from "@apollo/client";
 import { Mail, Pencil, UsersRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 type dataType = {
   id: string;
@@ -41,8 +40,6 @@ type Child = {
 };
 
 const Mypage = () => {
-  const navigate = useNavigate();
-
   const [tabIndex, setTabIndex] = useState(0);
   const tabs = ["내 작업공간", "내가 쓴 글", "내가 쓴 댓글"];
 

@@ -330,9 +330,9 @@ function MinglePage() {
 
     dynamicImport(menu).then(() => {
       console.log("Components mapped to nodeTypes:", nodeTypes);
+      setDrawerOpen((prev) => !prev);
     });
 
-    setDrawerOpen((prev) => !prev);
     setSelectedMenu(menu);
     console.log(menu);
   }
@@ -547,8 +547,9 @@ function MinglePage() {
           <X color="#222222" strokeWidth={"3px"} size={32} />
         </div>
 
-        <p className="text-[24px] font-semibold p-[10px]">컴포넌트 이름</p>
+        <p className="text-[24px] font-semibold p-[10px]">{selectedMenu}</p>
 
+        {/* 
         <div className="w-[260px] h-[180px] rounded-md border border-[#e0e0e0] m-[10px]">
           <img />
         </div>
@@ -569,9 +570,10 @@ function MinglePage() {
         </div>
 
         <div className="w-full border-b-2 border-[#e0e0e0] mt-[20px]"></div>
+        */}
 
         {/* 컴포넌트 리스트 */}
-        <div className="w-full max-h-[520px] overflow-scroll bg-[#f5f5f5] mt-[20px]">
+        <div className="w-full h-full overflow-scroll bg-[#f5f5f5] mt-[20px]">
           <div className="px-[10px] mt-[40px] flex flex-col gap-[20px]">
             <div className="flex gap-[20px]">
               <img src="/MUI.svg" alt="mui" className="mt-[4px]" />
@@ -579,7 +581,7 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center p-[10px]"
               onClick={MuiComp !== undefined ? onClickLib : () => ""}
               onDragStart={(event) => onDragStart(event, `Mui${selectedMenu}`)}
               draggable
@@ -596,7 +598,7 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center p-[10px]"
               onClick={AntdComp !== undefined ? onClickLib : () => ""}
               onDragStart={(event) => onDragStart(event, `Antd${selectedMenu}`)}
               draggable
@@ -613,7 +615,7 @@ function MinglePage() {
             </div>
 
             <div
-              className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center p-[10px]"
               onClick={ChakraComp !== undefined ? onClickLib : () => ""}
               onDragStart={(event) => onDragStart(event, `Chakra${selectedMenu}`)}
               draggable
@@ -629,7 +631,7 @@ function MinglePage() {
               <p className="text-[24px] font-semibold">shadcn/ui</p>
             </div>
             <div
-              className="w-full h-full rounded-md bg-[#e0e0e0] flex justify-center items-center"
+              className="w-full h-full rounded-md bg-[#e0e0e0] flex flex-col justify-center items-center p-[10px]"
               onClick={ShadcnComp !== undefined ? onClickLib : () => ""}
               onDragStart={(event) => onDragStart(event, `Shadcn${selectedMenu}`)}
               draggable
